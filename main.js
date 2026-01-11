@@ -218,19 +218,27 @@ function initMap(corporationId) {
     }).addTo(map);
     
     // Load GeoJSON for corporation boundaries
-    fetch('files/gba_corporation.geojson')
+    const geojsonPath = 'files/gba_corporation.geojson';
+    
+    fetch(geojsonPath)
         .then(response => {
-            if (!response.ok) throw new Error('Failed to load GeoJSON');
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
             return response.json();
         })
         .then(data => {
             console.log('GeoJSON loaded successfully:', data.features?.length, 'features');
             
+            if (!data.features || data.features.length === 0) {
+                throw new Error('No features found in GeoJSON');
+            }
+            
             // Filter and display only the current corporation
             const targetName = corp.name;
             let foundFeature = false;
             
-            L.geoJSON(data, {
+            const geoJsonLayer = L.geoJSON(data, {
                 filter: function(feature) {
                     const featureName = feature.properties?.namecol;
                     const matches = featureName === targetName;
@@ -264,15 +272,21 @@ function initMap(corporationId) {
             
             if (!foundFeature) {
                 console.warn('No matching feature found for:', targetName);
+                console.log('Available features:', data.features.map(f => f.properties?.namecol));
             }
         })
         .catch(error => {
             console.error('Error loading GeoJSON:', error);
-            // Show error message to user
-            const errorDiv = document.createElement('div');
-            errorDiv.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:white;padding:1rem;border-radius:0.5rem;box-shadow:0 2px 4px rgba(0,0,0,0.1);z-index:1000;';
-            errorDiv.innerHTML = '<p style="color:#ef4444;margin:0;">Unable to load map boundaries. Please refresh the page.</p>';
-            mapElement.appendChild(errorDiv);
+            console.error('Attempted path:', geojsonPath);
+            console.error('Full error:', error.message);
+            
+            // Show user-friendly error message
+            mapElement.innerHTML = `
+                <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:white;padding:1.5rem;border-radius:0.5rem;box-shadow:0 4px 6px rgba(0,0,0,0.1);z-index:1000;text-align:center;max-width:400px;">
+                    <p style="color:#ef4444;margin:0 0 0.5rem 0;font-weight:600;">⚠️ Map Data Unavailable</p>
+                    <p style="color:#6b7280;margin:0;font-size:0.875rem;">Unable to load corporation boundary. The map service may be temporarily unavailable.</p>
+                </div>
+            `;
         });
 }
 

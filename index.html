@@ -32,10 +32,37 @@
                         <a href="central.html" class="dropdown-item">Bengaluru Central</a>
                     </div>
                 </div>
-                <button class="admin-login-btn" onclick="openModal('adminModal')">Admin Login</button>
             </div>
         </div>
     </nav>
+
+    <!-- Corporation Performance Rankings -->
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">Corporation Performance Rankings</h2>
+            <p style="text-align: center; color: var(--text-secondary); margin-bottom: 1.5rem;">Ranked by Resolution Rate, Response Time, and Citizen Satisfaction</p>
+            <div class="table-container">
+                <table id="rankingsTable">
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Corporation</th>
+                            <th>Total Issues</th>
+                            <th>Open Issues</th>
+                            <th>Resolution Rate</th>
+                            <th>Avg Response Time</th>
+                            <th>SLA Compliance</th>
+                            <th>Citizen Score</th>
+                            <th>Overall Score</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rankingsBody">
+                        <!-- Will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
 
     <!-- Hero Section -->
     <section class="hero">
@@ -98,34 +125,6 @@
                     <h3>Performance Analytics</h3>
                     <p>Track KPIs including resolution time, SLA compliance, and citizen satisfaction scores</p>
                 </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Rankings Section -->
-    <section class="rankings">
-        <div class="container">
-            <h2 class="section-title">Corporation Performance Rankings</h2>
-            <p class="section-subtitle">Ranked by Resolution Rate, Response Time, and Citizen Satisfaction</p>
-            <div class="rankings-table">
-                <table id="rankingsTable">
-                    <thead>
-                        <tr>
-                            <th>Rank</th>
-                            <th>Corporation</th>
-                            <th>Total Issues</th>
-                            <th>Open Issues</th>
-                            <th>Resolution Rate</th>
-                            <th>Avg Response Time</th>
-                            <th>SLA Compliance</th>
-                            <th>Citizen Score</th>
-                            <th>Overall Score</th>
-                        </tr>
-                    </thead>
-                    <tbody id="rankingsBody">
-                        <!-- Will be populated by JavaScript -->
-                    </tbody>
-                </table>
             </div>
         </div>
     </section>
@@ -193,29 +192,6 @@
                         <input type="file" name="photo" class="form-file" accept="image/*">
                     </div>
                     <button type="submit" class="btn-primary">Submit Complaint</button>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- Admin Login Modal -->
-    <div id="adminModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title">Admin Login</h2>
-                <button class="modal-close" onclick="closeModal('adminModal')">×</button>
-            </div>
-            <div class="modal-body">
-                <form onsubmit="submitAdminLogin(event)" class="login-form">
-                    <div class="form-group">
-                        <label class="form-label">Username</label>
-                        <input type="text" id="adminUsername" class="form-input" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Password</label>
-                        <input type="password" id="adminPassword" class="form-input" required>
-                    </div>
-                    <button type="submit" class="btn-primary">Login</button>
                 </form>
             </div>
         </div>

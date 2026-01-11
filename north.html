@@ -69,20 +69,41 @@
         </div>
     </section>
 
-    <!-- Stats Section -->
-    <section class="corp-stats">
+    <!-- Dashboard Section -->
+    <section class="dashboard-section">
         <div class="container">
-            <div class="stats-grid" id="northStats">
-                <!-- Populated by JavaScript -->
+            <h2 class="section-title">Performance Dashboard</h2>
+            <div class="stats-grid">
+                <div class="stats-card">
+                    <h3>Total Issues</h3>
+                    <div class="value" id="totalIssues">26,234</div>
+                </div>
+                <div class="stats-card">
+                    <h3>Open Issues</h3>
+                    <div class="value" id="openIssues">3,892</div>
+                </div>
+                <div class="stats-card">
+                    <h3>Resolution Rate</h3>
+                    <div class="value" id="resolutionRate">85.2%</div>
+                </div>
+                <div class="stats-card">
+                    <h3>Avg Response Time</h3>
+                    <div class="value" id="avgResponseTime">18 hours</div>
+                </div>
+                <div class="stats-card">
+                    <h3>SLA Compliance</h3>
+                    <div class="value" id="slaCompliance">88.5%</div>
+                </div>
+                <div class="stats-card">
+                    <h3>Citizen Score</h3>
+                    <div class="value" id="citizenScore">4.2/5.0</div>
+                </div>
             </div>
-        </div>
-    </section>
 
-    <!-- Map Section -->
-    <section class="corp-map">
-        <div class="container">
-            <h2 class="section-title">Corporation Boundary Map</h2>
-            <div id="corpMap" style="height: 500px; border-radius: 12px;"></div>
+            <h3 class="section-title">Corporation Area Map</h3>
+            <div class="map-container">
+                <div id="map"></div>
+            </div>
         </div>
     </section>
 
@@ -159,7 +180,7 @@
     <div id="adminModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 class="modal-title">Admin Login</h2>
+                <h2 class="modal-title">Admin Login - <span id="adminCorpName">Bengaluru North</span></h2>
                 <button class="modal-close" onclick="closeModal('adminModal')">×</button>
             </div>
             <div class="modal-body">
