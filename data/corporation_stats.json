@@ -1,0 +1,89 @@
+{
+  "north": {
+    "name": "Bengaluru North City Corporation",
+    "totalIssues": 137846,
+    "closedIssues": 127249,
+    "openIssues": 10597,
+    "resolutionRate": 92.31,
+    "color": "#23A2A5",
+    "topWards": ["Horamavu", "Thanisandra", "Jakkur", "Someshwara", "Ramamurthy Nagar"],
+    "avgResponseTime": "18 hours",
+    "slaCompliance": 88.5,
+    "citizenScore": 4.2
+  },
+  "south": {
+    "name": "Bengaluru South City Corporation",
+    "totalIssues": 115341,
+    "closedIssues": 104782,
+    "openIssues": 10559,
+    "resolutionRate": 90.85,
+    "color": "#0D7576",
+    "topWards": ["Begur", "Uttarahalli", "HSR Layout", "Vasanthapura", "Gottigere"],
+    "avgResponseTime": "22 hours",
+    "slaCompliance": 85.2,
+    "citizenScore": 4.0
+  },
+  "east": {
+    "name": "Bengaluru East City Corporation",
+    "totalIssues": 36810,
+    "closedIssues": 33824,
+    "openIssues": 2986,
+    "resolutionRate": 91.89,
+    "color": "#FBC831",
+    "topWards": ["Bellandur", "Hoodi", "Marathahalli", "KR Puram", "Mahadevapura"],
+    "avgResponseTime": "20 hours",
+    "slaCompliance": 87.3,
+    "citizenScore": 4.1
+  },
+  "west": {
+    "name": "Bengaluru West City Corporation",
+    "totalIssues": 104972,
+    "closedIssues": 96614,
+    "openIssues": 8358,
+    "resolutionRate": 92.04,
+    "color": "#F7A782",
+    "topWards": ["Jnanabharathi Ward", "Rajarajeshwari Nagar", "Hemmigepura", "Ullalu", "Kengeri"],
+    "avgResponseTime": "19 hours",
+    "slaCompliance": 88.1,
+    "citizenScore": 4.2
+  },
+  "central": {
+    "name": "Bengaluru Central City Corporation",
+    "totalIssues": 39913,
+    "closedIssues": 36385,
+    "openIssues": 3528,
+    "resolutionRate": 91.16,
+    "color": "#4f46e5",
+    "topWards": ["Benniganahalli", "Shanthi Nagar", "Cottonpet", "Sampangiram Nagar", "Ulsoor"],
+    "avgResponseTime": "21 hours",
+    "slaCompliance": 86.4,
+    "citizenScore": 4.0
+  },
+  "overall": {
+    "totalGrievances": 766648,
+    "closedGrievances": 701878,
+    "resolutionRate": 91.55,
+    "topCategories": [
+      {"name": "Electrical (Street Lights)", "count": 310128, "percentage": 40.4},
+      {"name": "Solid Waste Management", "count": 195153, "percentage": 25.4},
+      {"name": "Road Maintenance", "count": 111535, "percentage": 14.5},
+      {"name": "Forest/Trees", "count": 34618, "percentage": 4.5},
+      {"name": "Health", "count": 29924, "percentage": 3.9}
+    ],
+    "yearlyTrends": [
+      {"year": "2020", "total": 91620, "closed": 80265, "resolutionRate": 87.61},
+      {"year": "2021", "total": 103504, "closed": 93373, "resolutionRate": 90.21},
+      {"year": "2022", "total": 118394, "closed": 113229, "resolutionRate": 95.64},
+      {"year": "2023", "total": 119140, "closed": 115430, "resolutionRate": 96.89},
+      {"year": "2024", "total": 207016, "closed": 190171, "resolutionRate": 91.86},
+      {"year": "2025", "total": 126974, "closed": 109410, "resolutionRate": 86.17}
+    ]
+  },
+  "dataSource": {
+    "provider": "OpenCity.in",
+    "url": "https://data.opencity.in/dataset/bbmp-grievances-data",
+    "dateRange": "2020-02-08 to 2025-06-19",
+    "lastUpdated": "2025-11-27",
+    "license": "Public Domain"
+  }
+}
