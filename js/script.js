@@ -297,31 +297,24 @@ function loadCorporationDashboard(corporationId) {
     const corp = corporationsData[corporationId];
     if (!corp) return;
     
-    // Update stats if elements exist
-    const statsElements = {
-        totalIssues: document.getElementById('totalIssues'),
-        openIssues: document.getElementById('openIssues'),
-        resolutionRate: document.getElementById('resolutionRate'),
-        avgResponseTime: document.getElementById('avgResponseTime'),
-        slaCompliance: document.getElementById('slaCompliance'),
-        citizenScore: document.getElementById('citizenScore')
-    };
+    // Update stats if elements exist (using real data structure)
+    const totalIssuesEl = document.getElementById('totalIssues');
+    const closedIssuesEl = document.getElementById('closedIssues');
+    const openIssuesEl = document.getElementById('openIssues');
+    const resolutionRateEl = document.getElementById('resolutionRate');
     
-    Object.keys(statsElements).forEach(key => {
-        if (statsElements[key] && corp.stats[key]) {
-            let value = corp.stats[key];
-            if (typeof value === 'number' && key !== 'citizenScore') {
-                value = value.toLocaleString();
-            }
-            if (key === 'resolutionRate' || key === 'slaCompliance') {
-                value += '%';
-            }
-            if (key === 'citizenScore') {
-                value += '/5.0';
-            }
-            statsElements[key].textContent = value;
-        }
-    });
+    if (totalIssuesEl) {
+        totalIssuesEl.textContent = corp.totalIssues.toLocaleString();
+    }
+    if (closedIssuesEl) {
+        closedIssuesEl.textContent = corp.closedIssues.toLocaleString();
+    }
+    if (openIssuesEl) {
+        openIssuesEl.textContent = corp.openIssues.toLocaleString();
+    }
+    if (resolutionRateEl) {
+        resolutionRateEl.textContent = corp.resolutionRate + '%';
+    }
     
     // Initialize map
     initMap(corporationId);
