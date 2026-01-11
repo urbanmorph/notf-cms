@@ -43,21 +43,89 @@
             <p class="hero-subtitle">AI-powered issue tracking and resolution across Greater Bengaluru's 5 city corporations</p>
             <div class="hero-stats">
                 <div class="stat-card">
-                    <div class="stat-number">126,974</div>
-                    <div class="stat-label">Total Issues Tracked</div>
+                    <div class="stat-number">766,648</div>
+                    <div class="stat-label">Total Grievances Analyzed</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-number">86.2%</div>
-                    <div class="stat-label">Resolution Rate</div>
+                    <div class="stat-number">91.6%</div>
+                    <div class="stat-label">Overall Resolution Rate</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-number">5</div>
-                    <div class="stat-label">City Corporations</div>
+                    <div class="stat-number">199</div>
+                    <div class="stat-label">Wards Covered</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-number">24/7</div>
-                    <div class="stat-label">AI-Powered Support</div>
+                    <div class="stat-number">6 Years</div>
+                    <div class="stat-label">Data History (2020-2025)</div>
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Data Insights Teaser -->
+    <section class="insights-section">
+        <div class="container">
+            <div class="insights-header">
+                <h2 class="section-title">Key Insights from 766,648 Grievances</h2>
+                <p class="insights-subtitle">Analysis of BBMP data from 2020-2025</p>
+            </div>
+            
+            <div class="insights-grid">
+                <!-- Top Issue Card -->
+                <div class="insight-card highlight-card">
+                    <div class="insight-icon">💡</div>
+                    <h3 class="insight-title">Top Citizen Concern</h3>
+                    <div class="insight-stat">38.3%</div>
+                    <p class="insight-desc">Street lights account for the largest share of complaints (293,580 grievances)</p>
+                    <div class="insight-trend">Quick wins available in electrical infrastructure</div>
+                </div>
+
+                <!-- Resolution Trend Card -->
+                <div class="insight-card">
+                    <div class="insight-icon">📈</div>
+                    <h3 class="insight-title">Performance Improvement</h3>
+                    <div class="insight-stat">+9.3%</div>
+                    <p class="insight-desc">Resolution rate improved from 87.6% (2020) to 96.9% (2023)</p>
+                    <div class="insight-trend positive">Peak performance in 2022-2023</div>
+                </div>
+
+                <!-- Volume Growth Card -->
+                <div class="insight-card">
+                    <div class="insight-icon">📊</div>
+                    <h3 class="insight-title">Citizen Engagement</h3>
+                    <div class="insight-stat">+74%</div>
+                    <p class="insight-desc">2024 saw massive increase to 207K complaints</p>
+                    <div class="insight-trend">Higher awareness of grievance systems</div>
+                </div>
+
+                <!-- Top 3 Issues Card -->
+                <div class="insight-card">
+                    <div class="insight-icon">🎯</div>
+                    <h3 class="insight-title">Focus Areas</h3>
+                    <div class="top-issues-mini">
+                        <div class="mini-issue">
+                            <span class="mini-rank">1</span>
+                            <span class="mini-label">Electrical</span>
+                            <span class="mini-percent">40.4%</span>
+                        </div>
+                        <div class="mini-issue">
+                            <span class="mini-rank">2</span>
+                            <span class="mini-label">Waste</span>
+                            <span class="mini-percent">25.4%</span>
+                        </div>
+                        <div class="mini-issue">
+                            <span class="mini-rank">3</span>
+                            <span class="mini-label">Roads</span>
+                            <span class="mini-percent">14.5%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data Source Attribution -->
+            <div class="data-attribution">
+                <p><strong>Data Source:</strong> BBMP Grievances Data (2020-2025) via <a href="https://data.opencity.in/dataset/bbmp-grievances-data" target="_blank">OpenCity.in</a></p>
+                <p class="text-muted small"><strong>Note:</strong> Corporation assignments based on geographic analysis (57% of wards mapped). Awaiting official GBA delimitation data for complete accuracy.</p>
             </div>
         </div>
     </section>
@@ -130,7 +198,9 @@
     </section>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="data.js"></script>
+    <script src="charts.js"></script>
     <script src="main.js"></script>
 </body>
 </html>
