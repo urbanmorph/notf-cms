@@ -1,5 +1,13 @@
 // Main JavaScript for Corporations of Greater Bengaluru
 
+// Hamburger menu toggle
+function toggleMenu() {
+    const navTabs = document.getElementById('navTabs');
+    const hamburger = document.querySelector('.hamburger');
+    navTabs.classList.toggle('active');
+    hamburger.classList.toggle('active');
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     // Load rankings on homepage
     if (document.getElementById('rankingsTable')) {
