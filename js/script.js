@@ -149,22 +149,25 @@ function loadRankings() {
     const tbody = document.getElementById('rankingsBody');
     if (!tbody) return;
     
-    // Calculate scores and create ranking array
+    // Create ranking array from real data
     const rankings = [];
     for (const [id, corp] of Object.entries(corporationsData)) {
-        const score = calculateScore(corp);
         rankings.push({
             id,
             name: corp.name,
-            ...corp.stats,
-            overallScore: score
+            totalIssues: corp.totalIssues,
+            closedIssues: corp.closedIssues,
+            openIssues: corp.openIssues,
+            resolutionRate: corp.resolutionRate,
+            topIssue: corp.topIssues[0].category,
+            topIssuePercent: corp.topIssues[0].percentage
         });
     }
     
-    // Sort by overall score
-    rankings.sort((a, b) => parseFloat(b.overallScore) - parseFloat(a.overallScore));
+    // Sort by resolution rate (descending)
+    rankings.sort((a, b) => b.resolutionRate - a.resolutionRate);
     
-    // Populate table
+    // Populate table with real data
     tbody.innerHTML = '';
     rankings.forEach((corp, index) => {
         const rank = index + 1;
@@ -176,24 +179,18 @@ function loadRankings() {
         else if (rank === 2) badgeClass += ' silver';
         else if (rank === 3) badgeClass += ' bronze';
         
-        // Determine metric classes
-        const resolutionClass = corp.resolutionRate >= 85 ? 'metric-good' : 
-                               corp.resolutionRate >= 80 ? 'metric-medium' : 'metric-poor';
-        const slaClass = corp.slaCompliance >= 85 ? 'metric-good' : 
-                        corp.slaCompliance >= 80 ? 'metric-medium' : 'metric-poor';
-        const scoreClass = parseFloat(corp.overallScore) >= 85 ? 'metric-good' : 
-                          parseFloat(corp.overallScore) >= 80 ? 'metric-medium' : 'metric-poor';
+        // Determine resolution rate class
+        const resolutionClass = corp.resolutionRate >= 92 ? 'metric-good' : 
+                               corp.resolutionRate >= 91 ? 'metric-medium' : 'metric-poor';
         
         row.innerHTML = `
             <td><span class="${badgeClass}">${rank}</span></td>
             <td><a href="${corp.id}.html" class="corp-link">${corp.name}</a></td>
             <td>${corp.totalIssues.toLocaleString()}</td>
-            <td>${corp.openIssues.toLocaleString()}</td>
+            <td class="metric-good">${corp.closedIssues.toLocaleString()}</td>
+            <td class="metric-poor">${corp.openIssues.toLocaleString()}</td>
             <td><span class="${resolutionClass}">${corp.resolutionRate}%</span></td>
-            <td>${corp.avgResponseTime}</td>
-            <td><span class="${slaClass}">${corp.slaCompliance}%</span></td>
-            <td>${corp.citizenScore}/5.0</td>
-            <td><span class="${scoreClass}">${corp.overallScore}</span></td>
+            <td>${corp.topIssue} <span style="color: var(--text-secondary); font-size: 0.875rem;">(${corp.topIssuePercent}%)</span></td>
         `;
         
         tbody.appendChild(row);
