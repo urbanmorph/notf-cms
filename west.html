@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bengaluru West City Corporation</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">Corporations of Greater Bengaluru</div>
+            <div class="nav-tabs">
+                <a href="index.html" class="nav-tab">Home</a>
+                <a href="north.html" class="nav-tab">Bengaluru North</a>
+                <a href="south.html" class="nav-tab">Bengaluru South</a>
+                <a href="east.html" class="nav-tab">Bengaluru East</a>
+                <a href="west.html" class="nav-tab active">Bengaluru West</a>
+                <a href="central.html" class="nav-tab">Bengaluru Central</a>
+            </div>
+        </div>
+    </nav>
+    <section class="corp-header">
+        <div class="container">
+            <h1>Bengaluru West City Corporation</h1>
+            <div class="commissioner-info">
+                <div class="commissioner-photo">
+                    <div class="placeholder-photo">
+                        <svg width="120" height="120" viewBox="0 0 120 120">
+                            <circle cx="60" cy="60" r="60" fill="#F7A782"/>
+                            <text x="60" y="75" text-anchor="middle" fill="white" font-size="48" font-weight="bold">AM</text>
+                        </svg>
+                    </div>
+                </div>
+                <div class="commissioner-details">
+                    <h2>Dr. Arvind Menon</h2>
+                    <p class="commissioner-title">City Corporation Commissioner</p>
+                    <div class="contact-methods">
+                        <a href="https://wa.me/919845123004" class="contact-btn whatsapp" target="_blank">
+                            <span class="icon">📱</span> WhatsApp: +91-98451-23004
+                        </a>
+                        <a href="https://t.me/BengaluruWestBot" class="contact-btn telegram" target="_blank">
+                            <span class="icon">✈️</span> Telegram: @BengaluruWestBot
+                        </a>
+                        <a href="mailto:commissioner.west@gba.gov.in" class="contact-btn email">
+                            <span class="icon">📧</span> Email: commissioner.west@gba.gov.in
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="dashboard-section">
+        <div class="container">
+            <h2 class="section-title">Performance Dashboard</h2>
+            <div class="stats-grid">
+                <div class="stats-card">
+                    <h3>Total Issues</h3>
+                    <div class="value" id="totalIssues">25,678</div>
+                </div>
+                <div class="stats-card">
+                    <h3>Open Issues</h3>
+                    <div class="value" id="openIssues">3,567</div>
+                </div>
+                <div class="stats-card">
+                    <h3>Resolution Rate</h3>
+                    <div class="value" id="resolutionRate">86.1%</div>
+                </div>
+                <div class="stats-card">
+                    <h3>Avg Response Time</h3>
+                    <div class="value" id="avgResponseTime">16 hours</div>
+                </div>
+                <div class="stats-card">
+                    <h3>SLA Compliance</h3>
+                    <div class="value" id="slaCompliance">89.2%</div>
+                </div>
+                <div class="stats-card">
+                    <h3>Citizen Score</h3>
+                    <div class="value" id="citizenScore">4.3/5.0</div>
+                </div>
+            </div>
+            <h3 class="section-title">Corporation Area Map</h3>
+            <div class="map-container">
+                <div id="map"></div>
+            </div>
+        </div>
+    </section>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="data.js"></script>
+    <script src="main.js"></script>
+    <script>loadCorporationDashboard('west');</script>
+</body>
+</html>

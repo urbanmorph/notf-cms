@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Corporations of Greater Bengaluru</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">Corporations of Greater Bengaluru</div>
+            <div class="nav-tabs">
+                <a href="index.html" class="nav-tab active">Home</a>
+                <a href="north.html" class="nav-tab">Bengaluru North</a>
+                <a href="south.html" class="nav-tab">Bengaluru South</a>
+                <a href="east.html" class="nav-tab">Bengaluru East</a>
+                <a href="west.html" class="nav-tab">Bengaluru West</a>
+                <a href="central.html" class="nav-tab">Bengaluru Central</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1 class="hero-title">Intelligent Civic Issue Management for Bengaluru</h1>
+            <p class="hero-subtitle">AI-powered issue tracking and resolution across Greater Bengaluru's 5 city corporations</p>
+            <div class="hero-stats">
+                <div class="stat-card">
+                    <div class="stat-number">126,974</div>
+                    <div class="stat-label">Total Issues Tracked</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">86.2%</div>
+                    <div class="stat-label">Resolution Rate</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">5</div>
+                    <div class="stat-label">City Corporations</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">24/7</div>
+                    <div class="stat-label">AI-Powered Support</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features">
+        <div class="container">
+            <h2 class="section-title">Platform Features</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🤖</div>
+                    <h3>AI-Powered Issue Routing</h3>
+                    <p>Advanced ML algorithms automatically assign issues to the right engineers based on geography and responsibility areas</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>Real-Time Dashboards</h3>
+                    <p>Commissioner dashboards provide instant visibility into issue status, trends, and performance metrics</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📱</div>
+                    <h3>Multi-Channel Support</h3>
+                    <p>Citizens can report issues via WhatsApp, Telegram, Email, or Web - all integrated into one system</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🗺️</div>
+                    <h3>Interactive Maps</h3>
+                    <p>Visual geographic tracking of all issues with heat maps showing problem areas across the city</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Priority Matrix</h3>
+                    <p>Smart escalation system ensures critical issues get immediate attention from the right agencies</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📈</div>
+                    <h3>Performance Analytics</h3>
+                    <p>Track KPIs including resolution time, SLA compliance, and citizen satisfaction scores</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Rankings Section -->
+    <section class="rankings">
+        <div class="container">
+            <h2 class="section-title">Corporation Performance Rankings</h2>
+            <p class="section-subtitle">Ranked by Resolution Rate, Response Time, and Citizen Satisfaction</p>
+            <div class="rankings-table">
+                <table id="rankingsTable">
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Corporation</th>
+                            <th>Total Issues</th>
+                            <th>Open Issues</th>
+                            <th>Resolution Rate</th>
+                            <th>Avg Response Time</th>
+                            <th>SLA Compliance</th>
+                            <th>Citizen Score</th>
+                            <th>Overall Score</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rankingsBody">
+                        <!-- Will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="data.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>
