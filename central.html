@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bengaluru Central City Corporation</title>
-    <link rel="stylesheet" href="styles.css?v=4">
+    <link rel="stylesheet" href="css/styles.css?v=4">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 </head>
 <body data-page="central">
         <nav class="navbar">
         <div class="container">
-            <div class="nav-brand">Corporations of Greater Bengaluru</div>
+            <div class="nav-brand"><img src="images/gba-logo.png" alt="GBA" class="brand-logo">Corporations of Greater Bengaluru</div>
             <div class="hamburger" onclick="toggleMenu()">
                 <span></span>
                 <span></span>
@@ -149,7 +149,7 @@
             <!-- Data Attribution -->
             <div class="data-attribution" style="margin-top: 2.5rem;">
                 <p><strong>Data Source:</strong> BBMP Grievances Data (2020-2025) via <a href="https://data.opencity.in/dataset/bbmp-grievances-data" target="_blank">OpenCity.in</a></p>
-                <p class="text-muted small">Based on 39,913 mapped grievances from Bengaluru Central City Corporation wards (geographic analysis). Some wards may require official GBA delimitation for precise assignment.</p>
+                <p class="text-muted small"><strong>Ward Mapping:</strong> Based on official GBA delimitation (2025 reorganization to 369 wards). Data accuracy: 62.3% of total grievances mapped. Historical data (2020-2024) uses pre-2025 ward system (198 wards).</p>
             </div>
         </div>
     </section>
@@ -243,8 +243,8 @@
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    <script src="data.js"></script>
-    <script src="charts.js"></script>
+    <script src="js/data.js"></script>
+    <script src="js/charts.js"></script>
     <script src="main.js"></script>
     <script>loadCorporationDashboard('central');</script>
 </body>

@@ -1289,3 +1289,24 @@ thead tr:hover {
         font-size: 1.5rem;
     }
 }
+
+/* Brand Logo Styling */
+.brand-logo {
+    height: 40px;
+    width: auto;
+    margin-right: 12px;
+    vertical-align: middle;
+    border-radius: 50%;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+    .brand-logo {
+        height: 32px;
+        margin-right: 8px;
+    }
+    
+    .nav-brand {
+        font-size: 0.95rem;
+    }
+}
