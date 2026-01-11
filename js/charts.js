@@ -176,12 +176,16 @@ function createCategoryChart(canvasId, corpData) {
     const ctx = document.getElementById(canvasId);
     if (!ctx) return;
     
+    // Use distinct, vibrant colors for better readability
     const colors = [
-        corpData.color,
-        corpData.color + 'CC',
-        corpData.color + '99',
-        corpData.color + '66',
-        corpData.color + '33'
+        '#3b82f6', // Blue
+        '#10b981', // Green
+        '#f59e0b', // Orange
+        '#8b5cf6', // Purple
+        '#ef4444', // Red
+        '#06b6d4', // Cyan
+        '#ec4899', // Pink
+        '#14b8a6'  // Teal
     ];
     
     new Chart(ctx, {
