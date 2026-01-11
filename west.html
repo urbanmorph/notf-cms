@@ -177,6 +177,84 @@
         </div>
     </div>
 
+
+
+    <!-- Geographic Coverage Section -->
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">Geographic Coverage</h2>
+            <p style="text-align: center; color: var(--text-secondary); margin-bottom: 1.5rem;">
+                Interactive map showing ward boundaries and issue density across the corporation
+            </p>
+            <div style="background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);">
+                <div id="map" style="height: 500px; width: 100%; border-radius: 8px;"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Charts and Analytics Section -->
+    <section class="charts-section">
+        <div class="container">
+            <h2 class="section-title">Performance Analytics & Trends</h2>
+            
+            <div class="charts-grid">
+                <!-- Resolution Rate Trend -->
+                <div class="chart-container">
+                    <h3 class="chart-title">Resolution Rate Trend (2020-2025)</h3>
+                    <div class="chart-canvas">
+                        <canvas id="trendChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Grievance Volume -->
+                <div class="chart-container">
+                    <h3 class="chart-title">Yearly Grievance Volume</h3>
+                    <div class="chart-canvas">
+                        <canvas id="volumeChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Category Breakdown -->
+                <div class="chart-container">
+                    <h3 class="chart-title">Top Issue Categories</h3>
+                    <div class="chart-canvas">
+                        <canvas id="categoryChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Closed vs Open Comparison -->
+                <div class="chart-container">
+                    <h3 class="chart-title">Closed vs Open Grievances</h3>
+                    <div class="chart-canvas">
+                        <canvas id="comparisonChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Seasonal Patterns -->
+                <div class="chart-container">
+                    <h3 class="chart-title">Monthly Distribution (Seasonal Patterns)</h3>
+                    <div class="chart-canvas">
+                        <canvas id="seasonalChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Top Issues List -->
+            <div style="margin-top: 3rem;">
+                <h3 class="section-title">Top 5 Issue Categories</h3>
+                <div id="topIssuesContainer" style="margin-top: 1.5rem;">
+                    <!-- Populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Data Attribution -->
+            <div class="data-attribution" style="margin-top: 2.5rem;">
+                <p><strong>Data Source:</strong> BBMP Grievances Data (2020-2025) via <a href="https://data.opencity.in/dataset/bbmp-grievances-data" target="_blank">OpenCity.in</a></p>
+                <p class="text-muted small"><strong>Ward Mapping:</strong> Based on official GBA delimitation (2025 reorganization to 369 wards). Data accuracy: 62.3% of total grievances mapped. Historical data (2020-2024) uses pre-2025 ward system (198 wards).</p>
+            </div>
+        </div>
+    </section>
+
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="js/data.js"></script>
