@@ -36,6 +36,32 @@
         </div>
     </nav>
 
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1 class="hero-title">Intelligent Civic Issue Management for Bengaluru</h1>
+            <p class="hero-subtitle">AI-powered issue tracking and resolution across Greater Bengaluru's 5 city corporations</p>
+            <div class="hero-stats">
+                <div class="stat-card">
+                    <div class="stat-number">126,974</div>
+                    <div class="stat-label">Total Issues Tracked</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">86.2%</div>
+                    <div class="stat-label">Resolution Rate</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">5</div>
+                    <div class="stat-label">City Corporations</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">24/7</div>
+                    <div class="stat-label">AI-Powered Support</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Corporation Performance Rankings -->
     <section class="section">
         <div class="container">
@@ -60,32 +86,6 @@
                         <!-- Will be populated by JavaScript -->
                     </tbody>
                 </table>
-            </div>
-        </div>
-    </section>
-
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="container">
-            <h1 class="hero-title">Intelligent Civic Issue Management for Bengaluru</h1>
-            <p class="hero-subtitle">AI-powered issue tracking and resolution across Greater Bengaluru's 5 city corporations</p>
-            <div class="hero-stats">
-                <div class="stat-card">
-                    <div class="stat-number">126,974</div>
-                    <div class="stat-label">Total Issues Tracked</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">86.2%</div>
-                    <div class="stat-label">Resolution Rate</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">5</div>
-                    <div class="stat-label">City Corporations</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">24/7</div>
-                    <div class="stat-label">AI-Powered Support</div>
-                </div>
             </div>
         </div>
     </section>
@@ -128,74 +128,6 @@
             </div>
         </div>
     </section>
-
-    <!-- Floating Action Buttons -->
-    <div class="floating-buttons">
-        <button class="floating-btn complaint-btn" onclick="openModal('complaintModal')" title="File Complaint">
-            📝
-        </button>
-        <button class="floating-btn whatsapp-btn" onclick="openWhatsApp()" title="WhatsApp">
-            📱
-        </button>
-        <button class="floating-btn telegram-btn" onclick="openTelegram()" title="Telegram">
-            ✈️
-        </button>
-    </div>
-
-    <!-- Complaint Modal -->
-    <div id="complaintModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title">File a Complaint</h2>
-                <button class="modal-close" onclick="closeModal('complaintModal')">×</button>
-            </div>
-            <div class="modal-body">
-                <form onsubmit="submitComplaint(event)">
-                    <div class="form-group">
-                        <label class="form-label">Corporation</label>
-                        <input type="text" id="complaintCorporation" class="form-input" value="General" readonly>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Your Name *</label>
-                        <input type="text" name="name" class="form-input" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Phone Number *</label>
-                        <input type="tel" name="phone" class="form-input" required pattern="[0-9]{10}">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Email</label>
-                        <input type="email" name="email" class="form-input">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Location of Issue *</label>
-                        <input type="text" name="location" class="form-input" placeholder="Street address, landmark, or area" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Issue Type *</label>
-                        <select name="issueType" class="form-select" required>
-                            <option value="">Select issue type</option>
-                            <option value="electrical">Electrical / Street Lights</option>
-                            <option value="waste">Waste Management</option>
-                            <option value="roads">Roads / Potholes</option>
-                            <option value="water">Water Supply</option>
-                            <option value="drainage">Drainage / Sewage</option>
-                            <option value="other">Other</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Description *</label>
-                        <textarea name="description" class="form-textarea" required placeholder="Please describe the issue in detail"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Upload Photo (Optional)</label>
-                        <input type="file" name="photo" class="form-file" accept="image/*">
-                    </div>
-                    <button type="submit" class="btn-primary">Submit Complaint</button>
-                </form>
-            </div>
-        </div>
-    </div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="data.js"></script>
