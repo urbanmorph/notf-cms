@@ -307,6 +307,12 @@ function initializeCorporationCharts(corporationId) {
     createCategoryChart('categoryChart', corpData);
     createComparisonChart('comparisonChart', corpData);
     
+    // Create seasonal chart if canvas exists
+    const seasonalCanvas = document.getElementById('seasonalChart');
+    if (seasonalCanvas) {
+        createSeasonalChart(seasonalCanvas, corporationId);
+    }
+    
     // Update top issues list
     updateTopIssuesList(corpData);
     
@@ -362,3 +368,92 @@ document.addEventListener('DOMContentLoaded', function() {
         initializeHomepageInsights();
     }
 });
+
+// Create Seasonal Analysis Chart
+function createSeasonalChart(ctx, corporationId) {
+    const corp = corporationsData[corporationId];
+    
+    const months = ['January', 'February', 'March', 'April', 'May', 'June', 
+                    'July', 'August', 'September', 'October', 'November', 'December'];
+    
+    const data = months.map(month => corp.seasonalData[month] || 0);
+    
+    // Calculate seasonal insights
+    const summer = data[2] + data[3] + data[4]; // Mar, Apr, May
+    const monsoon = data[5] + data[6] + data[7] + data[8]; // Jun, Jul, Aug, Sep
+    const winter = data[9] + data[10] + data[11] + data[0] + data[1]; // Oct-Feb
+    
+    const peakMonth = months[data.indexOf(Math.max(...data))];
+    const lowMonth = months[data.indexOf(Math.min(...data))];
+    
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: months,
+            datasets: [{
+                label: 'Monthly Grievances',
+                data: data,
+                borderColor: getCorpColor(corporationId),
+                backgroundColor: getCorpColor(corporationId) + '20',
+                tension: 0.4,
+                fill: true,
+                borderWidth: 3,
+                pointRadius: 4,
+                pointHoverRadius: 6
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                },
+                title: {
+                    display: true,
+                    text: `Peak: ${peakMonth} | Low: ${lowMonth}`,
+                    font: {
+                        size: 12,
+                        weight: 'normal'
+                    },
+                    color: '#6b7280'
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return context.parsed.y.toLocaleString() + ' grievances';
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return value >= 1000 ? (value/1000).toFixed(1) + 'K' : value;
+                        }
+                    }
+                },
+                x: {
+                    ticks: {
+                        callback: function(value, index) {
+                            return months[index].substring(0, 3); // Show 3-letter month names
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+function getCorpColor(corporationId) {
+    const colors = {
+        'north': '#3b82f6',
+        'south': '#10b981',
+        'east': '#f59e0b',
+        'west': '#8b5cf6',
+        'central': '#ef4444'
+    };
+    return colors[corporationId] || '#3b82f6';
+}

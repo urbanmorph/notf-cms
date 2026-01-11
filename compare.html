@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Corporation Comparison - Bengaluru</title>
+    <link rel="stylesheet" href="styles.css?v=4">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body data-page="compare">
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <a href="index.html" class="nav-brand">Corporations of Greater Bengaluru</a>
+            <button class="hamburger" onclick="toggleMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <div class="nav-tabs">
+                <a href="index.html" class="nav-tab">Home</a>
+                <div class="dropdown">
+                    <button class="nav-tab dropdown-toggle" onclick="toggleDropdown(event)">
+                        Corporations
+                        <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
+                            <path d="M6 8L2 4h8z"/>
+                        </svg>
+                    </button>
+                    <div class="dropdown-menu">
+                        <a href="north.html" class="dropdown-item">Bengaluru North</a>
+                        <a href="south.html" class="dropdown-item">Bengaluru South</a>
+                        <a href="east.html" class="dropdown-item">Bengaluru East</a>
+                        <a href="west.html" class="dropdown-item">Bengaluru West</a>
+                        <a href="central.html" class="dropdown-item">Bengaluru Central</a>
+                    </div>
+                </div>
+                <a href="compare.html" class="nav-tab active">Compare</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 3rem 0;">
+        <div class="container">
+            <h1 style="color: white; margin-bottom: 0.5rem;">Corporation Comparison</h1>
+            <p style="color: rgba(255,255,255,0.9); font-size: 1.1rem;">Compare performance across all five corporations</p>
+        </div>
+    </section>
+
+    <!-- Comparison Controls -->
+    <section class="section" style="padding-top: 2rem;">
+        <div class="container">
+            <div class="comparison-controls">
+                <h2 style="margin-bottom: 1.5rem;">Select Corporations to Compare</h2>
+                <div class="checkbox-grid">
+                    <label class="checkbox-card">
+                        <input type="checkbox" id="compare-north" value="north" checked onchange="updateComparison()">
+                        <div class="checkbox-content">
+                            <span class="corp-name">North</span>
+                            <span class="corp-color" style="background: #3b82f6;"></span>
+                        </div>
+                    </label>
+                    <label class="checkbox-card">
+                        <input type="checkbox" id="compare-south" value="south" checked onchange="updateComparison()">
+                        <div class="checkbox-content">
+                            <span class="corp-name">South</span>
+                            <span class="corp-color" style="background: #10b981;"></span>
+                        </div>
+                    </label>
+                    <label class="checkbox-card">
+                        <input type="checkbox" id="compare-east" value="east" checked onchange="updateComparison()">
+                        <div class="checkbox-content">
+                            <span class="corp-name">East</span>
+                            <span class="corp-color" style="background: #f59e0b;"></span>
+                        </div>
+                    </label>
+                    <label class="checkbox-card">
+                        <input type="checkbox" id="compare-west" value="west" checked onchange="updateComparison()">
+                        <div class="checkbox-content">
+                            <span class="corp-name">West</span>
+                            <span class="corp-color" style="background: #8b5cf6;"></span>
+                        </div>
+                    </label>
+                    <label class="checkbox-card">
+                        <input type="checkbox" id="compare-central" value="central" checked onchange="updateComparison()">
+                        <div class="checkbox-content">
+                            <span class="corp-name">Central</span>
+                            <span class="corp-color" style="background: #ef4444;"></span>
+                        </div>
+                    </label>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Comparison Charts -->
+    <section class="section">
+        <div class="container">
+            <!-- Key Metrics Comparison -->            <div class="metrics-comparison">
+                <h2 class="section-title">Key Metrics Overview</h2>
+                <div id="metricsCards"></div>
+            </div>
+
+            <!-- Resolution Rate Comparison -->
+            <div class="chart-card" style="margin-top: 2rem;">
+                <h3 class="chart-title">Resolution Rate Comparison (2020-2025)</h3>
+                <canvas id="resolutionCompareChart" class="chart-canvas"></canvas>
+            </div>
+
+            <!-- Volume Comparison -->
+            <div class="chart-card" style="margin-top: 2rem;">
+                <h3 class="chart-title">Grievance Volume Comparison</h3>
+                <canvas id="volumeCompareChart" class="chart-canvas"></canvas>
+            </div>
+
+            <!-- Seasonal Patterns -->
+            <div class="chart-card" style="margin-top: 2rem;">
+                <h3 class="chart-title">Seasonal Patterns (Monthly Distribution)</h3>
+                <canvas id="seasonalCompareChart" class="chart-canvas"></canvas>
+            </div>
+
+            <!-- Top Issues Side-by-Side -->
+            <div style="margin-top: 2rem;">
+                <h2 class="section-title">Top Issues by Corporation</h2>
+                <div id="topIssuesComparison" class="issues-comparison-grid"></div>
+            </div>
+
+            <!-- Performance Rankings -->
+            <div style="margin-top: 2rem;">
+                <h2 class="section-title">Performance Rankings</h2>
+                <div class="table-container">
+                    <table id="rankingsTable">
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>Corporation</th>
+                                <th>Total Grievances</th>
+                                <th>Resolution Rate</th>
+                                <th>Open Issues</th>
+                            </tr>
+                        </thead>
+                        <tbody id="rankingsBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Data Attribution -->
+    <section class="section" style="padding-top: 1rem;">
+        <div class="container">
+            <div class="data-attribution">
+                <p><strong>Data Source:</strong> BBMP Grievances Data (2020-2025) via <a href="https://data.opencity.in/dataset/bbmp-grievances-data" target="_blank">OpenCity.in</a></p>
+                <p class="text-muted small"><strong>Ward Mapping:</strong> Official GBA delimitation (369 wards). Mapping accuracy: 62.3% (477,997 of 766,648 grievances mapped). Historical data uses pre-2025 ward system (198 wards).</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 Corporations of Greater Bengaluru. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="data.js"></script>
+    <script src="compare.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

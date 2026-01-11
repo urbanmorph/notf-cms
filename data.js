@@ -1,207 +1,198 @@
-// Corporation Data - Based on BBMP Grievances Analysis (2020-2025)
-// Data Source: OpenCity.in - https://data.opencity.in/dataset/bbmp-grievances-data
-// Total Grievances Analyzed: 766,648 from Feb 2020 to June 2025
+// Updated with 62.3% accurate ward mapping (Official GBA delimitation)
+// Generated: 2026-01-11
 
 const corporationsData = {
     north: {
-        id: 'north',
-        name: 'Bengaluru North City Corporation',
-        color: '#23A2A5',
-        stats: {
-            totalIssues: 137846,
-            openIssues: 10597,
-            resolutionRate: 92.31,
-            avgResponseTime: '18 hours',
-            slaCompliance: 88.5,
-            citizenScore: 4.2
-        },
-        commissioner: {
-            name: 'Dr. Nandini Kumar',
-            phone: '+91-98451-23001',
-            email: 'commissioner.north@gba.gov.in'
-        },
-        topIssues: [
-            { category: 'Electrical (Street Lights)', count: 48234, percentage: 35.0 },
-            { category: 'Solid Waste Management', count: 34461, percentage: 25.0 },
-            { category: 'Road Maintenance', count: 19335, percentage: 14.0 },
-            { category: 'Forest/Trees', count: 6892, percentage: 5.0 },
-            { category: 'Health & Sanitation', count: 5514, percentage: 4.0 }
-        ],
+        name: "Bengaluru North City Corporation",
+        totalIssues: 122859,
+        closedIssues: 114247,
+        openIssues: 8612,
+        resolutionRate: 92.99,
         yearlyData: [
-            { year: '2020', total: 18543, closed: 16288, rate: 87.8 },
-            { year: '2021', total: 21231, closed: 19108, rate: 90.0 },
-            { year: '2022', total: 24089, closed: 23045, rate: 95.7 },
-            { year: '2023', total: 24513, closed: 23768, rate: 97.0 },
-            { year: '2024', total: 36784, closed: 33862, rate: 92.1 },
-            { year: '2025', total: 12686, closed: 11178, rate: 88.1 }
-        ]
+            {year: "2020", total: 13648, closed: 12158, rate: 89.08},
+            {year: "2021", total: 17512, closed: 16255, rate: 92.82},
+            {year: "2022", total: 17732, closed: 17247, rate: 97.26},
+            {year: "2023", total: 19452, closed: 19096, rate: 98.17},
+            {year: "2024", total: 33611, closed: 31425, rate: 93.5},
+            {year: "2025", total: 20904, closed: 18066, rate: 86.42},
+        ],
+        topIssues: [
+            {category: "Electrical", count: 51025, percentage: 41.5},
+            {category: "Solid Waste (Garbage) Related", count: 33112, percentage: 27.0},
+            {category: "Road Maintenance(Engg)", count: 17301, percentage: 14.1},
+            {category: "Forest", count: 4930, percentage: 4.0},
+            {category: "Health Dept", count: 4060, percentage: 3.3},
+        ],
+        seasonalData: {
+            "April": 9553,
+            "August": 10081,
+            "December": 8968,
+            "February": 9305,
+            "January": 8689,
+            "July": 9983,
+            "June": 12302,
+            "March": 10917,
+            "May": 12572,
+            "November": 9852,
+            "October": 10898,
+            "September": 9739,
+        }
     },
     south: {
-        id: 'south',
-        name: 'Bengaluru South City Corporation',
-        color: '#0D7576',
-        stats: {
-            totalIssues: 115341,
-            openIssues: 10559,
-            resolutionRate: 90.85,
-            avgResponseTime: '22 hours',
-            slaCompliance: 85.2,
-            citizenScore: 4.0
-        },
-        commissioner: {
-            name: 'Shri Rajesh Gowda',
-            phone: '+91-98451-23002',
-            email: 'commissioner.south@gba.gov.in'
-        },
-        topIssues: [
-            { category: 'Electrical (Street Lights)', count: 40418, percentage: 35.0 },
-            { category: 'Solid Waste Management', count: 28835, percentage: 25.0 },
-            { category: 'Road Maintenance', count: 16148, percentage: 14.0 },
-            { category: 'Water Supply', count: 6920, percentage: 6.0 },
-            { category: 'Drainage/Sewage', count: 4614, percentage: 4.0 }
-        ],
+        name: "Bengaluru South City Corporation",
+        totalIssues: 140892,
+        closedIssues: 128215,
+        openIssues: 12677,
+        resolutionRate: 91.0,
         yearlyData: [
-            { year: '2020', total: 15502, closed: 13589, rate: 87.7 },
-            { year: '2021', total: 17764, closed: 16024, rate: 90.2 },
-            { year: '2022', total: 20312, closed: 19397, rate: 95.5 },
-            { year: '2023', total: 20433, closed: 19798, rate: 96.9 },
-            { year: '2024', total: 30758, closed: 27950, rate: 90.9 },
-            { year: '2025', total: 10572, closed: 8024, rate: 75.9 }
-        ]
+            {year: "2020", total: 18259, closed: 16332, rate: 89.45},
+            {year: "2021", total: 20384, closed: 18667, rate: 91.58},
+            {year: "2022", total: 22790, closed: 21480, rate: 94.25},
+            {year: "2023", total: 20709, closed: 19588, rate: 94.59},
+            {year: "2024", total: 36232, closed: 32803, rate: 90.54},
+            {year: "2025", total: 22518, closed: 19345, rate: 85.91},
+        ],
+        topIssues: [
+            {category: "Electrical", count: 56339, percentage: 40.0},
+            {category: "Solid Waste (Garbage) Related", count: 35144, percentage: 24.9},
+            {category: "Road Maintenance(Engg)", count: 21538, percentage: 15.3},
+            {category: "Forest", count: 6143, percentage: 4.4},
+            {category: "Health Dept", count: 5604, percentage: 4.0},
+        ],
+        seasonalData: {
+            "April": 10851,
+            "August": 11468,
+            "December": 9801,
+            "February": 11401,
+            "January": 9779,
+            "July": 11472,
+            "June": 15043,
+            "March": 13046,
+            "May": 14956,
+            "November": 9946,
+            "October": 11835,
+            "September": 11294,
+        }
     },
     east: {
-        id: 'east',
-        name: 'Bengaluru East City Corporation',
-        color: '#FBC831',
-        stats: {
-            totalIssues: 36810,
-            openIssues: 2986,
-            resolutionRate: 91.89,
-            avgResponseTime: '20 hours',
-            slaCompliance: 87.3,
-            citizenScore: 4.1
-        },
-        commissioner: {
-            name: 'Ms. Priya Reddy',
-            phone: '+91-98451-23003',
-            email: 'commissioner.east@gba.gov.in'
-        },
-        topIssues: [
-            { category: 'Electrical (Street Lights)', count: 13267, percentage: 36.0 },
-            { category: 'Solid Waste Management', count: 9203, percentage: 25.0 },
-            { category: 'Road Maintenance', count: 5890, percentage: 16.0 },
-            { category: 'Water Supply', count: 2209, percentage: 6.0 },
-            { category: 'Drainage/Sewage', count: 1472, percentage: 4.0 }
-        ],
+        name: "Bengaluru East City Corporation",
+        totalIssues: 72731,
+        closedIssues: 66157,
+        openIssues: 6574,
+        resolutionRate: 90.96,
         yearlyData: [
-            { year: '2020', total: 4945, closed: 4333, rate: 87.6 },
-            { year: '2021', total: 5595, closed: 5045, rate: 90.2 },
-            { year: '2022', total: 6393, closed: 6115, rate: 95.7 },
-            { year: '2023', total: 6434, closed: 6234, rate: 96.9 },
-            { year: '2024', total: 9848, closed: 9046, rate: 91.9 },
-            { year: '2025', total: 3595, closed: 3051, rate: 84.9 }
-        ]
+            {year: "2020", total: 9764, closed: 8724, rate: 89.35},
+            {year: "2021", total: 8419, closed: 6948, rate: 82.53},
+            {year: "2022", total: 11117, closed: 10710, rate: 96.34},
+            {year: "2023", total: 11681, closed: 11386, rate: 97.47},
+            {year: "2024", total: 18890, closed: 17354, rate: 91.87},
+            {year: "2025", total: 12860, closed: 11035, rate: 85.81},
+        ],
+        topIssues: [
+            {category: "Electrical", count: 23148, percentage: 31.8},
+            {category: "Solid Waste (Garbage) Related", count: 18424, percentage: 25.3},
+            {category: "Road Maintenance(Engg)", count: 14383, percentage: 19.8},
+            {category: "veterinary", count: 3557, percentage: 4.9},
+            {category: "Health Dept", count: 3416, percentage: 4.7},
+        ],
+        seasonalData: {
+            "April": 5432,
+            "August": 5936,
+            "December": 4770,
+            "February": 5588,
+            "January": 4830,
+            "July": 6327,
+            "June": 7500,
+            "March": 6829,
+            "May": 7378,
+            "November": 5414,
+            "October": 6707,
+            "September": 6020,
+        }
     },
     west: {
-        id: 'west',
-        name: 'Bengaluru West City Corporation',
-        color: '#F7A782',
-        stats: {
-            totalIssues: 104972,
-            openIssues: 8358,
-            resolutionRate: 92.04,
-            avgResponseTime: '19 hours',
-            slaCompliance: 88.1,
-            citizenScore: 4.2
-        },
-        commissioner: {
-            name: 'Dr. Suresh Kumar',
-            phone: '+91-98451-23004',
-            email: 'commissioner.west@gba.gov.in'
-        },
-        topIssues: [
-            { category: 'Electrical (Street Lights)', count: 36740, percentage: 35.0 },
-            { category: 'Solid Waste Management', count: 26243, percentage: 25.0 },
-            { category: 'Road Maintenance', count: 14696, percentage: 14.0 },
-            { category: 'Forest/Trees', count: 6298, percentage: 6.0 },
-            { category: 'Drainage/Sewage', count: 4199, percentage: 4.0 }
-        ],
+        name: "Bengaluru West City Corporation",
+        totalIssues: 97789,
+        closedIssues: 90254,
+        openIssues: 7535,
+        resolutionRate: 92.29,
         yearlyData: [
-            { year: '2020', total: 14113, closed: 12371, rate: 87.7 },
-            { year: '2021', total: 16001, closed: 14441, rate: 90.2 },
-            { year: '2022', total: 18276, closed: 17464, rate: 95.6 },
-            { year: '2023', total: 18623, closed: 18044, rate: 96.9 },
-            { year: '2024', total: 28463, closed: 26162, rate: 91.9 },
-            { year: '2025', total: 9496, closed: 8132, rate: 85.6 }
-        ]
+            {year: "2020", total: 11979, closed: 10439, rate: 87.14},
+            {year: "2021", total: 14216, closed: 12991, rate: 91.38},
+            {year: "2022", total: 15753, closed: 14954, rate: 94.93},
+            {year: "2023", total: 14919, closed: 14515, rate: 97.29},
+            {year: "2024", total: 25311, closed: 23449, rate: 92.64},
+            {year: "2025", total: 15611, closed: 13906, rate: 89.08},
+        ],
+        topIssues: [
+            {category: "Electrical", count: 47670, percentage: 48.7},
+            {category: "Solid Waste (Garbage) Related", count: 20029, percentage: 20.5},
+            {category: "Road Maintenance(Engg)", count: 11736, percentage: 12.0},
+            {category: "Forest", count: 5551, percentage: 5.7},
+            {category: "Health Dept", count: 3413, percentage: 3.5},
+        ],
+        seasonalData: {
+            "April": 7399,
+            "August": 7407,
+            "December": 7218,
+            "February": 7311,
+            "January": 6990,
+            "July": 7937,
+            "June": 10095,
+            "March": 8649,
+            "May": 10692,
+            "November": 7476,
+            "October": 8822,
+            "September": 7793,
+        }
     },
     central: {
-        id: 'central',
-        name: 'Bengaluru Central City Corporation',
-        color: '#4f46e5',
-        stats: {
-            totalIssues: 39913,
-            openIssues: 3528,
-            resolutionRate: 91.16,
-            avgResponseTime: '21 hours',
-            slaCompliance: 86.4,
-            citizenScore: 4.0
-        },
-        commissioner: {
-            name: 'Shri Arun Patel',
-            phone: '+91-98451-23005',
-            email: 'commissioner.central@gba.gov.in'
-        },
-        topIssues: [
-            { category: 'Electrical (Street Lights)', count: 13970, percentage: 35.0 },
-            { category: 'Solid Waste Management', count: 9978, percentage: 25.0 },
-            { category: 'Road Maintenance', count: 5588, percentage: 14.0 },
-            { category: 'Health & Sanitation', count: 2395, percentage: 6.0 },
-            { category: 'Drainage/Sewage', count: 1596, percentage: 4.0 }
-        ],
+        name: "Bengaluru Central City Corporation",
+        totalIssues: 43726,
+        closedIssues: 39981,
+        openIssues: 3745,
+        resolutionRate: 91.44,
         yearlyData: [
-            { year: '2020', total: 5366, closed: 4702, rate: 87.6 },
-            { year: '2021', total: 6082, closed: 5486, rate: 90.2 },
-            { year: '2022', total: 6948, closed: 6642, rate: 95.6 },
-            { year: '2023', total: 7082, closed: 6864, rate: 96.9 },
-            { year: '2024', total: 10815, closed: 9935, rate: 91.9 },
-            { year: '2025', total: 3620, closed: 2756, rate: 76.1 }
-        ]
+            {year: "2020", total: 4802, closed: 4111, rate: 85.61},
+            {year: "2021", total: 6185, closed: 5749, rate: 92.95},
+            {year: "2022", total: 6687, closed: 6497, rate: 97.16},
+            {year: "2023", total: 6953, closed: 6780, rate: 97.51},
+            {year: "2024", total: 11973, closed: 10871, rate: 90.8},
+            {year: "2025", total: 7126, closed: 5973, rate: 83.82},
+        ],
+        topIssues: [
+            {category: "Electrical", count: 16520, percentage: 37.8},
+            {category: "Solid Waste (Garbage) Related", count: 12757, percentage: 29.2},
+            {category: "Road Maintenance(Engg)", count: 6376, percentage: 14.6},
+            {category: "Forest", count: 2105, percentage: 4.8},
+            {category: "Health Dept", count: 1945, percentage: 4.4},
+        ],
+        seasonalData: {
+            "April": 3429,
+            "August": 3411,
+            "December": 3168,
+            "February": 3578,
+            "January": 3050,
+            "July": 3536,
+            "June": 4540,
+            "March": 3929,
+            "May": 4253,
+            "November": 3171,
+            "October": 4184,
+            "September": 3477,
+        }
     }
 };
 
-// Overall city statistics
-const overallStats = {
+const dataMetadata = {
     totalGrievances: 766648,
-    analyzedGrievances: 434882, // Mapped to corporations (57%)
-    unmappedGrievances: 331766, // Unmapped (43%)
-    closedGrievances: 701878,
-    resolutionRate: 91.55,
-    dataSource: {
-        provider: 'OpenCity.in',
-        url: 'https://data.opencity.in/dataset/bbmp-grievances-data',
-        dateRange: '2020-02-08 to 2025-06-19',
-        totalRecords: 766648,
-        mappingAccuracy: '57%',
-        note: 'Ward-to-corporation mapping based on geographic analysis. 43% of wards require official GBA delimitation data for accurate assignment.'
-    }
+    mappedGrievances: 477997,
+    mappingAccuracy: 62.35,
+    dateRange: "2020-02-08 to 2025-06-19",
+    dataSource: "https://data.opencity.in/dataset/bbmp-grievances-data",
+    wardMappingSource: "https://data.opencity.in/dataset/gba-wards-delimitation-2025"
 };
-
-// Top issues across the city
-const cityWideIssues = [
-    { category: 'Electrical (Street Lights)', count: 310128, percentage: 40.4 },
-    { category: 'Solid Waste Management', count: 195153, percentage: 25.4 },
-    { category: 'Road Maintenance', count: 111535, percentage: 14.5 },
-    { category: 'Forest/Trees', count: 34618, percentage: 4.5 },
-    { category: 'Health & Sanitation', count: 29924, percentage: 3.9 },
-    { category: 'Veterinary', count: 25524, percentage: 3.3 },
-    { category: 'Road Infrastructure', count: 12817, percentage: 1.7 },
-    { category: 'Storm Water Drain', count: 6621, percentage: 0.9 },
-    { category: 'Revenue Department', count: 5158, percentage: 0.7 },
-    { category: 'Parks and Playgrounds', count: 3857, percentage: 0.5 }
-];
-
-// Issue categories for complaint form (actual data from analysis)
+// Issue categories for complaint form (from actual BBMP data)
 const issueCategories = [
     { value: 'electrical', label: 'Electrical / Street Lights', subcategories: [
         'Street Light Not Working',
@@ -243,13 +234,13 @@ const issueCategories = [
     { value: 'health', label: 'Health & Sanitation', subcategories: [
         'Dengue Positive',
         'Dead Animal(s)',
-        'Sanitation Issues',
-        'Public Toilet Issues'
+        'Public Toilet Cleaning',
+        'Sanitation Issues'
     ]},
     { value: 'animals', label: 'Stray Animals', subcategories: [
-        'Stray Dog Related Complaints',
-        'Animal Birth Control/Neutering',
-        'Cattle on Roads'
+        'Stray Dogs',
+        'Stray Cattle',
+        'Animal Menace'
     ]},
     { value: 'other', label: 'Other Issues', subcategories: [
         'Revenue Department',
@@ -259,15 +250,3 @@ const issueCategories = [
         'Other'
     ]}
 ];
-
-// Calculate overall score for rankings
-function calculateScore(corp) {
-    const stats = corp.stats;
-    // Weighted scoring: Resolution Rate (40%), SLA Compliance (30%), Response Time (15%), Citizen Score (15%)
-    const resolutionScore = stats.resolutionRate * 0.4;
-    const slaScore = stats.slaCompliance * 0.3;
-    const responseScore = (24 - parseFloat(stats.avgResponseTime)) / 24 * 100 * 0.15; // Lower time = higher score
-    const citizenScoreNorm = (stats.citizenScore / 5) * 100 * 0.15;
-    
-    return (resolutionScore + slaScore + responseScore + citizenScoreNorm).toFixed(1);
-}
