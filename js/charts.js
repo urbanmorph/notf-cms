@@ -464,11 +464,23 @@ function getCorpColor(corporationId) {
 
 // Render contact section for corporation pages
 function renderContactSection(corporationId) {
+    console.log('renderContactSection called with:', corporationId);
+    
     const container = document.getElementById('contactContainer');
-    if (!container) return;
+    console.log('contactContainer element:', container);
+    
+    if (!container) {
+        console.error('contactContainer not found!');
+        return;
+    }
     
     const contact = contactDetails[corporationId];
-    if (!contact) return;
+    console.log('contact data:', contact);
+    
+    if (!contact) {
+        console.error('No contact data for:', corporationId);
+        return;
+    }
     
     let html = `
         <!-- Office Address -->
