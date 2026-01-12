@@ -250,3 +250,327 @@ const issueCategories = [
         'Other'
     ]}
 ];
+// Contact details for all corporations (as of 08-12-2025)
+
+const contactDetails = {
+    north: {
+        name: "Bengaluru North City Corporation",
+        address: "Byatarayanapura, Amruthahalli Main Road, Ballari Road, Bengaluru – 560092",
+        controlRoom: ["080-22975936", "080-28636671", "94806 85705"],
+        commissioner: {
+            name: "Sri. Pommala Sunil Kumar, I.A.S.",
+            phone: "94806 84949",
+            email: "bengalurunorthcitycorporation@gmail.com"
+        },
+        additionalCommissioners: [
+            {
+                designation: "Additional Commissioner (Development)",
+                name: "Smt. Latha R, I.A.S.",
+                phone: "98452 00485"
+            },
+            {
+                designation: "Additional Commissioner (Revenue)",
+                name: "Sri. Amaresh K.A.S.",
+                phone: "94803 54143"
+            }
+        ],
+        zones: [
+            {
+                zone: "Zone 01",
+                jointCommissioner: "Mr. Mohammed Naem Momin, K.A.S.",
+                phone: "96207 57186"
+            },
+            {
+                zone: "Zone 02",
+                jointCommissioner: "Smt. K R Pallavi K.A.S.",
+                phone: "95918 60887"
+            }
+        ],
+        departments: [
+            {
+                dept: "Chief Engineer (Zone 01)",
+                name: "S P Ranganath",
+                phone: "94806 84473"
+            },
+            {
+                dept: "Chief Engineer (Zone 02)",
+                name: "Yamuna",
+                phone: "94806 83126"
+            },
+            {
+                dept: "Deputy Commissioner (Zone 01)",
+                name: "Sri. Vijay Shekar (I/C)",
+                phone: "9448670084"
+            },
+            {
+                dept: "Deputy Commissioner (Zone 02)",
+                name: "Smt. Mangala Gowri",
+                phone: "80957 43299"
+            },
+            {
+                dept: "Health Officer",
+                name: "Dr. Siddappaji",
+                phone: "94806 88298"
+            },
+            {
+                dept: "PR Wing",
+                name: "Pushpa H",
+                phone: "99455 80352"
+            }
+        ]
+    },
+    south: {
+        name: "Bengaluru South City Corporation",
+        address: "9th Main Road, 9th Cross Road, 2nd Stage, Jayanagar, Bengaluru – 560011",
+        controlRoom: ["080-26566362", "080-22975703", "94806 85704"],
+        commissioner: {
+            name: "Sri. Ramesh K N I.A.S.",
+            phone: "94825 09549",
+            email: "comm.south.gba@gmail.com"
+        },
+        additionalCommissioners: [
+            {
+                designation: "Additional Commissioner (Development)",
+                name: "Sri. Naveen Kumar Raju S IAS",
+                phone: "73383 72368"
+            },
+            {
+                designation: "Additional Commissioner (Revenue)",
+                name: "Sri. Rachappa K.A.S.",
+                phone: "94800 56951"
+            }
+        ],
+        zones: [
+            {
+                zone: "Zone 01",
+                jointCommissioner: "Smt. Madhu N.N, K.A.S.",
+                phone: "94814 92649"
+            },
+            {
+                zone: "Zone 02",
+                jointCommissioner: "Sri. Satish Babu, K.A.S.",
+                phone: "87627 16711"
+            }
+        ],
+        departments: [
+            {
+                dept: "Chief Engineer (Zone 01)",
+                name: "Basavaraj Kabade",
+                phone: "97396 25025"
+            },
+            {
+                dept: "Chief Engineer (Zone 02)",
+                name: "K V Ravi",
+                phone: "94806 83818"
+            },
+            {
+                dept: "Deputy Commissioner (Zone 01)",
+                name: "Smt. Gagana",
+                phone: "99165 36036"
+            },
+            {
+                dept: "Deputy Commissioner (Zone 02)",
+                name: "Sri. D K Babu",
+                phone: "94806 84353"
+            },
+            {
+                dept: "Health Officer",
+                name: "Dr. Balasundar",
+                phone: "94806 88300"
+            },
+            {
+                dept: "PR Wing",
+                name: "Harish B.M",
+                phone: "94806 83517"
+            }
+        ]
+    },
+    east: {
+        name: "Bengaluru East City Corporation",
+        address: "RHB Colony, Opposite Phoenix Mall, Whitefield Main Road, Mahadevapura Post, Bengaluru – 560048",
+        controlRoom: ["080-28512300", "080-28512301", "94806 85706"],
+        commissioner: {
+            name: "Sri. Ramesh D S, I.A.S.",
+            phone: "87627 08901",
+            email: "commissioner.becc@gmail.com"
+        },
+        additionalCommissioners: [
+            {
+                designation: "Additional Commissioner (Development)",
+                name: "Sri. Lokhande Snehal Sudhakar, I.A.S.",
+                phone: "94806 83831"
+            },
+            {
+                designation: "Additional Commissioner (Revenue)",
+                name: "Dr. Prajna Ammembala, K.A.S.",
+                phone: "80508 99833"
+            }
+        ],
+        zones: [
+            {
+                zone: "Zone 01",
+                jointCommissioner: "Dr. Dakshayini, K.A.S.",
+                phone: "98459 25372"
+            },
+            {
+                zone: "Zone 02",
+                jointCommissioner: "Smt. Sudha, K.A.S.",
+                phone: "99015 75664"
+            }
+        ],
+        departments: [
+            {
+                dept: "Chief Engineer (Zone 01)",
+                name: "M Lokesh",
+                phone: "94806 83176"
+            },
+            {
+                dept: "Chief Engineer (Zone 02)",
+                name: "M Krishnamurthy",
+                phone: "94806 83822"
+            },
+            {
+                dept: "Deputy Commissioner",
+                name: "Sri. Shashikumar",
+                phone: "97408 60806"
+            },
+            {
+                dept: "Health Officer",
+                name: "Dr. Savitha",
+                phone: "94806 88560"
+            },
+            {
+                dept: "PR Wing",
+                name: "Ravikumar B",
+                phone: "99869 44655"
+            }
+        ]
+    },
+    west: {
+        name: "Bengaluru West City Corporation",
+        address: "18th Cross Road, Ideal Homes Township, Rajarajeshwari Nagar, Bengaluru – 560098",
+        controlRoom: ["080-23561692", "080-23463366", "94806 85703"],
+        commissioner: {
+            name: "Dr. Rajendra K V I.A.S.",
+            phone: "99722 46800",
+            email: "commissioner.bwcc@gmail.com"
+        },
+        additionalCommissioners: [
+            {
+                designation: "Additional Commissioner (Development)",
+                name: "Sri. Digvijay Bhodke, I.A.S.",
+                phone: "94806 83345"
+            },
+            {
+                designation: "Additional Commissioner (Revenue)",
+                name: "Sri Manjunath Saamy K.A.S.",
+                phone: "9945 42835"
+            }
+        ],
+        zones: [
+            {
+                zone: "Zone 01",
+                jointCommissioner: "Smt. Arathi Anand, K.A.S.",
+                phone: "80730 77109"
+            },
+            {
+                zone: "Zone 02",
+                jointCommissioner: "Sri. Sangappa, K.A.S.",
+                phone: "99026 02220"
+            }
+        ],
+        departments: [
+            {
+                dept: "Chief Engineer (Zone 01)",
+                name: "Svayamprabha",
+                phone: "96321 84693"
+            },
+            {
+                dept: "Chief Engineer (Zone 02)",
+                name: "G Vishvanath",
+                phone: "9480684268"
+            },
+            {
+                dept: "Deputy Commissioner (Zone 01)",
+                name: "Mr. Abdul Rub",
+                phone: "99452 86379"
+            },
+            {
+                dept: "Deputy Commissioner (Zone 02)",
+                name: "Sri. Manjunath Swamy L",
+                phone: "94806 83467"
+            },
+            {
+                dept: "Health Officer",
+                name: "Dr. Manoranjan Hegde",
+                phone: "94806 88561"
+            },
+            {
+                dept: "PR Wing",
+                name: "Venkatesh",
+                phone: "78921 90030"
+            }
+        ]
+    },
+    central: {
+        name: "Bengaluru Central City Corporation",
+        address: "10th Floor, Multipurpose P.U. Building, Mahatma Gandhi Road, Bengaluru – 560001",
+        controlRoom: ["080-22975803", "94806 85702"],
+        commissioner: {
+            name: "Sri. Rajendra Cholan P, I.A.S.",
+            phone: "94485 73007",
+            email: "commissionerbccc@gmail.com"
+        },
+        additionalCommissioners: [
+            {
+                designation: "Additional Commissioner (Development)",
+                name: "Sri. Daljeet Kumar I.A.S.",
+                phone: "99276 62057"
+            },
+            {
+                designation: "Additional Commissioner (Revenue)",
+                name: "Sri. Ranganath K, K.A.S. (I/C)",
+                phone: "96206 30581"
+            }
+        ],
+        zones: [
+            {
+                zone: "Zone 01",
+                jointCommissioner: "Sri. Ranganath K, K.A.S.",
+                phone: "96206 30581"
+            },
+            {
+                zone: "Zone 02",
+                jointCommissioner: "Sri. Hemanth Sharan, K.M.A.S.",
+                phone: "98458 16773"
+            }
+        ],
+        departments: [
+            {
+                dept: "Chief Engineer (Zone 01)",
+                name: "Suguna",
+                phone: "94806 83016"
+            },
+            {
+                dept: "Chief Engineer (Zone 02)",
+                name: "Vijayakumar Haridas",
+                phone: "94806 83059"
+            },
+            {
+                dept: "Deputy Commissioner",
+                name: "Sri. J Raju",
+                phone: "94489 79429"
+            },
+            {
+                dept: "Health Officer",
+                name: "Dr. Shivakumar",
+                phone: "94809 73395"
+            },
+            {
+                dept: "PR Wing",
+                name: "Sri. Iranna Boravata",
+                phone: "99454 92174"
+            }
+        ]
+    }
+};

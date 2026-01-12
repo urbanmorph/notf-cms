@@ -318,4 +318,7 @@ function loadCorporationDashboard(corporationId) {
     
     // Initialize map
     initMap(corporationId);
+    
+    // Render contact section
+    renderContactSection(corporationId);
 }

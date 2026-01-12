@@ -461,3 +461,101 @@ function getCorpColor(corporationId) {
     };
     return colors[corporationId] || '#3b82f6';
 }
+
+// Render contact section for corporation pages
+function renderContactSection(corporationId) {
+    const container = document.getElementById('contactContainer');
+    if (!container) return;
+    
+    const contact = contactDetails[corporationId];
+    if (!contact) return;
+    
+    let html = `
+        <!-- Office Address -->
+        <div class="office-address">
+            <h3>📍 Office Address</h3>
+            <p>${contact.address}</p>
+        </div>
+        
+        <!-- Control Room -->
+        <div class="control-room-box">
+            <h3>🚨 24x7 Control Room</h3>
+            <div class="control-room-numbers">
+                ${contact.controlRoom.map(num => `<div class="control-number">${num}</div>`).join('')}
+            </div>
+        </div>
+        
+        <div class="contact-grid">
+            <!-- Commissioner -->
+            <div class="contact-card">
+                <h3>Commissioner</h3>
+                <div class="contact-info">
+                    <span class="contact-label">Name</span>
+                    <div class="contact-value">${contact.commissioner.name}</div>
+                </div>
+                <div class="contact-info">
+                    <span class="contact-label">Phone</span>
+                    <div class="contact-value">
+                        <span class="contact-icon">📞</span>
+                        <a href="tel:${contact.commissioner.phone}">${contact.commissioner.phone}</a>
+                    </div>
+                </div>
+                <div class="contact-info">
+                    <span class="contact-label">Email</span>
+                    <div class="contact-value">
+                        <span class="contact-icon">✉️</span>
+                        <a href="mailto:${contact.commissioner.email}">${contact.commissioner.email}</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Additional Commissioners -->
+            <div class="contact-card">
+                <h3>Additional Commissioners</h3>
+                ${contact.additionalCommissioners.map(ac => `
+                    <div class="contact-info">
+                        <span class="contact-label">${ac.designation}</span>
+                        <div class="contact-value">${ac.name}</div>
+                        <div class="contact-value">
+                            <span class="contact-icon">📞</span>
+                            <a href="tel:${ac.phone}">${ac.phone}</a>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+            
+            <!-- Joint Commissioners -->
+            <div class="contact-card">
+                <h3>Joint Commissioners</h3>
+                ${contact.zones.map(zone => `
+                    <div class="contact-info">
+                        <span class="contact-label">${zone.zone}</span>
+                        <div class="contact-value">${zone.jointCommissioner}</div>
+                        <div class="contact-value">
+                            <span class="contact-icon">📞</span>
+                            <a href="tel:${zone.phone}">${zone.phone}</a>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+            
+            <!-- Departments -->
+            <div class="contact-card">
+                <h3>Department Heads</h3>
+                <ul class="contact-dept-list">
+                    ${contact.departments.map(dept => `
+                        <li class="contact-dept-item">
+                            <span class="dept-name">${dept.dept}</span>
+                            <span class="dept-person">
+                                ${dept.name}
+                                <a href="tel:${dept.phone}" class="dept-phone">📞 ${dept.phone}</a>
+                            </span>
+                        </li>
+                    `).join('')}
+                </ul>
+            </div>
+        </div>
+    `;
+    
+    container.innerHTML = html;
+}
