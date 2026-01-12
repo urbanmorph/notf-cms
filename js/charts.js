@@ -317,42 +317,8 @@ function initializeCorporationCharts(corporationId) {
         createSeasonalChart(seasonalCanvas, corporationId);
     }
     
-    // Update top issues list
-    updateTopIssuesList(corpData);
-    
     // Initialize complaint form
     initializeComplaintForm();
-}
-
-// Update top issues list with real data
-function updateTopIssuesList(corpData) {
-    const container = document.getElementById('topIssuesContainer');
-    if (!container) return;
-    
-    container.innerHTML = '';
-    
-    corpData.topIssues.forEach((issue, index) => {
-        const percentage = ((issue.count / corpData.stats.totalIssues) * 100).toFixed(1);
-        const issueCard = document.createElement('div');
-        issueCard.className = 'issue-card';
-        issueCard.innerHTML = `
-            <div class="d-flex justify-content-between align-items-start mb-2">
-                <div>
-                    <span class="issue-rank">#${index + 1}</span>
-                    <span class="issue-category">${issue.category}</span>
-                </div>
-                <span class="badge bg-primary">${percentage}%</span>
-            </div>
-            <div class="progress" style="height: 8px;">
-                <div class="progress-bar" role="progressbar" 
-                     style="width: ${percentage}%; background-color: ${corpData.color};"
-                     aria-valuenow="${percentage}" aria-valuemin="0" aria-valuemax="100">
-                </div>
-            </div>
-            <small class="text-muted mt-1 d-block">${issue.count.toLocaleString()} grievances</small>
-        `;
-        container.appendChild(issueCard);
-    });
 }
 
 // Initialize homepage insights
@@ -464,23 +430,11 @@ function getCorpColor(corporationId) {
 
 // Render contact section for corporation pages
 function renderContactSection(corporationId) {
-    console.log('renderContactSection called with:', corporationId);
-    
     const container = document.getElementById('contactContainer');
-    console.log('contactContainer element:', container);
-    
-    if (!container) {
-        console.error('contactContainer not found!');
-        return;
-    }
+    if (!container) return;
     
     const contact = contactDetails[corporationId];
-    console.log('contact data:', contact);
-    
-    if (!contact) {
-        console.error('No contact data for:', corporationId);
-        return;
-    }
+    if (!contact) return;
     
     let html = `
         <!-- Office Address -->
