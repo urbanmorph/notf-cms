@@ -32,7 +32,7 @@
                         <a href="central.html" class="dropdown-item">Bengaluru Central</a>
                     </div>
                 </div>
-                <button class="admin-login-btn" onclick="openModal('adminModal')">Admin Login</button>
+                <a href="admin/login.html" class="admin-login-btn">Admin Login</a>
             </div>
         </div>
     </nav>
@@ -193,33 +193,42 @@
                 <button class="modal-close" onclick="closeModal('complaintModal')">×</button>
             </div>
             <div class="modal-body">
-                <form onsubmit="submitComplaint(event)">
-                    <div class="form-group">
-                        <label class="form-label">Corporation</label>
-                        <input type="text" id="complaintCorporation" class="form-input" value="" readonly>
-                    </div>
+                <form id="complaintForm" onsubmit="handleComplaintSubmit(event); return false;">
+                    <input type="hidden" name="corporation" id="complaintCorporation" value="Bengaluru North City Corporation">
                     <div class="form-group">
                         <label class="form-label">Your Name *</label>
-                        <input type="text" name="name" class="form-input" required>
+                        <input type="text" name="name" class="form-input" required placeholder="Enter your full name">
                     </div>
                     <div class="form-group">
                         <label class="form-label">Phone Number *</label>
-                        <input type="tel" name="phone" class="form-input" required pattern="[0-9]{10}">
+                        <input type="tel" name="phone" class="form-input" required pattern="[0-9]{10}" placeholder="10-digit mobile number">
                     </div>
                     <div class="form-group">
                         <label class="form-label">Email</label>
-                        <input type="email" name="email" class="form-input">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Location of Issue *</label>
-                        <input type="text" name="location" class="form-input" placeholder="Street address, landmark, or area" required>
+                        <input type="email" name="email" class="form-input" placeholder="For updates (optional)">
                     </div>
                     <div class="form-group">
                         <label class="form-label">Issue Type *</label>
-                        <select name="issueType" class="form-select" id="issueTypeSelect" required>
+                        <select name="issueType" id="issueType" class="form-select" required>
                             <option value="">Select issue type</option>
-                            <!-- Options populated by JavaScript from real data -->
+                            <option value="roads">Roads & Potholes</option>
+                            <option value="water">Water Supply</option>
+                            <option value="drainage">Drainage & Sewage</option>
+                            <option value="swm">Garbage & Waste</option>
+                            <option value="electrical">Streetlights & Electrical</option>
+                            <option value="health">Health & Sanitation</option>
+                            <option value="forest">Trees & Parks</option>
+                            <option value="animals">Stray Animals</option>
+                            <option value="other">Other</option>
                         </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Location of Issue *</label>
+                        <input type="text" name="address" class="form-input" placeholder="Street address or area" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Landmark</label>
+                        <input type="text" name="landmark" class="form-input" placeholder="Nearby landmark (optional)">
                     </div>
                     <div class="form-group">
                         <label class="form-label">Description *</label>
@@ -229,31 +238,22 @@
                         <label class="form-label">Upload Photo (Optional)</label>
                         <input type="file" name="photo" class="form-file" accept="image/*">
                     </div>
-                    <button type="submit" class="btn-primary">Submit Complaint</button>
+                    <button type="submit" class="btn-primary" id="submitComplaintBtn">Submit Complaint</button>
                 </form>
             </div>
         </div>
     </div>
 
-    <!-- Admin Login Modal -->
+    <!-- Admin Login Modal - Redirects to dedicated login page -->
     <div id="adminModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 class="modal-title">Admin Login - <span id="adminCorpName">Bengaluru North</span></h2>
+                <h2 class="modal-title">Admin Login</h2>
                 <button class="modal-close" onclick="closeModal('adminModal')">×</button>
             </div>
-            <div class="modal-body">
-                <form onsubmit="submitAdminLogin(event)" class="login-form">
-                    <div class="form-group">
-                        <label class="form-label">Username</label>
-                        <input type="text" id="adminUsername" class="form-input" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Password</label>
-                        <input type="password" id="adminPassword" class="form-input" required>
-                    </div>
-                    <button type="submit" class="btn-primary">Login</button>
-                </form>
+            <div class="modal-body" style="text-align: center; padding: 2rem;">
+                <p style="margin-bottom: 1.5rem; color: #666;">You will be redirected to the secure admin portal.</p>
+                <a href="/admin/login.html" class="btn-primary" style="display: inline-block; text-decoration: none;">Go to Admin Portal</a>
             </div>
         </div>
     </div>
@@ -275,9 +275,11 @@
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <script src="js/data.js?v=10"></script>
     <script src="js/charts.js?v=10"></script>
     <script src="js/script.js?v=10"></script>
+    <script src="js/complaint-form.js?v=1"></script>
     <script>loadCorporationDashboard('north');</script>
     <!-- Footer -->
     <footer class="site-footer">

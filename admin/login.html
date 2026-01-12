@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - GBA Complaint Management</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/admin.css">
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+</head>
+<body class="admin-body">
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <img src="../images/gba-logo.png" alt="GBA Logo" class="login-logo" onerror="this.style.display='none'">
+                <h1>GBA Admin Portal</h1>
+                <p>Complaint Management System</p>
+            </div>
+
+            <form id="loginForm" class="login-form" onsubmit="return handleLogin(event)">
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" required placeholder="admin@corporation.gov.in" autocomplete="email">
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="password-input-wrapper">
+                        <input type="password" id="password" required placeholder="Enter your password" autocomplete="current-password">
+                        <button type="button" class="toggle-password" onclick="togglePassword()">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-group remember-me">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="rememberMe">
+                        <span>Remember me</span>
+                    </label>
+                    <a href="#" class="forgot-password" onclick="showForgotPassword(); return false;">Forgot password?</a>
+                </div>
+
+                <button type="submit" class="btn-login" id="loginBtn">
+                    <span class="btn-text">Sign In</span>
+                    <span class="btn-loader" style="display: none;">
+                        <svg class="spinner" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" fill="none" stroke-dasharray="30 70"></circle>
+                        </svg>
+                    </span>
+                </button>
+
+                <div id="loginError" class="error-message" style="display: none;"></div>
+            </form>
+
+            <div class="login-footer">
+                <p>Greater Bengaluru Authority</p>
+                <p class="version">v1.0.0</p>
+            </div>
+        </div>
+
+        <!-- Background decoration -->
+        <div class="login-bg-pattern"></div>
+    </div>
+
+    <!-- Forgot Password Modal -->
+    <div id="forgotPasswordModal" class="modal" style="display: none;">
+        <div class="modal-content modal-sm">
+            <div class="modal-header">
+                <h3>Reset Password</h3>
+                <button class="modal-close" onclick="closeForgotPassword()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Enter your email address and we'll send you a link to reset your password.</p>
+                <form id="forgotPasswordForm">
+                    <div class="form-group">
+                        <label for="resetEmail">Email Address</label>
+                        <input type="email" id="resetEmail" name="resetEmail" required placeholder="admin@corporation.gov.in">
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Send Reset Link</button>
+                </form>
+                <div id="resetMessage" class="success-message" style="display: none;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/supabase-config.js"></script>
+    <script>
+        // Check if already logged in on page load
+        document.addEventListener('DOMContentLoaded', async function() {
+            try {
+                // Wait for Supabase to be ready
+                await waitForSupabase();
+                console.log('Supabase ready, checking session...');
+
+                // Check if already logged in
+                const session = await getSession();
+                if (session) {
+                    window.location.href = '/admin/dashboard.html';
+                }
+            } catch (e) {
+                console.log('Initialization:', e.message);
+            }
+        });
+
+        // Show error message
+        function showError(message) {
+            const errorDiv = document.getElementById('loginError');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+        }
+
+        // Toggle password visibility
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const type = passwordInput.type === 'password' ? 'text' : 'password';
+            passwordInput.type = type;
+        }
+
+        // Login form submission - named function for inline handler
+        async function handleLogin(e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const loginBtn = document.getElementById('loginBtn');
+            const errorDiv = document.getElementById('loginError');
+
+            // Show loading state
+            loginBtn.disabled = true;
+            loginBtn.querySelector('.btn-text').style.display = 'none';
+            loginBtn.querySelector('.btn-loader').style.display = 'inline-block';
+            errorDiv.style.display = 'none';
+
+            try {
+                // Wait for Supabase to be ready
+                await waitForSupabase();
+
+                console.log('Attempting login for:', email);
+
+                // Sign in with Supabase
+                const { data, error } = await supabaseClient.auth.signInWithPassword({
+                    email,
+                    password
+                });
+
+                if (error) {
+                    console.error('Supabase auth error:', error);
+                    throw error;
+                }
+
+                console.log('Auth successful, user ID:', data.user.id);
+
+                // Check if user is an admin - first try simple query
+                let adminUser = null;
+                let adminError = null;
+
+                // Try with corporation join first
+                const result1 = await supabaseClient
+                    .from('admin_users')
+                    .select('*, corporation:corporations(*)')
+                    .eq('user_id', data.user.id)
+                    .eq('is_active', true)
+                    .single();
+
+                if (result1.error) {
+                    console.log('Join query failed, trying simple query...', result1.error);
+                    // Fall back to simple query without join
+                    const result2 = await supabaseClient
+                        .from('admin_users')
+                        .select('*')
+                        .eq('user_id', data.user.id)
+                        .eq('is_active', true)
+                        .single();
+
+                    adminUser = result2.data;
+                    adminError = result2.error;
+                } else {
+                    adminUser = result1.data;
+                    adminError = result1.error;
+                }
+
+                if (adminError) {
+                    console.error('Admin lookup error:', adminError);
+                    console.error('Looking for user_id:', data.user.id);
+                    await supabaseClient.auth.signOut();
+                    throw new Error('Admin user not found in database. user_id: ' + data.user.id);
+                }
+
+                if (!adminUser) {
+                    console.error('No admin user found for ID:', data.user.id);
+                    await supabaseClient.auth.signOut();
+                    throw new Error('Admin user not found. user_id: ' + data.user.id);
+                }
+
+                console.log('Admin user found:', adminUser.name, adminUser);
+
+                // Store admin info in session storage
+                sessionStorage.setItem('adminUser', JSON.stringify(adminUser));
+
+                // Redirect to dashboard
+                window.location.href = '/admin/dashboard.html';
+
+            } catch (error) {
+                console.error('Login error:', error);
+                errorDiv.textContent = error.message || 'Invalid email or password. Please try again.';
+                errorDiv.style.display = 'block';
+            } finally {
+                loginBtn.disabled = false;
+                loginBtn.querySelector('.btn-text').style.display = 'inline';
+                loginBtn.querySelector('.btn-loader').style.display = 'none';
+            }
+
+            return false; // Prevent form submission
+        }
+
+        // Show forgot password modal
+        function showForgotPassword() {
+            document.getElementById('forgotPasswordModal').style.display = 'flex';
+        }
+
+        // Close forgot password modal
+        function closeForgotPassword() {
+            document.getElementById('forgotPasswordModal').style.display = 'none';
+        }
+
+        // Forgot password form submission
+        document.getElementById('forgotPasswordForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const email = document.getElementById('resetEmail').value.trim();
+            const messageDiv = document.getElementById('resetMessage');
+
+            try {
+                const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+                    redirectTo: window.location.origin + '/admin/reset-password.html'
+                });
+
+                if (error) throw error;
+
+                messageDiv.textContent = 'Password reset link sent! Check your email.';
+                messageDiv.className = 'success-message';
+                messageDiv.style.display = 'block';
+
+                // Reset form
+                document.getElementById('forgotPasswordForm').reset();
+
+            } catch (error) {
+                messageDiv.textContent = error.message || 'Failed to send reset link. Please try again.';
+                messageDiv.className = 'error-message';
+                messageDiv.style.display = 'block';
+            }
+        });
+
+        // Close modal on outside click
+        document.getElementById('forgotPasswordModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeForgotPassword();
+            }
+        });
+    </script>
+</body>
+</html>

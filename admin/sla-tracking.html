@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SLA Tracking - GBA Admin</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/admin.css">
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <div class="admin-layout">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <img src="../images/gba-logo.png" alt="GBA" class="sidebar-logo" onerror="this.style.display='none'">
+                <div>
+                    <div class="sidebar-title">GBA Admin</div>
+                    <div class="sidebar-subtitle" id="sidebarCorporation">Loading...</div>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Overview</div>
+                    <a href="dashboard.html" class="nav-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="14" width="7" height="7"></rect>
+                            <rect x="3" y="14" width="7" height="7"></rect>
+                        </svg>
+                        Dashboard
+                    </a>
+                    <a href="complaints.html" class="nav-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                        </svg>
+                        All Complaints
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Management</div>
+                    <a href="assignments.html" class="nav-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                        </svg>
+                        Assignments
+                    </a>
+                    <a href="sla-tracking.html" class="nav-item active">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                        SLA Tracking
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Analytics</div>
+                    <a href="analytics.html" class="nav-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="20" x2="18" y2="10"></line>
+                            <line x1="12" y1="20" x2="12" y2="4"></line>
+                            <line x1="6" y1="20" x2="6" y2="14"></line>
+                        </svg>
+                        Reports
+                    </a>
+                    <a href="officers.html" class="nav-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                        Officer Performance
+                    </a>
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="sidebar-user">
+                    <div class="user-avatar" id="userAvatar">A</div>
+                    <div class="user-info">
+                        <div class="user-name" id="userName">Admin User</div>
+                        <div class="user-role" id="userRole">Administrator</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="admin-main">
+            <header class="admin-header">
+                <div class="header-left">
+                    <button class="menu-toggle" onclick="toggleSidebar()">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="3" y1="12" x2="21" y2="12"></line>
+                            <line x1="3" y1="6" x2="21" y2="6"></line>
+                            <line x1="3" y1="18" x2="21" y2="18"></line>
+                        </svg>
+                    </button>
+                    <div class="header-breadcrumb">
+                        <a href="dashboard.html">Home</a>
+                        <span>/</span>
+                        <span class="current">SLA Tracking</span>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <button class="header-btn" onclick="handleLogout()">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                            <polyline points="16 17 21 12 16 7"></polyline>
+                            <line x1="21" y1="12" x2="9" y2="12"></line>
+                        </svg>
+                    </button>
+                </div>
+            </header>
+
+            <div class="admin-content">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">SLA Tracking</h1>
+                        <p class="page-subtitle">Monitor service level agreements and prevent breaches</p>
+                    </div>
+                </div>
+
+                <!-- SLA Summary Stats -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon green">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                            </svg>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-label">Within SLA</div>
+                            <div class="stat-value" id="withinSLA">--</div>
+                            <div class="stat-change positive">On track</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon orange">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                                <line x1="12" y1="9" x2="12" y2="13"></line>
+                                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                            </svg>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-label">At Risk</div>
+                            <div class="stat-value" id="atRisk">--</div>
+                            <div class="stat-change negative">< 12 hours left</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon red">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="15" y1="9" x2="9" y2="15"></line>
+                                <line x1="9" y1="9" x2="15" y2="15"></line>
+                            </svg>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-label">Breached</div>
+                            <div class="stat-value" id="breached">--</div>
+                            <div class="stat-change negative">Needs attention</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon teal">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="12" y1="20" x2="12" y2="10"></line>
+                                <line x1="18" y1="20" x2="18" y2="4"></line>
+                                <line x1="6" y1="20" x2="6" y2="16"></line>
+                            </svg>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-label">Overall SLA Rate</div>
+                            <div class="stat-value" id="overallSLA">--%</div>
+                            <div class="stat-change" id="slaTarget">Target: 90%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SLA by Department Chart -->
+                <div class="analytics-grid">
+                    <div class="chart-card">
+                        <h4>SLA Compliance by Department</h4>
+                        <div class="chart-container">
+                            <canvas id="slaDeptChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="chart-card">
+                        <h4>SLA Trend (Last 30 Days)</h4>
+                        <div class="chart-container">
+                            <canvas id="slaTrendChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- At Risk Complaints -->
+                <div class="data-card" style="margin-top: 24px;">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <span class="alert-icon">⚠️</span> At Risk & Breached Complaints
+                        </h3>
+                        <div class="card-actions">
+                            <select id="riskFilter" onchange="filterRiskComplaints()">
+                                <option value="all">All</option>
+                                <option value="at_risk">At Risk Only</option>
+                                <option value="breached">Breached Only</option>
+                            </select>
+                        </div>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Status</th>
+                                <th>Complaint ID</th>
+                                <th>Title</th>
+                                <th>Department</th>
+                                <th>Assigned To</th>
+                                <th>Created</th>
+                                <th>SLA Deadline</th>
+                                <th>Time Left/Overdue</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="riskTable">
+                            <tr>
+                                <td colspan="9" style="text-align: center; padding: 40px;">Loading...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Department SLA Details -->
+                <div class="data-card" style="margin-top: 24px;">
+                    <div class="card-header">
+                        <h3 class="card-title">Department SLA Configuration</h3>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Department</th>
+                                <th>Default SLA (Hours)</th>
+                                <th>Total Complaints</th>
+                                <th>Within SLA</th>
+                                <th>Breached</th>
+                                <th>Compliance Rate</th>
+                            </tr>
+                        </thead>
+                        <tbody id="deptSLATable">
+                            <tr>
+                                <td colspan="6" style="text-align: center; padding: 40px;">Loading...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <style>
+        .alert-icon {
+            font-size: 1.2rem;
+            margin-right: 8px;
+        }
+
+        .sla-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .sla-status.at-risk {
+            background: #fef3cd;
+            color: #856404;
+        }
+
+        .sla-status.breached {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .sla-status.on-track {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .time-indicator {
+            font-weight: 600;
+        }
+
+        .time-indicator.overdue {
+            color: var(--admin-danger);
+        }
+
+        .time-indicator.warning {
+            color: var(--admin-warning);
+        }
+
+        .time-indicator.safe {
+            color: var(--admin-success);
+        }
+
+        .escalate-btn {
+            background: var(--admin-danger);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .escalate-btn:hover {
+            background: #c0392b;
+        }
+
+        .compliance-bar {
+            width: 100px;
+            height: 8px;
+            background: var(--admin-border);
+            border-radius: 4px;
+            overflow: hidden;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+
+        .compliance-bar-fill {
+            height: 100%;
+            border-radius: 4px;
+        }
+
+        .compliance-good .compliance-bar-fill { background: var(--admin-success); }
+        .compliance-warning .compliance-bar-fill { background: var(--admin-warning); }
+        .compliance-bad .compliance-bar-fill { background: var(--admin-danger); }
+    </style>
+
+    <script src="../js/supabase-config.js"></script>
+    <script>
+        let adminUser = null;
+        let riskComplaints = [];
+        let deptStats = [];
+        let charts = {};
+
+        document.addEventListener('DOMContentLoaded', async function() {
+            initSupabase();
+            adminUser = await requireAdmin();
+            if (!adminUser) return;
+
+            updateUserInfo();
+            await loadSLAData();
+
+            // Auto-refresh every 5 minutes
+            setInterval(loadSLAData, 5 * 60 * 1000);
+        });
+
+        function updateUserInfo() {
+            document.getElementById('userName').textContent = adminUser.name || 'Admin User';
+            document.getElementById('userRole').textContent = formatRole(adminUser.role);
+            document.getElementById('userAvatar').textContent = (adminUser.name || 'A').charAt(0).toUpperCase();
+            if (adminUser.corporation) {
+                document.getElementById('sidebarCorporation').textContent = adminUser.corporation.short_name || adminUser.corporation.name;
+            }
+        }
+
+        async function loadSLAData() {
+            try {
+                // Get all open complaints with SLA info
+                const { data: complaints } = await supabase
+                    .from('complaints')
+                    .select(`
+                        *,
+                        department:departments(id, name, default_sla_hours),
+                        assigned_officer:admin_users!complaints_assigned_to_fkey(name)
+                    `)
+                    .eq('corporation_id', adminUser.corporation_id)
+                    .not('status', 'in', '("resolved","closed","rejected")');
+
+                // Calculate SLA status for each complaint
+                const now = new Date();
+                let withinSLA = 0;
+                let atRisk = 0;
+                let breached = 0;
+
+                riskComplaints = [];
+
+                complaints?.forEach(c => {
+                    if (!c.sla_deadline) return;
+
+                    const deadline = new Date(c.sla_deadline);
+                    const hoursLeft = (deadline - now) / (1000 * 60 * 60);
+
+                    if (c.sla_breached || hoursLeft < 0) {
+                        breached++;
+                        c.slaStatus = 'breached';
+                        c.hoursOverdue = Math.abs(Math.round(hoursLeft));
+                        riskComplaints.push(c);
+                    } else if (hoursLeft < 12) {
+                        atRisk++;
+                        c.slaStatus = 'at_risk';
+                        c.hoursLeft = Math.round(hoursLeft);
+                        riskComplaints.push(c);
+                    } else {
+                        withinSLA++;
+                        c.slaStatus = 'on_track';
+                    }
+                });
+
+                // Update stats
+                document.getElementById('withinSLA').textContent = withinSLA;
+                document.getElementById('atRisk').textContent = atRisk;
+                document.getElementById('breached').textContent = breached;
+
+                const total = withinSLA + atRisk + breached;
+                const slaRate = total > 0 ? Math.round(((withinSLA + atRisk) / total) * 100) : 100;
+                document.getElementById('overallSLA').textContent = `${slaRate}%`;
+
+                const targetEl = document.getElementById('slaTarget');
+                if (slaRate >= 90) {
+                    targetEl.className = 'stat-change positive';
+                    targetEl.textContent = 'Above target (90%)';
+                } else {
+                    targetEl.className = 'stat-change negative';
+                    targetEl.textContent = `Below target (90%)`;
+                }
+
+                // Sort risk complaints by urgency
+                riskComplaints.sort((a, b) => {
+                    if (a.slaStatus === 'breached' && b.slaStatus !== 'breached') return -1;
+                    if (b.slaStatus === 'breached' && a.slaStatus !== 'breached') return 1;
+                    return (a.hoursLeft || -a.hoursOverdue) - (b.hoursLeft || -b.hoursOverdue);
+                });
+
+                renderRiskTable();
+                await loadDeptSLAStats();
+                await loadSLACharts();
+
+            } catch (error) {
+                console.error('Error loading SLA data:', error);
+            }
+        }
+
+        function renderRiskTable() {
+            const filter = document.getElementById('riskFilter').value;
+            let filtered = riskComplaints;
+
+            if (filter === 'at_risk') {
+                filtered = riskComplaints.filter(c => c.slaStatus === 'at_risk');
+            } else if (filter === 'breached') {
+                filtered = riskComplaints.filter(c => c.slaStatus === 'breached');
+            }
+
+            const tbody = document.getElementById('riskTable');
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="9" style="text-align: center; padding: 40px; color: var(--admin-success);">
+                            🎉 No complaints at risk! Great job staying on top of SLAs.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = filtered.map(c => {
+                const statusClass = c.slaStatus === 'breached' ? 'breached' : 'at-risk';
+                const statusText = c.slaStatus === 'breached' ? 'Breached' : 'At Risk';
+
+                let timeText, timeClass;
+                if (c.slaStatus === 'breached') {
+                    timeText = `${c.hoursOverdue}h overdue`;
+                    timeClass = 'overdue';
+                } else {
+                    timeText = `${c.hoursLeft}h left`;
+                    timeClass = 'warning';
+                }
+
+                return `
+                    <tr>
+                        <td><span class="sla-status ${statusClass}">${statusText}</span></td>
+                        <td><span class="complaint-id">${c.complaint_number || 'N/A'}</span></td>
+                        <td>${truncateText(c.title, 30)}</td>
+                        <td>${c.department?.name || 'Unassigned'}</td>
+                        <td>${c.assigned_officer?.name || '<span style="color: #e74c3c;">Unassigned</span>'}</td>
+                        <td>${formatDate(c.created_at)}</td>
+                        <td>${formatDateTime(c.sla_deadline)}</td>
+                        <td><span class="time-indicator ${timeClass}">${timeText}</span></td>
+                        <td>
+                            <button class="escalate-btn" onclick="escalateComplaint('${c.id}')">
+                                Escalate
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function filterRiskComplaints() {
+            renderRiskTable();
+        }
+
+        async function loadDeptSLAStats() {
+            const { data: departments } = await supabase
+                .from('departments')
+                .select('id, name, default_sla_hours');
+
+            const { data: complaints } = await supabase
+                .from('complaints')
+                .select('department_id, sla_breached')
+                .eq('corporation_id', adminUser.corporation_id);
+
+            deptStats = (departments || []).map(dept => {
+                const deptComplaints = complaints?.filter(c => c.department_id === dept.id) || [];
+                const breached = deptComplaints.filter(c => c.sla_breached).length;
+                const total = deptComplaints.length;
+                const compliance = total > 0 ? Math.round(((total - breached) / total) * 100) : 100;
+
+                return {
+                    ...dept,
+                    total,
+                    withinSLA: total - breached,
+                    breached,
+                    compliance
+                };
+            }).filter(d => d.total > 0);
+
+            deptStats.sort((a, b) => b.total - a.total);
+
+            const tbody = document.getElementById('deptSLATable');
+            tbody.innerHTML = deptStats.map(d => {
+                const compClass = d.compliance >= 90 ? 'compliance-good' :
+                    d.compliance >= 75 ? 'compliance-warning' : 'compliance-bad';
+
+                return `
+                    <tr>
+                        <td><strong>${d.name}</strong></td>
+                        <td>${d.default_sla_hours}h</td>
+                        <td>${d.total}</td>
+                        <td>${d.withinSLA}</td>
+                        <td style="color: ${d.breached > 0 ? 'var(--admin-danger)' : 'inherit'}">${d.breached}</td>
+                        <td class="${compClass}">
+                            <div class="compliance-bar">
+                                <div class="compliance-bar-fill" style="width: ${d.compliance}%"></div>
+                            </div>
+                            ${d.compliance}%
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        async function loadSLACharts() {
+            // Department SLA Chart
+            const ctx1 = document.getElementById('slaDeptChart').getContext('2d');
+            if (charts.slaDept) charts.slaDept.destroy();
+
+            const topDepts = deptStats.slice(0, 6);
+            charts.slaDept = new Chart(ctx1, {
+                type: 'bar',
+                data: {
+                    labels: topDepts.map(d => truncateText(d.name, 12)),
+                    datasets: [
+                        {
+                            label: 'Within SLA',
+                            data: topDepts.map(d => d.withinSLA),
+                            backgroundColor: '#27ae60',
+                            borderRadius: 4
+                        },
+                        {
+                            label: 'Breached',
+                            data: topDepts.map(d => d.breached),
+                            backgroundColor: '#e74c3c',
+                            borderRadius: 4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    },
+                    scales: {
+                        x: { stacked: true, grid: { display: false } },
+                        y: { stacked: true, beginAtZero: true }
+                    }
+                }
+            });
+
+            // SLA Trend Chart (last 30 days)
+            const thirtyDaysAgo = new Date();
+            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+            const { data: trendData } = await supabase
+                .from('complaints')
+                .select('created_at, sla_breached')
+                .eq('corporation_id', adminUser.corporation_id)
+                .gte('created_at', thirtyDaysAgo.toISOString())
+                .order('created_at');
+
+            // Group by day
+            const dailyData = {};
+            trendData?.forEach(c => {
+                const day = c.created_at.split('T')[0];
+                if (!dailyData[day]) {
+                    dailyData[day] = { total: 0, breached: 0 };
+                }
+                dailyData[day].total++;
+                if (c.sla_breached) dailyData[day].breached++;
+            });
+
+            const days = Object.keys(dailyData).sort();
+            const compliance = days.map(d => {
+                const data = dailyData[d];
+                return data.total > 0 ? Math.round(((data.total - data.breached) / data.total) * 100) : 100;
+            });
+
+            const ctx2 = document.getElementById('slaTrendChart').getContext('2d');
+            if (charts.slaTrend) charts.slaTrend.destroy();
+
+            charts.slaTrend = new Chart(ctx2, {
+                type: 'line',
+                data: {
+                    labels: days.map(d => new Date(d).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' })),
+                    datasets: [{
+                        label: 'SLA Compliance %',
+                        data: compliance,
+                        borderColor: '#23a2a5',
+                        backgroundColor: 'rgba(35, 162, 165, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }, {
+                        label: 'Target (90%)',
+                        data: days.map(() => 90),
+                        borderColor: '#e74c3c',
+                        borderDash: [5, 5],
+                        pointRadius: 0,
+                        fill: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: { callback: v => v + '%' }
+                        },
+                        x: { ticks: { maxTicksLimit: 10 } }
+                    }
+                }
+            });
+        }
+
+        function escalateComplaint(id) {
+            // For now, just redirect to complaints page with the ID
+            window.location.href = `complaints.html?assign=${id}`;
+        }
+
+        function truncateText(text, max) {
+            if (!text) return '-';
+            return text.length > max ? text.substring(0, max) + '...' : text;
+        }
+
+        function formatDate(dateStr) {
+            if (!dateStr) return '-';
+            return new Date(dateStr).toLocaleDateString('en-IN', {
+                day: 'numeric',
+                month: 'short'
+            });
+        }
+
+        function formatDateTime(dateStr) {
+            if (!dateStr) return '-';
+            return new Date(dateStr).toLocaleString('en-IN', {
+                day: 'numeric',
+                month: 'short',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function formatRole(role) {
+            const roleMap = {
+                'super_admin': 'Super Admin',
+                'commissioner': 'Commissioner',
+                'zone_officer': 'Zone Officer',
+                'department_head': 'Dept Head',
+                'field_officer': 'Field Officer'
+            };
+            return roleMap[role] || role;
+        }
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+
+        async function handleLogout() {
+            await signOut();
+            sessionStorage.removeItem('adminUser');
+            window.location.href = 'login.html';
+        }
+    </script>
+</body>
+</html>

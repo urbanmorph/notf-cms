@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Officer Performance - GBA Admin</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/admin.css">
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <div class="admin-layout">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <img src="../images/gba-logo.png" alt="GBA" class="sidebar-logo" onerror="this.style.display='none'">
+                <div>
+                    <div class="sidebar-title">GBA Admin</div>
+                    <div class="sidebar-subtitle" id="sidebarCorporation">Loading...</div>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Overview</div>
+                    <a href="dashboard.html" class="nav-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="14" width="7" height="7"></rect>
+                            <rect x="3" y="14" width="7" height="7"></rect>
+                        </svg>
+                        Dashboard
+                    </a>
+                    <a href="complaints.html" class="nav-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                        </svg>
+                        All Complaints
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Management</div>
+                    <a href="assignments.html" class="nav-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                        </svg>
+                        Assignments
+                    </a>
+                    <a href="sla-tracking.html" class="nav-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                        SLA Tracking
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Analytics</div>
+                    <a href="analytics.html" class="nav-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="20" x2="18" y2="10"></line>
+                            <line x1="12" y1="20" x2="12" y2="4"></line>
+                            <line x1="6" y1="20" x2="6" y2="14"></line>
+                        </svg>
+                        Reports
+                    </a>
+                    <a href="officers.html" class="nav-item active">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                        Officer Performance
+                    </a>
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="sidebar-user">
+                    <div class="user-avatar" id="userAvatar">A</div>
+                    <div class="user-info">
+                        <div class="user-name" id="userName">Admin User</div>
+                        <div class="user-role" id="userRole">Administrator</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="admin-main">
+            <header class="admin-header">
+                <div class="header-left">
+                    <button class="menu-toggle" onclick="toggleSidebar()">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="3" y1="12" x2="21" y2="12"></line>
+                            <line x1="3" y1="6" x2="21" y2="6"></line>
+                            <line x1="3" y1="18" x2="21" y2="18"></line>
+                        </svg>
+                    </button>
+                    <div class="header-breadcrumb">
+                        <a href="dashboard.html">Home</a>
+                        <span>/</span>
+                        <span class="current">Officer Performance</span>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <button class="header-btn" onclick="handleLogout()">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                            <polyline points="16 17 21 12 16 7"></polyline>
+                            <line x1="21" y1="12" x2="9" y2="12"></line>
+                        </svg>
+                    </button>
+                </div>
+            </header>
+
+            <div class="admin-content">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">Officer Performance</h1>
+                        <p class="page-subtitle">Track and analyze individual officer performance metrics</p>
+                    </div>
+                    <div class="page-actions">
+                        <select id="dateRangeSelect" class="date-range-select" onchange="loadOfficerStats()">
+                            <option value="7">Last 7 Days</option>
+                            <option value="30" selected>Last 30 Days</option>
+                            <option value="90">Last 90 Days</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Summary Stats -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon blue">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="9" cy="7" r="4"></circle>
+                            </svg>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-label">Active Officers</div>
+                            <div class="stat-value" id="totalOfficers">--</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon green">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-label">Total Resolved</div>
+                            <div class="stat-value" id="totalResolved">--</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon purple">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12 6 12 12 16 14"></polyline>
+                            </svg>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-label">Avg Resolution Time</div>
+                            <div class="stat-value" id="avgResolutionTime">--</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon teal">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                            </svg>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-label">Avg SLA Compliance</div>
+                            <div class="stat-value" id="avgSLACompliance">--%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Row -->
+                <div class="analytics-grid">
+                    <div class="chart-card">
+                        <h4>Top Performers</h4>
+                        <div class="chart-container">
+                            <canvas id="topPerformersChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="chart-card">
+                        <h4>Workload Distribution</h4>
+                        <div class="chart-container">
+                            <canvas id="workloadChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Officers Table -->
+                <div class="data-card" style="margin-top: 24px;">
+                    <div class="card-header">
+                        <h3 class="card-title">Officer Performance Details</h3>
+                        <div class="card-actions">
+                            <button class="btn btn-secondary btn-sm" onclick="exportOfficerReport()">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="7 10 12 15 17 10"></polyline>
+                                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                                </svg>
+                                Export
+                            </button>
+                        </div>
+                    </div>
+                    <div class="table-filters">
+                        <div class="filter-group">
+                            <label>Department:</label>
+                            <select id="departmentFilter" onchange="loadOfficerStats()">
+                                <option value="">All Departments</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label>Sort By:</label>
+                            <select id="sortBy" onchange="sortOfficerTable()">
+                                <option value="resolved_desc">Most Resolved</option>
+                                <option value="resolved_asc">Least Resolved</option>
+                                <option value="time_asc">Fastest Resolution</option>
+                                <option value="time_desc">Slowest Resolution</option>
+                                <option value="sla_desc">Best SLA Compliance</option>
+                                <option value="sla_asc">Worst SLA Compliance</option>
+                            </select>
+                        </div>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>Officer</th>
+                                <th>Department</th>
+                                <th>Role</th>
+                                <th>Assigned</th>
+                                <th>Resolved</th>
+                                <th>Pending</th>
+                                <th>Resolution Rate</th>
+                                <th>Avg Time (hrs)</th>
+                                <th>SLA Compliance</th>
+                            </tr>
+                        </thead>
+                        <tbody id="officersTable">
+                            <tr>
+                                <td colspan="10" style="text-align: center; padding: 40px;">Loading...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <style>
+        .date-range-select {
+            padding: 10px 16px;
+            border: 1px solid var(--admin-border);
+            border-radius: 8px;
+            font-size: 0.875rem;
+            background: var(--admin-card-bg);
+        }
+
+        .rank-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            font-weight: 700;
+            font-size: 0.8rem;
+        }
+
+        .rank-badge.gold {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            color: white;
+        }
+
+        .rank-badge.silver {
+            background: linear-gradient(135deg, #bdc3c7, #95a5a6);
+            color: white;
+        }
+
+        .rank-badge.bronze {
+            background: linear-gradient(135deg, #e67e22, #d35400);
+            color: white;
+        }
+
+        .rank-badge.default {
+            background: var(--admin-bg);
+            color: var(--admin-text-light);
+        }
+
+        .officer-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .officer-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--admin-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .officer-name {
+            font-weight: 600;
+        }
+
+        .officer-email {
+            font-size: 0.75rem;
+            color: var(--admin-text-light);
+        }
+
+        .performance-bar {
+            width: 80px;
+            height: 8px;
+            background: var(--admin-border);
+            border-radius: 4px;
+            overflow: hidden;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+
+        .performance-bar-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.3s;
+        }
+
+        .performance-good .performance-bar-fill { background: var(--admin-success); }
+        .performance-warning .performance-bar-fill { background: var(--admin-warning); }
+        .performance-bad .performance-bar-fill { background: var(--admin-danger); }
+    </style>
+
+    <script src="../js/supabase-config.js"></script>
+    <script>
+        let adminUser = null;
+        let officers = [];
+        let charts = {};
+
+        document.addEventListener('DOMContentLoaded', async function() {
+            initSupabase();
+            adminUser = await requireAdmin();
+            if (!adminUser) return;
+
+            updateUserInfo();
+            await loadDepartments();
+            await loadOfficerStats();
+        });
+
+        function updateUserInfo() {
+            document.getElementById('userName').textContent = adminUser.name || 'Admin User';
+            document.getElementById('userRole').textContent = formatRole(adminUser.role);
+            document.getElementById('userAvatar').textContent = (adminUser.name || 'A').charAt(0).toUpperCase();
+            if (adminUser.corporation) {
+                document.getElementById('sidebarCorporation').textContent = adminUser.corporation.short_name || adminUser.corporation.name;
+            }
+        }
+
+        async function loadDepartments() {
+            const { data } = await supabase
+                .from('departments')
+                .select('id, name')
+                .order('name');
+
+            const select = document.getElementById('departmentFilter');
+            data?.forEach(d => {
+                select.innerHTML += `<option value="${d.id}">${d.name}</option>`;
+            });
+        }
+
+        async function loadOfficerStats() {
+            const days = parseInt(document.getElementById('dateRangeSelect').value);
+            const fromDate = new Date();
+            fromDate.setDate(fromDate.getDate() - days);
+            const deptFilter = document.getElementById('departmentFilter').value;
+
+            try {
+                // Get all officers
+                let officerQuery = supabase
+                    .from('admin_users')
+                    .select('*, department:departments(name)')
+                    .eq('corporation_id', adminUser.corporation_id)
+                    .eq('is_active', true);
+
+                if (deptFilter) {
+                    officerQuery = officerQuery.eq('department_id', deptFilter);
+                }
+
+                const { data: officerData } = await officerQuery;
+
+                // Get complaints for each officer
+                const { data: complaints } = await supabase
+                    .from('complaints')
+                    .select('assigned_to, status, sla_breached, created_at, resolved_at')
+                    .eq('corporation_id', adminUser.corporation_id)
+                    .gte('created_at', fromDate.toISOString());
+
+                // Calculate stats for each officer
+                officers = (officerData || []).map(officer => {
+                    const officerComplaints = complaints?.filter(c => c.assigned_to === officer.id) || [];
+                    const resolved = officerComplaints.filter(c => ['resolved', 'closed'].includes(c.status));
+                    const pending = officerComplaints.filter(c => !['resolved', 'closed', 'rejected'].includes(c.status));
+                    const slaBreached = officerComplaints.filter(c => c.sla_breached);
+
+                    let avgTime = 0;
+                    if (resolved.length > 0) {
+                        const totalTime = resolved.reduce((sum, c) => {
+                            if (c.resolved_at) {
+                                return sum + (new Date(c.resolved_at) - new Date(c.created_at)) / (1000 * 60 * 60);
+                            }
+                            return sum;
+                        }, 0);
+                        avgTime = Math.round(totalTime / resolved.length);
+                    }
+
+                    const slaCompliance = officerComplaints.length > 0
+                        ? Math.round(((officerComplaints.length - slaBreached.length) / officerComplaints.length) * 100)
+                        : 100;
+
+                    return {
+                        ...officer,
+                        assigned: officerComplaints.length,
+                        resolved: resolved.length,
+                        pending: pending.length,
+                        resolutionRate: officerComplaints.length > 0
+                            ? Math.round((resolved.length / officerComplaints.length) * 100)
+                            : 0,
+                        avgTime,
+                        slaCompliance
+                    };
+                });
+
+                // Sort by resolved count (descending) by default
+                officers.sort((a, b) => b.resolved - a.resolved);
+
+                // Update summary stats
+                document.getElementById('totalOfficers').textContent = officers.length;
+                document.getElementById('totalResolved').textContent = officers.reduce((sum, o) => sum + o.resolved, 0);
+
+                const avgTime = officers.length > 0
+                    ? Math.round(officers.reduce((sum, o) => sum + o.avgTime, 0) / officers.filter(o => o.avgTime > 0).length) || 0
+                    : 0;
+                document.getElementById('avgResolutionTime').textContent = `${avgTime}h`;
+
+                const avgSLA = officers.length > 0
+                    ? Math.round(officers.reduce((sum, o) => sum + o.slaCompliance, 0) / officers.length)
+                    : 100;
+                document.getElementById('avgSLACompliance').textContent = `${avgSLA}%`;
+
+                renderOfficerTable();
+                renderCharts();
+
+            } catch (error) {
+                console.error('Error loading officer stats:', error);
+            }
+        }
+
+        function renderOfficerTable() {
+            const tbody = document.getElementById('officersTable');
+
+            if (officers.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="10" style="text-align: center; padding: 40px;">No officers found</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = officers.map((o, idx) => {
+                const rank = idx + 1;
+                let rankClass = 'default';
+                if (rank === 1) rankClass = 'gold';
+                else if (rank === 2) rankClass = 'silver';
+                else if (rank === 3) rankClass = 'bronze';
+
+                const resolutionClass = o.resolutionRate >= 80 ? 'performance-good' :
+                    o.resolutionRate >= 60 ? 'performance-warning' : 'performance-bad';
+
+                const slaClass = o.slaCompliance >= 90 ? 'performance-good' :
+                    o.slaCompliance >= 75 ? 'performance-warning' : 'performance-bad';
+
+                return `
+                    <tr>
+                        <td><span class="rank-badge ${rankClass}">${rank}</span></td>
+                        <td>
+                            <div class="officer-info">
+                                <div class="officer-avatar">${(o.name || 'U').charAt(0)}</div>
+                                <div>
+                                    <div class="officer-name">${o.name || 'Unknown'}</div>
+                                    <div class="officer-email">${o.email || ''}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>${o.department?.name || 'Unassigned'}</td>
+                        <td>${formatRole(o.role)}</td>
+                        <td>${o.assigned}</td>
+                        <td><strong>${o.resolved}</strong></td>
+                        <td>${o.pending}</td>
+                        <td class="${resolutionClass}">
+                            <div class="performance-bar"><div class="performance-bar-fill" style="width: ${o.resolutionRate}%"></div></div>
+                            ${o.resolutionRate}%
+                        </td>
+                        <td>${o.avgTime}h</td>
+                        <td class="${slaClass}">
+                            <div class="performance-bar"><div class="performance-bar-fill" style="width: ${o.slaCompliance}%"></div></div>
+                            ${o.slaCompliance}%
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function renderCharts() {
+            // Top performers chart
+            const topPerformers = officers.slice(0, 5);
+            const ctx1 = document.getElementById('topPerformersChart').getContext('2d');
+
+            if (charts.topPerformers) charts.topPerformers.destroy();
+            charts.topPerformers = new Chart(ctx1, {
+                type: 'bar',
+                data: {
+                    labels: topPerformers.map(o => truncateName(o.name)),
+                    datasets: [{
+                        label: 'Resolved',
+                        data: topPerformers.map(o => o.resolved),
+                        backgroundColor: '#27ae60',
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { beginAtZero: true },
+                        y: { grid: { display: false } }
+                    }
+                }
+            });
+
+            // Workload distribution
+            const ctx2 = document.getElementById('workloadChart').getContext('2d');
+            if (charts.workload) charts.workload.destroy();
+
+            const workloadData = officers.filter(o => o.assigned > 0).slice(0, 8);
+            charts.workload = new Chart(ctx2, {
+                type: 'doughnut',
+                data: {
+                    labels: workloadData.map(o => truncateName(o.name)),
+                    datasets: [{
+                        data: workloadData.map(o => o.assigned),
+                        backgroundColor: [
+                            '#3498db', '#e74c3c', '#2ecc71', '#f39c12',
+                            '#9b59b6', '#1abc9c', '#34495e', '#e67e22'
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: { usePointStyle: true, padding: 12 }
+                        }
+                    },
+                    cutout: '50%'
+                }
+            });
+        }
+
+        function sortOfficerTable() {
+            const sortBy = document.getElementById('sortBy').value;
+
+            switch (sortBy) {
+                case 'resolved_desc':
+                    officers.sort((a, b) => b.resolved - a.resolved);
+                    break;
+                case 'resolved_asc':
+                    officers.sort((a, b) => a.resolved - b.resolved);
+                    break;
+                case 'time_asc':
+                    officers.sort((a, b) => (a.avgTime || 999) - (b.avgTime || 999));
+                    break;
+                case 'time_desc':
+                    officers.sort((a, b) => (b.avgTime || 0) - (a.avgTime || 0));
+                    break;
+                case 'sla_desc':
+                    officers.sort((a, b) => b.slaCompliance - a.slaCompliance);
+                    break;
+                case 'sla_asc':
+                    officers.sort((a, b) => a.slaCompliance - b.slaCompliance);
+                    break;
+            }
+
+            renderOfficerTable();
+        }
+
+        function exportOfficerReport() {
+            const headers = ['Rank', 'Name', 'Email', 'Department', 'Role', 'Assigned', 'Resolved', 'Pending', 'Resolution Rate', 'Avg Time (hrs)', 'SLA Compliance'];
+            const rows = officers.map((o, idx) => [
+                idx + 1,
+                o.name || '',
+                o.email || '',
+                o.department?.name || '',
+                o.role || '',
+                o.assigned,
+                o.resolved,
+                o.pending,
+                `${o.resolutionRate}%`,
+                o.avgTime,
+                `${o.slaCompliance}%`
+            ]);
+
+            const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `officer_performance_${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function truncateName(name) {
+            if (!name) return 'Unknown';
+            return name.length > 15 ? name.substring(0, 15) + '...' : name;
+        }
+
+        function formatRole(role) {
+            const roleMap = {
+                'super_admin': 'Super Admin',
+                'commissioner': 'Commissioner',
+                'zone_officer': 'Zone Officer',
+                'department_head': 'Dept Head',
+                'field_officer': 'Field Officer'
+            };
+            return roleMap[role] || role;
+        }
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+
+        async function handleLogout() {
+            await signOut();
+            sessionStorage.removeItem('adminUser');
+            window.location.href = 'login.html';
+        }
+    </script>
+</body>
+</html>

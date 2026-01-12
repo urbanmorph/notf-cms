@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Track Your Complaint - Greater Bengaluru Authority</title>
+    <link rel="stylesheet" href="css/styles.css?v=4">
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <style>
+        .track-hero {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: white;
+            padding: 60px 0;
+            text-align: center;
+        }
+
+        .track-hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 16px;
+        }
+
+        .track-hero p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .track-container {
+            max-width: 800px;
+            margin: -40px auto 60px;
+            padding: 0 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .track-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+        }
+
+        .track-form-section {
+            padding: 40px;
+            background: white;
+        }
+
+        .track-input-group {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .track-input {
+            flex: 1;
+            padding: 16px 20px;
+            border: 2px solid #e1e8ed;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            transition: border-color 0.2s;
+        }
+
+        .track-input:focus {
+            outline: none;
+            border-color: #23A2A5;
+        }
+
+        .track-input::placeholder {
+            color: #95a5a6;
+        }
+
+        .track-btn {
+            padding: 16px 32px;
+            background: #23A2A5;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.2s;
+            white-space: nowrap;
+        }
+
+        .track-btn:hover {
+            background: #1a7a7c;
+            transform: translateY(-1px);
+        }
+
+        .track-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .track-hint {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+        }
+
+        .track-hint code {
+            background: #f5f7fa;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+
+        /* Results Section */
+        .track-results {
+            display: none;
+            border-top: 1px solid #e1e8ed;
+        }
+
+        .track-results.active {
+            display: block;
+        }
+
+        .result-header {
+            padding: 30px 40px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e1e8ed;
+        }
+
+        .result-id {
+            font-family: monospace;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #23A2A5;
+            margin-bottom: 8px;
+        }
+
+        .result-title {
+            font-size: 1.1rem;
+            color: #2c3e50;
+            margin: 0;
+        }
+
+        .result-body {
+            padding: 30px 40px;
+        }
+
+        .status-timeline {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .status-timeline::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: #e1e8ed;
+            z-index: 0;
+        }
+
+        .timeline-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .timeline-dot {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #e1e8ed;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+            transition: all 0.3s;
+        }
+
+        .timeline-dot svg {
+            width: 20px;
+            height: 20px;
+            color: white;
+        }
+
+        .timeline-step.completed .timeline-dot {
+            background: #27ae60;
+        }
+
+        .timeline-step.current .timeline-dot {
+            background: #23A2A5;
+            box-shadow: 0 0 0 8px rgba(35, 162, 165, 0.2);
+            animation: pulse 2s infinite;
+        }
+
+        .timeline-step.rejected .timeline-dot {
+            background: #e74c3c;
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 8px rgba(35, 162, 165, 0.2); }
+            50% { box-shadow: 0 0 0 12px rgba(35, 162, 165, 0.1); }
+        }
+
+        .timeline-label {
+            font-size: 0.8rem;
+            color: #7f8c8d;
+            text-align: center;
+        }
+
+        .timeline-step.completed .timeline-label,
+        .timeline-step.current .timeline-label {
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 24px;
+        }
+
+        .detail-item {
+            padding: 16px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .detail-label {
+            font-size: 0.75rem;
+            color: #7f8c8d;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .detail-value {
+            font-size: 1rem;
+            color: #2c3e50;
+            font-weight: 500;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .status-badge.new { background: #e8f4fd; color: #2980b9; }
+        .status-badge.assigned { background: #fef9e7; color: #d68910; }
+        .status-badge.in_progress { background: #fdf2e9; color: #e67e22; }
+        .status-badge.resolved { background: #eafaf1; color: #27ae60; }
+        .status-badge.closed { background: #f4f6f7; color: #7f8c8d; }
+        .status-badge.rejected { background: #fdedec; color: #e74c3c; }
+
+        .priority-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .priority-badge.critical { background: #e74c3c; color: white; }
+        .priority-badge.high { background: #f39c12; color: white; }
+        .priority-badge.medium { background: #3498db; color: white; }
+        .priority-badge.low { background: #95a5a6; color: white; }
+
+        /* Error State */
+        .track-error {
+            display: none;
+            padding: 20px 40px;
+            background: #fdedec;
+            border-top: 1px solid #f5c6cb;
+        }
+
+        .track-error.active {
+            display: block;
+        }
+
+        .error-text {
+            color: #721c24;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Loading State */
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .track-hero h1 { font-size: 1.8rem; }
+            .track-input-group { flex-direction: column; }
+            .track-form-section, .result-header, .result-body { padding: 24px; }
+            .status-timeline { flex-wrap: wrap; gap: 20px; }
+            .status-timeline::before { display: none; }
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e1e8ed;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .quick-action-btn {
+            padding: 10px 20px;
+            border: 2px solid #e1e8ed;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .quick-action-btn:hover {
+            border-color: #23A2A5;
+            color: #23A2A5;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <a href="index.html" class="nav-brand">
+                <img src="images/gba-logo.png" alt="GBA" class="brand-logo">
+                Corporations of Greater Bengaluru
+            </a>
+            <div class="hamburger" onclick="toggleMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <div class="nav-tabs" id="navTabs">
+                <a href="index.html" class="nav-tab">Home</a>
+                <div class="dropdown">
+                    <button class="dropdown-toggle" onclick="toggleDropdown(event)">
+                        Corporations
+                        <span class="dropdown-arrow">▼</span>
+                    </button>
+                    <div class="dropdown-menu">
+                        <a href="north.html" class="dropdown-item">Bengaluru North</a>
+                        <a href="south.html" class="dropdown-item">Bengaluru South</a>
+                        <a href="east.html" class="dropdown-item">Bengaluru East</a>
+                        <a href="west.html" class="dropdown-item">Bengaluru West</a>
+                        <a href="central.html" class="dropdown-item">Bengaluru Central</a>
+                    </div>
+                </div>
+                <a href="compare.html" class="nav-tab">Compare</a>
+                <a href="track.html" class="nav-tab active">Track Complaint</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="track-hero">
+        <div class="container">
+            <h1>Track Your Complaint</h1>
+            <p>Enter your complaint number to check the current status and timeline of your grievance.</p>
+        </div>
+    </section>
+
+    <!-- Track Card -->
+    <div class="track-container">
+        <div class="track-card">
+            <div class="track-form-section">
+                <div class="track-input-group">
+                    <input type="text" id="complaintNumber" class="track-input"
+                        placeholder="Enter Complaint Number (e.g., NOR-26-000001)"
+                        autocomplete="off">
+                    <button class="track-btn" id="trackBtn" onclick="trackComplaint()">
+                        <span id="btnText">Track Status</span>
+                        <span id="btnLoader" style="display: none;" class="loading-spinner"></span>
+                    </button>
+                </div>
+                <p class="track-hint">
+                    Your complaint number was sent to you via SMS/Email. Format: <code>XXX-YY-NNNNNN</code>
+                </p>
+            </div>
+
+            <!-- Error State -->
+            <div class="track-error" id="trackError">
+                <p class="error-text">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="15" y1="9" x2="9" y2="15"></line>
+                        <line x1="9" y1="9" x2="15" y2="15"></line>
+                    </svg>
+                    <span id="errorText">Complaint not found. Please check the number and try again.</span>
+                </p>
+            </div>
+
+            <!-- Results Section -->
+            <div class="track-results" id="trackResults">
+                <div class="result-header">
+                    <div class="result-id" id="resultId">NOR-26-000001</div>
+                    <p class="result-title" id="resultTitle">Loading...</p>
+                </div>
+
+                <div class="result-body">
+                    <!-- Status Timeline -->
+                    <div class="status-timeline" id="statusTimeline">
+                        <div class="timeline-step" data-status="new">
+                            <div class="timeline-dot">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                    <polyline points="14 2 14 8 20 8"></polyline>
+                                </svg>
+                            </div>
+                            <span class="timeline-label">Submitted</span>
+                        </div>
+                        <div class="timeline-step" data-status="assigned">
+                            <div class="timeline-dot">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="8.5" cy="7" r="4"></circle>
+                                    <line x1="20" y1="8" x2="20" y2="14"></line>
+                                    <line x1="23" y1="11" x2="17" y2="11"></line>
+                                </svg>
+                            </div>
+                            <span class="timeline-label">Assigned</span>
+                        </div>
+                        <div class="timeline-step" data-status="in_progress">
+                            <div class="timeline-dot">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <polyline points="12 6 12 12 16 14"></polyline>
+                                </svg>
+                            </div>
+                            <span class="timeline-label">In Progress</span>
+                        </div>
+                        <div class="timeline-step" data-status="resolved">
+                            <div class="timeline-dot">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                                </svg>
+                            </div>
+                            <span class="timeline-label">Resolved</span>
+                        </div>
+                    </div>
+
+                    <!-- Details Grid -->
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <div class="detail-label">Current Status</div>
+                            <div class="detail-value" id="detailStatus">
+                                <span class="status-badge new">New</span>
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Priority</div>
+                            <div class="detail-value" id="detailPriority">
+                                <span class="priority-badge medium">Medium</span>
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Department</div>
+                            <div class="detail-value" id="detailDepartment">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Corporation</div>
+                            <div class="detail-value" id="detailCorporation">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Submitted On</div>
+                            <div class="detail-value" id="detailCreated">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Last Updated</div>
+                            <div class="detail-value" id="detailUpdated">-</div>
+                        </div>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="detail-item" style="margin-top: 24px;">
+                        <div class="detail-label">Description</div>
+                        <div class="detail-value" id="detailDescription" style="line-height: 1.6;">-</div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="quick-actions">
+                        <button class="quick-action-btn" onclick="shareComplaint()">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="18" cy="5" r="3"></circle>
+                                <circle cx="6" cy="12" r="3"></circle>
+                                <circle cx="18" cy="19" r="3"></circle>
+                                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                            </svg>
+                            Share
+                        </button>
+                        <button class="quick-action-btn" onclick="printComplaint()">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                                <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                                <rect x="6" y="14" width="12" height="8"></rect>
+                            </svg>
+                            Print
+                        </button>
+                        <button class="quick-action-btn" onclick="contactSupport()">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                            </svg>
+                            Contact Support
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2026 Corporations of Greater Bengaluru. Data sourced from <a href="https://data.opencity.in" target="_blank">OpenCity.in</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/script.js?v=10"></script>
+    <script>
+        // Supabase config
+        const SUPABASE_URL = 'https://abblyaukkoxmgzwretvm.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_I1nVJvhGbNwAgSiypEq1gg_KkMaKtar';
+
+        let supabase;
+        let currentComplaint = null;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize Supabase
+            if (typeof window.supabase !== 'undefined') {
+                supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            }
+
+            // Check URL for complaint number
+            const urlParams = new URLSearchParams(window.location.search);
+            const complaintNum = urlParams.get('id') || urlParams.get('complaint');
+            if (complaintNum) {
+                document.getElementById('complaintNumber').value = complaintNum;
+                trackComplaint();
+            }
+
+            // Enter key to submit
+            document.getElementById('complaintNumber').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') trackComplaint();
+            });
+        });
+
+        async function trackComplaint() {
+            const input = document.getElementById('complaintNumber');
+            const complaintNumber = input.value.trim().toUpperCase();
+
+            if (!complaintNumber) {
+                showError('Please enter a complaint number.');
+                return;
+            }
+
+            // Show loading
+            const btn = document.getElementById('trackBtn');
+            const btnText = document.getElementById('btnText');
+            const btnLoader = document.getElementById('btnLoader');
+            btn.disabled = true;
+            btnText.style.display = 'none';
+            btnLoader.style.display = 'inline-block';
+
+            hideError();
+            hideResults();
+
+            try {
+                if (!supabase) {
+                    throw new Error('Unable to connect to the service. Please try again later.');
+                }
+
+                const { data, error } = await supabase
+                    .from('complaints')
+                    .select(`
+                        *,
+                        department:departments(name),
+                        corporation:corporations(name, short_name)
+                    `)
+                    .eq('complaint_number', complaintNumber)
+                    .single();
+
+                if (error || !data) {
+                    throw new Error('Complaint not found. Please check the number and try again.');
+                }
+
+                currentComplaint = data;
+                displayResults(data);
+
+            } catch (error) {
+                console.error('Track error:', error);
+                showError(error.message);
+            } finally {
+                btn.disabled = false;
+                btnText.style.display = 'inline';
+                btnLoader.style.display = 'none';
+            }
+        }
+
+        function displayResults(complaint) {
+            // Update header
+            document.getElementById('resultId').textContent = complaint.complaint_number;
+            document.getElementById('resultTitle').textContent = complaint.title || 'No title provided';
+
+            // Update timeline
+            updateTimeline(complaint.status);
+
+            // Update details
+            document.getElementById('detailStatus').innerHTML =
+                `<span class="status-badge ${complaint.status}">${formatStatus(complaint.status)}</span>`;
+
+            document.getElementById('detailPriority').innerHTML =
+                `<span class="priority-badge ${complaint.priority}">${complaint.priority}</span>`;
+
+            document.getElementById('detailDepartment').textContent =
+                complaint.department?.name || 'Not yet assigned';
+
+            document.getElementById('detailCorporation').textContent =
+                complaint.corporation?.name || '-';
+
+            document.getElementById('detailCreated').textContent =
+                formatDateTime(complaint.created_at);
+
+            document.getElementById('detailUpdated').textContent =
+                formatDateTime(complaint.updated_at);
+
+            document.getElementById('detailDescription').textContent =
+                complaint.description || 'No description provided.';
+
+            // Show results
+            document.getElementById('trackResults').classList.add('active');
+
+            // Update URL
+            history.replaceState(null, '', `?id=${complaint.complaint_number}`);
+        }
+
+        function updateTimeline(currentStatus) {
+            const statusOrder = ['new', 'assigned', 'in_progress', 'resolved'];
+            const currentIndex = statusOrder.indexOf(currentStatus);
+
+            document.querySelectorAll('.timeline-step').forEach((step, index) => {
+                step.classList.remove('completed', 'current', 'rejected');
+
+                if (currentStatus === 'rejected') {
+                    if (index === 0) step.classList.add('completed');
+                    else if (step.dataset.status === 'resolved') step.classList.add('rejected');
+                } else if (currentStatus === 'closed') {
+                    step.classList.add('completed');
+                } else {
+                    if (index < currentIndex) step.classList.add('completed');
+                    else if (index === currentIndex) step.classList.add('current');
+                }
+            });
+        }
+
+        function formatStatus(status) {
+            const map = {
+                'new': 'Submitted',
+                'assigned': 'Assigned',
+                'in_progress': 'In Progress',
+                'resolved': 'Resolved',
+                'closed': 'Closed',
+                'rejected': 'Rejected'
+            };
+            return map[status] || status;
+        }
+
+        function formatDateTime(dateStr) {
+            if (!dateStr) return '-';
+            return new Date(dateStr).toLocaleString('en-IN', {
+                day: 'numeric',
+                month: 'short',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function showError(message) {
+            document.getElementById('errorText').textContent = message;
+            document.getElementById('trackError').classList.add('active');
+        }
+
+        function hideError() {
+            document.getElementById('trackError').classList.remove('active');
+        }
+
+        function hideResults() {
+            document.getElementById('trackResults').classList.remove('active');
+        }
+
+        function shareComplaint() {
+            if (!currentComplaint) return;
+
+            const url = window.location.href;
+            const text = `Track complaint ${currentComplaint.complaint_number}: ${currentComplaint.title}`;
+
+            if (navigator.share) {
+                navigator.share({ title: 'Complaint Status', text, url });
+            } else {
+                navigator.clipboard.writeText(url);
+                alert('Link copied to clipboard!');
+            }
+        }
+
+        function printComplaint() {
+            window.print();
+        }
+
+        function contactSupport() {
+            const corpCode = currentComplaint?.corporation?.short_name?.toLowerCase() || 'central';
+            window.location.href = `${corpCode}.html#contact`;
+        }
+    </script>
+</body>
+</html>
