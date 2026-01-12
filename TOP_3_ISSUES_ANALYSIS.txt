@@ -1,0 +1,173 @@
+TOP 3 ISSUES BY CORPORATION
+Based on 766,648 total BBMP grievances (2020-2025)
+Data Source: https://data.opencity.in/dataset/bbmp-grievances-data
+
+================================================================================
+BENGALURU NORTH CITY CORPORATION
+================================================================================
+Total Grievances: 122,859
+Resolution Rate: 92.99%
+
+Rank  Issue Category                      Count      Percentage
+────────────────────────────────────────────────────────────────────────────
+ 🥇   Electrical                          51,025     41.5%
+ 🥈   Solid Waste (Garbage) Related       33,112     27.0%
+ 🥉   Road Maintenance (Engineering)      17,301     14.1%
+────────────────────────────────────────────────────────────────────────────
+      TOP 3 TOTAL:                        101,438    82.6%
+
+
+================================================================================
+BENGALURU SOUTH CITY CORPORATION
+================================================================================
+Total Grievances: 140,892
+Resolution Rate: 91.0%
+
+Rank  Issue Category                      Count      Percentage
+────────────────────────────────────────────────────────────────────────────
+ 🥇   Electrical                          56,339     40.0%
+ 🥈   Solid Waste (Garbage) Related       35,144     24.9%
+ 🥉   Road Maintenance (Engineering)      21,538     15.3%
+────────────────────────────────────────────────────────────────────────────
+      TOP 3 TOTAL:                        113,021    80.2%
+
+
+================================================================================
+BENGALURU EAST CITY CORPORATION
+================================================================================
+Total Grievances: 72,731
+Resolution Rate: 90.96%
+
+Rank  Issue Category                      Count      Percentage
+────────────────────────────────────────────────────────────────────────────
+ 🥇   Electrical                          23,148     31.8%
+ 🥈   Solid Waste (Garbage) Related       18,424     25.3%
+ 🥉   Road Maintenance (Engineering)      14,383     19.8%
+────────────────────────────────────────────────────────────────────────────
+      TOP 3 TOTAL:                        55,955     76.9%
+
+
+================================================================================
+BENGALURU WEST CITY CORPORATION
+================================================================================
+Total Grievances: 97,789
+Resolution Rate: 92.29%
+
+Rank  Issue Category                      Count      Percentage
+────────────────────────────────────────────────────────────────────────────
+ 🥇   Electrical                          47,670     48.7%  ⚡ HIGHEST %
+ 🥈   Solid Waste (Garbage) Related       20,029     20.5%
+ 🥉   Road Maintenance (Engineering)      11,736     12.0%
+────────────────────────────────────────────────────────────────────────────
+      TOP 3 TOTAL:                        79,435     81.2%
+
+
+================================================================================
+BENGALURU CENTRAL CITY CORPORATION
+================================================================================
+Total Grievances: 43,726
+Resolution Rate: 91.44%
+
+Rank  Issue Category                      Count      Percentage
+────────────────────────────────────────────────────────────────────────────
+ 🥇   Electrical                          37.8%      16,520     37.8%
+ 🥈   Solid Waste (Garbage) Related       12,757     29.2%  🗑️ HIGHEST %
+ 🥉   Road Maintenance (Engineering)      6,376      14.6%
+────────────────────────────────────────────────────────────────────────────
+      TOP 3 TOTAL:                        35,653     81.6%
+
+
+================================================================================
+CITY-WIDE PATTERNS
+================================================================================
+
+CONSISTENT ACROSS ALL 5 CORPORATIONS:
+✅ Same Top 3 Categories (in same order)
+   1. Electrical Issues (Street lights, park lights, junction boxes)
+   2. Solid Waste Management (Garbage collection, disposal)
+   3. Road Maintenance (Potholes, road damage)
+
+ELECTRICAL ISSUES:
+• Total across city: 194,702 complaints (25.4% of all grievances)
+• Highest %: West Corporation (48.7%)
+• Lowest %: East Corporation (31.8%)
+• Includes: Street lights, park lights, junction boxes, power issues
+
+SOLID WASTE ISSUES:
+• Total across city: 119,466 complaints (15.6% of all grievances)
+• Highest %: Central Corporation (29.2%)
+• Lowest %: West Corporation (20.5%)
+• Includes: Garbage collection, disposal, bin issues, littering
+
+ROAD MAINTENANCE ISSUES:
+• Total across city: 71,334 complaints (9.3% of all grievances)
+• Highest %: East Corporation (19.8%)
+• Lowest %: West Corporation (12.0%)
+• Includes: Potholes, road damage, footpath issues
+
+TOP 3 CATEGORIES REPRESENT:
+• 76.9% - 82.6% of all grievances in each corporation
+• City-wide average: ~80% of all complaints
+
+================================================================================
+KEY INSIGHTS
+================================================================================
+
+1. UNIVERSAL CHALLENGES:
+   All 5 corporations face the same top 3 issues, suggesting city-wide
+   infrastructure and service challenges rather than localized problems.
+
+2. ELECTRICAL DOMINANCE:
+   Electrical issues are the #1 complaint across ALL corporations, ranging
+   from 31.8% to 48.7% of total grievances. This indicates widespread
+   street lighting and electrical infrastructure problems.
+
+3. WEST CORPORATION ELECTRICAL CRISIS:
+   West Corporation has the highest electrical complaint rate (48.7%),
+   nearly half of all their grievances. This warrants urgent attention
+   to electrical infrastructure in western Bengaluru.
+
+4. CENTRAL'S WASTE CHALLENGE:
+   Central Corporation has the highest solid waste complaint rate (29.2%),
+   suggesting garbage management is particularly problematic in the city core.
+
+5. EAST'S ROAD PROBLEMS:
+   East Corporation has the highest road maintenance complaint rate (19.8%),
+   nearly 1 in 5 complaints, indicating significant road infrastructure issues
+   in eastern Bengaluru (possibly due to rapid development/IT corridor growth).
+
+6. SERVICE CONCENTRATION:
+   By focusing on just these 3 categories, corporations could address
+   ~80% of all citizen complaints, enabling targeted resource allocation.
+
+================================================================================
+RECOMMENDATIONS
+================================================================================
+
+1. CITY-WIDE ELECTRICAL AUDIT:
+   • Conduct comprehensive street light infrastructure assessment
+   • Deploy preventive maintenance programs
+   • Consider LED conversion to reduce failures
+   • Establish 24/7 electrical response teams
+
+2. TARGETED INTERVENTIONS:
+   • West: Emergency electrical infrastructure upgrade
+   • Central: Enhanced garbage collection frequency
+   • East: Road resurfacing and pothole filling program
+
+3. PREDICTIVE MAINTENANCE:
+   • Use complaint data to identify hotspots
+   • Schedule preventive maintenance before failures occur
+   • Deploy sensors for real-time monitoring
+
+4. RESOURCE ALLOCATION:
+   • Allocate 80% of resources to top 3 categories
+   • Create specialized teams for each category
+   • Set category-specific SLAs and KPIs
+
+5. CITIZEN COMMUNICATION:
+   • Publish category-specific action plans
+   • Share progress on electrical, waste, and road improvements
+   • Set realistic expectations for resolution timelines
+
+================================================================================

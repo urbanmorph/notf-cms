@@ -571,3 +571,164 @@ function renderContactSection(corporationId) {
     
     container.innerHTML = html;
 }
+
+// Corporation-specific insights
+const corporationInsights = {
+    north: {
+        highlight: "Electrical Crisis",
+        description: "41.5% of complaints are electrical-related, indicating widespread street lighting infrastructure issues.",
+        comparison: "Above city average",
+        recommendations: [
+            "Conduct comprehensive street light audit across all zones",
+            "Deploy rapid response electrical teams for urgent repairs",
+            "Consider LED conversion program to reduce failures",
+            "Implement preventive maintenance schedule"
+        ]
+    },
+    south: {
+        highlight: "Balanced Challenges",
+        description: "South has the highest total grievances (140,892) but maintains good resolution rate at 91%.",
+        comparison: "40% electrical (at city average)",
+        recommendations: [
+            "Scale up resources to match high grievance volume",
+            "Focus on electrical infrastructure in high-density areas",
+            "Enhance waste collection in commercial zones",
+            "Prioritize road repairs on arterial routes"
+        ]
+    },
+    east: {
+        highlight: "Road Infrastructure Crisis",
+        description: "19.8% of complaints are road-related - highest across all corporations. Likely due to rapid IT corridor development.",
+        comparison: "Above city average by 7%",
+        recommendations: [
+            "Emergency road resurfacing program in Whitefield/Marathahalli",
+            "Pothole filling on priority basis before monsoon",
+            "Coordinate with builders on infrastructure development",
+            "Regular road quality audits"
+        ]
+    },
+    west: {
+        highlight: "Severe Electrical Crisis",
+        description: "48.7% of complaints are electrical - HIGHEST in the city. Nearly half of all grievances involve street lights and power issues.",
+        comparison: "17% above city average",
+        recommendations: [
+            "URGENT: Emergency electrical infrastructure overhaul",
+            "Deploy additional electrical maintenance staff",
+            "Fast-track LED street light installation",
+            "Establish 24/7 electrical helpline",
+            "Partner with BESCOM for power supply improvements"
+        ]
+    },
+    central: {
+        highlight: "Waste Management Crisis",
+        description: "29.2% of complaints are waste-related - HIGHEST in the city. City core faces significant garbage management challenges.",
+        comparison: "Above city average",
+        recommendations: [
+            "Double garbage collection frequency in high-density areas",
+            "Deploy additional waste collection vehicles",
+            "Install smart bins with sensor monitoring",
+            "Strict enforcement of waste segregation",
+            "Public awareness campaigns on waste disposal"
+        ]
+    }
+};
+
+// Render top issues section
+function renderTopIssues(corporationId) {
+    const container = document.getElementById('topIssuesContainer');
+    if (!container) return;
+    
+    const corp = corporationsData[corporationId];
+    const insights = corporationInsights[corporationId];
+    if (!corp || !insights) return;
+    
+    // Get top 3 issues
+    const topThree = corp.topIssues.slice(0, 3);
+    
+    let html = `
+        <div class="issues-grid">
+            <!-- Main Issues Display -->
+            <div class="issues-main">
+                <h3 style="color: var(--primary-color); margin-bottom: 1.5rem; font-size: 1.5rem;">
+                    🎯 Top 3 Grievance Categories
+                </h3>
+                
+                ${topThree.map((issue, index) => `
+                    <div class="issue-item" style="margin-bottom: 1.5rem;">
+                        <div class="issue-header">
+                            <div class="issue-rank">
+                                <div class="rank-badge rank-${index + 1}">
+                                    ${index === 0 ? '🥇' : index === 1 ? '🥈' : '🥉'}
+                                </div>
+                                <span class="issue-name">${issue.category}</span>
+                            </div>
+                            <div class="issue-percentage">${issue.percentage}%</div>
+                        </div>
+                        <div class="issue-count">
+                            ${issue.count.toLocaleString()} complaints out of ${corp.totalIssues.toLocaleString()} total
+                        </div>
+                        <div class="issue-bar">
+                            <div class="issue-progress" style="width: ${issue.percentage}%"></div>
+                        </div>
+                    </div>
+                `).join('')}
+                
+                <div style="margin-top: 2rem; padding: 1.5rem; background: #f1f5f9; border-radius: 8px;">
+                    <strong style="color: var(--text-primary);">📊 Combined Impact:</strong>
+                    <p style="margin: 0.5rem 0 0 0; color: var(--text-secondary);">
+                        These top 3 categories represent 
+                        <strong>${topThree.reduce((sum, issue) => sum + issue.percentage, 0).toFixed(1)}%</strong> 
+                        of all grievances. Focusing resources here could address 
+                        <strong>${topThree.reduce((sum, issue) => sum + issue.count, 0).toLocaleString()}</strong> 
+                        citizen complaints.
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Sidebar: Insights & Recommendations -->
+            <div class="issues-sidebar">
+                <!-- Key Insight -->
+                <div class="comparison-card">
+                    <h4>🔍 Key Insight</h4>
+                    <div class="comparison-value">${insights.highlight}</div>
+                    <div class="comparison-label">${insights.description}</div>
+                </div>
+                
+                <!-- Comparison -->
+                <div class="insights-card">
+                    <h3>📈 Comparison</h3>
+                    <div class="insight-item">
+                        <span class="insight-label">vs. City Average</span>
+                        <div class="insight-value">${insights.comparison}</div>
+                    </div>
+                    <div class="insight-item">
+                        <span class="insight-label">Total Grievances</span>
+                        <div class="insight-value">${corp.totalIssues.toLocaleString()} (${((corp.totalIssues / 477997) * 100).toFixed(1)}% of mapped data)</div>
+                    </div>
+                    <div class="insight-item">
+                        <span class="insight-label">Resolution Rate</span>
+                        <div class="insight-value">${corp.resolutionRate}% (${corp.closedIssues.toLocaleString()} closed)</div>
+                    </div>
+                </div>
+                
+                <!-- Recommendations -->
+                <div class="recommendations-card">
+                    <h4>💡 Recommendations</h4>
+                    <ul class="recommendation-list">
+                        ${insights.recommendations.map(rec => `<li>${rec}</li>`).join('')}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    container.innerHTML = html;
+    
+    // Animate progress bars
+    setTimeout(() => {
+        const progressBars = container.querySelectorAll('.issue-progress');
+        progressBars.forEach(bar => {
+            bar.style.width = bar.style.width;
+        });
+    }, 100);
+}

@@ -319,6 +319,9 @@ function loadCorporationDashboard(corporationId) {
     // Initialize map
     initMap(corporationId);
     
+    // Render top issues section
+    renderTopIssues(corporationId);
+    
     // Render contact section
     renderContactSection(corporationId);
 }
