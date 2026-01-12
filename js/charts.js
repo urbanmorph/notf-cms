@@ -589,12 +589,28 @@ const corporationInsights = {
 
 // Render top issues section
 function renderTopIssues(corporationId) {
+    console.log('renderTopIssues called with:', corporationId);
+    
     const container = document.getElementById('topIssuesContainer');
-    if (!container) return;
+    console.log('topIssuesContainer element:', container);
+    
+    if (!container) {
+        console.error('topIssuesContainer not found!');
+        return;
+    }
     
     const corp = corporationsData[corporationId];
+    console.log('corp data:', corp);
+    
     const insights = corporationInsights[corporationId];
-    if (!corp || !insights) return;
+    console.log('insights data:', insights);
+    
+    if (!corp || !insights) {
+        console.error('Missing data - corp:', !!corp, 'insights:', !!insights);
+        return;
+    }
+    
+    console.log('Generating HTML for top issues...');
     
     // Get top 3 issues
     const topThree = corp.topIssues.slice(0, 3);
@@ -676,7 +692,9 @@ function renderTopIssues(corporationId) {
         </div>
     `;
     
+    console.log('Setting innerHTML for topIssuesContainer');
     container.innerHTML = html;
+    console.log('HTML set successfully');
     
     // Animate progress bars
     setTimeout(() => {
