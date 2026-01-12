@@ -20,6 +20,9 @@ function initializeComplaintForm() {
     // Add subcategory select if needed
     const form = issueSelect.closest('form');
     if (form && !document.getElementById('subCategorySelect')) {
+        const parentElement = issueSelect.closest('.mb-3');
+        if (!parentElement) return; // Exit if parent doesn't exist
+        
         const subCategoryDiv = document.createElement('div');
         subCategoryDiv.className = 'mb-3';
         subCategoryDiv.id = 'subCategoryContainer';
@@ -30,7 +33,7 @@ function initializeComplaintForm() {
                 <option value="">Select specific issue</option>
             </select>
         `;
-        issueSelect.closest('.mb-3').after(subCategoryDiv);
+        parentElement.after(subCategoryDiv);
         
         // Listen for category changes
         issueSelect.addEventListener('change', function() {
@@ -703,4 +706,58 @@ function renderTopIssues(corporationId) {
             bar.style.width = bar.style.width;
         });
     }, 100);
+}
+
+// Render compact top issues section (appears after stats cards)
+function renderTopIssuesCompact(corporationId) {
+    const container = document.getElementById('topIssuesContainer');
+    if (!container) return;
+    
+    const corp = corporationsData[corporationId];
+    const insights = corporationInsights[corporationId];
+    if (!corp || !insights) return;
+    
+    // Get top 3 issues
+    const topThree = corp.topIssues.slice(0, 3);
+    
+    let html = `
+        <div class="top-issues-compact">
+            <h3>🎯 Top 3 Issues</h3>
+            
+            <div class="issues-compact-grid">
+                ${topThree.map((issue, index) => `
+                    <div class="issue-compact-card">
+                        <div class="issue-compact-header">
+                            <div class="rank-badge-compact rank-${index + 1}">
+                                ${index === 0 ? '🥇' : index === 1 ? '🥈' : '🥉'}
+                            </div>
+                            <span class="issue-compact-name">${issue.category}</span>
+                        </div>
+                        <div class="issue-compact-percentage">${issue.percentage}%</div>
+                        <div class="issue-compact-count">${issue.count.toLocaleString()} complaints</div>
+                        <div class="issue-compact-bar">
+                            <div class="issue-compact-progress" style="width: ${issue.percentage}%"></div>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+            
+            <div class="insights-compact">
+                <div class="insight-compact-item">
+                    <span class="insight-compact-label">Combined Impact</span>
+                    <div class="insight-compact-value">${topThree.reduce((sum, issue) => sum + issue.percentage, 0).toFixed(1)}%</div>
+                </div>
+                <div class="insight-compact-item">
+                    <span class="insight-compact-label">Total Complaints</span>
+                    <div class="insight-compact-value">${topThree.reduce((sum, issue) => sum + issue.count, 0).toLocaleString()}</div>
+                </div>
+                <div class="insight-compact-item">
+                    <span class="insight-compact-label">Key Challenge</span>
+                    <div class="insight-compact-value" style="font-size: 0.9rem;">${insights.highlight}</div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    container.innerHTML = html;
 }

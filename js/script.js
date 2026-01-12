@@ -316,11 +316,11 @@ function loadCorporationDashboard(corporationId) {
         resolutionRateEl.textContent = corp.resolutionRate + '%';
     }
     
+    // Render compact top issues section (after stats)
+    renderTopIssuesCompact(corporationId);
+    
     // Initialize map
     initMap(corporationId);
-    
-    // Render top issues section
-    renderTopIssues(corporationId);
     
     // Render contact section
     renderContactSection(corporationId);
