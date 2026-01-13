@@ -96,10 +96,18 @@
                 await waitForSupabase();
                 console.log('Supabase ready, checking session...');
 
-                // Check if already logged in - only redirect if session AND user exist
-                const session = await getSession();
-                if (session && session.user && session.access_token) {
-                    console.log('Valid session found, redirecting to dashboard...');
+                // Use getUser() to validate session with server (not just local storage)
+                const { data: { user }, error } = await supabaseClient.auth.getUser();
+
+                if (error) {
+                    console.log('Session validation error:', error.message);
+                    // Clear any stale session data
+                    await supabaseClient.auth.signOut();
+                    return; // Stay on login page
+                }
+
+                if (user) {
+                    console.log('Valid authenticated user found, redirecting to dashboard...');
                     window.location.href = '/admin/dashboard.html';
                 } else {
                     console.log('No valid session, staying on login page');
