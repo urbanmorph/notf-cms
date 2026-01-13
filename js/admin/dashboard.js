@@ -267,8 +267,8 @@ async function loadRecentComplaints() {
             .from('complaints')
             .select(`
                 *,
-                department:departments(name),
-                category:issue_categories(name)
+                department:departments!complaints_department_id_fkey(name),
+                category:issue_categories!complaints_category_id_fkey(name)
             `)
             .eq('corporation_id', adminUser.corporation_id)
             .order('created_at', { ascending: false })
@@ -350,7 +350,7 @@ async function loadCharts() {
         // Get department distribution
         const { data: deptData } = await supabaseClient
             .from('complaints')
-            .select('department:departments(name)')
+            .select('department:departments!complaints_department_id_fkey(name)')
             .eq('corporation_id', corporationId);
 
         // Process status data
