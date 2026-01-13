@@ -158,46 +158,77 @@ async function initComplaintFormWithSupabase() {
     await loadCategories();
 }
 
-// Load issue categories from Supabase
+// Load issue categories from Supabase (hierarchical)
 async function loadCategories() {
     if (!window.supabaseClient) return;
 
     try {
-        const { data: departments, error } = await window.supabaseClient
-            .from('departments')
-            .select(`
-                id,
-                code,
-                name,
-                issue_categories (
-                    id,
-                    code,
-                    name
-                )
-            `)
-            .order('name');
+        // Load main categories (parent_id IS NULL)
+        const { data: mainCategories, error: mainError } = await window.supabaseClient
+            .from('issue_categories')
+            .select('id, code, name')
+            .is('parent_id', null)
+            .order('display_order');
 
-        if (error) throw error;
+        if (mainError) throw mainError;
+
+        // Load all subcategories
+        const { data: subCategories, error: subError } = await window.supabaseClient
+            .from('issue_categories')
+            .select('id, code, name, parent_id')
+            .not('parent_id', 'is', null)
+            .order('display_order');
+
+        if (subError) throw subError;
 
         // Store for later use
-        window.departmentsData = departments;
+        window.categoriesData = {
+            main: mainCategories || [],
+            sub: subCategories || []
+        };
 
-        // Update the issue type dropdown if it exists
+        // Update the main category dropdown
         const issueTypeSelect = document.getElementById('issueType');
-        if (issueTypeSelect && departments) {
-            // Keep existing options or rebuild
-            const currentOptions = issueTypeSelect.innerHTML;
-            if (!currentOptions.includes('data-loaded')) {
-                let optionsHTML = '<option value="" data-loaded="true">Select Issue Type</option>';
-                departments.forEach(dept => {
-                    optionsHTML += `<option value="${dept.code}">${dept.name}</option>`;
-                });
-                issueTypeSelect.innerHTML = optionsHTML;
-            }
+        if (issueTypeSelect && mainCategories) {
+            let optionsHTML = '<option value="">Select Category</option>';
+            mainCategories.forEach(cat => {
+                optionsHTML += `<option value="${cat.id}" data-code="${cat.code}">${cat.name}</option>`;
+            });
+            issueTypeSelect.innerHTML = optionsHTML;
         }
+
+        // Add change listener to populate subcategories
+        if (issueTypeSelect) {
+            issueTypeSelect.addEventListener('change', populateSubcategories);
+        }
+
     } catch (error) {
         console.error('Error loading categories:', error);
     }
+}
+
+// Populate subcategory dropdown based on selected main category
+function populateSubcategories() {
+    const mainCategoryId = document.getElementById('issueType')?.value;
+    const subCategorySelect = document.getElementById('subCategory');
+
+    if (!subCategorySelect) return;
+
+    if (!mainCategoryId) {
+        subCategorySelect.innerHTML = '<option value="">Select subcategory</option>';
+        subCategorySelect.disabled = true;
+        return;
+    }
+
+    const subcategories = window.categoriesData?.sub?.filter(s => s.parent_id === mainCategoryId) || [];
+
+    let optionsHTML = '<option value="">Select subcategory</option>';
+    subcategories.forEach(sub => {
+        optionsHTML += `<option value="${sub.id}" data-code="${sub.code}">${sub.name}</option>`;
+    });
+
+    subCategorySelect.innerHTML = optionsHTML;
+    subCategorySelect.disabled = subcategories.length === 0;
 }
 
 // Submit complaint to Supabase
@@ -221,43 +252,33 @@ async function submitComplaintToSupabase(formData) {
         throw new Error('Unable to identify corporation. Please try again.');
     }
 
-    // Get department ID based on issue type
-    let departmentId = null;
-    if (formData.issueType) {
-        const { data: deptData } = await window.supabaseClient
-            .from('departments')
-            .select('id')
-            .eq('code', formData.issueType)
-            .single();
+    // Category ID - use subcategory if selected, otherwise main category
+    const categoryId = formData.subCategory || formData.issueType || null;
 
-        if (deptData) {
-            departmentId = deptData.id;
-        }
-    }
+    // ML Classification for auto-routing
+    const classification = classifyComplaint(formData.title || formData.categoryName, formData.description);
+    const priority = determinePriority(formData.title || formData.categoryName, formData.description);
 
-    // ML Classification
-    const classification = classifyComplaint(formData.title || formData.issueType, formData.description);
-    const priority = determinePriority(formData.title || formData.issueType, formData.description);
-
-    // Get ML suggested department ID
-    let mlDepartmentId = null;
-    if (classification.department) {
-        const { data: mlDept } = await window.supabaseClient
-            .from('departments')
-            .select('id')
-            .eq('code', classification.department)
-            .single();
-
-        if (mlDept) {
-            mlDepartmentId = mlDept.id;
+    // Get ML suggested category ID based on keywords
+    let mlCategoryId = null;
+    if (classification.department && window.categoriesData) {
+        // Try to find a matching category by code
+        const matchingCat = window.categoriesData.sub?.find(c =>
+            c.code.includes(classification.department)
+        ) || window.categoriesData.main?.find(c =>
+            c.code.includes(classification.department)
+        );
+        if (matchingCat) {
+            mlCategoryId = matchingCat.id;
         }
     }
 
     // Build complaint object
     const complaint = {
         corporation_id: corpData.id,
-        department_id: departmentId || mlDepartmentId,
-        title: formData.title || `${formData.issueType} Issue`,
+        category_id: categoryId,
+        ml_category_id: mlCategoryId,
+        title: formData.title || formData.categoryName || 'Citizen Complaint',
         description: formData.description,
         address: formData.address,
         landmark: formData.landmark,
@@ -266,7 +287,6 @@ async function submitComplaintToSupabase(formData) {
         citizen_email: formData.email,
         status: 'new',
         priority: priority,
-        ml_department_id: mlDepartmentId,
         ml_confidence: classification.confidence
     };
 
@@ -313,10 +333,15 @@ async function handleComplaintSubmit(event) {
         }
 
         // Gather form data from named fields
+        const mainCategorySelect = form.querySelector('[name="issueType"]');
+        const subCategorySelect = form.querySelector('[name="subCategory"]');
+
         const formData = {
             corporation: form.querySelector('[name="corporation"]')?.value || document.getElementById('complaintCorporation')?.value,
-            issueType: form.querySelector('[name="issueType"]')?.value,
-            title: form.querySelector('[name="issueType"]')?.selectedOptions?.[0]?.text || form.querySelector('[name="issueType"]')?.value,
+            issueType: mainCategorySelect?.value,
+            subCategory: subCategorySelect?.value || null,
+            categoryName: subCategorySelect?.selectedOptions?.[0]?.text || mainCategorySelect?.selectedOptions?.[0]?.text || 'General',
+            title: form.querySelector('[name="title"]')?.value || null,
             description: form.querySelector('[name="description"]')?.value,
             address: form.querySelector('[name="address"]')?.value,
             landmark: form.querySelector('[name="landmark"]')?.value,
