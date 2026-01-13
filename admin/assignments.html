@@ -733,6 +733,21 @@
             margin-top: 16px;
         }
 
+        .ml-badge {
+            background: #e8f8f5;
+            border: 1px solid #1abc9c;
+            color: #16a085;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            white-space: nowrap;
+            display: inline-block;
+            max-width: 120px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
         .ml-suggestion-header {
             display: flex;
             align-items: center;
@@ -901,7 +916,7 @@
                         <td>${c.address || c.ward || 'N/A'}</td>
                         <td title="${c.description || ''}">${truncateText(c.title || c.description, 40)}</td>
                         <td>${formatDate(c.created_at)}</td>
-                        <td>${c.ml_department?.name ? `<span class="ml-suggestion">${c.ml_department.name}</span>` : '-'}</td>
+                        <td>${c.ml_department?.name ? `<span class="ml-badge" title="${c.ml_department.name}">${c.ml_department.name}</span>` : '-'}</td>
                         <td>
                             <button class="action-btn" onclick="openAssignModal('${c.id}')" title="Assign">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
