@@ -151,6 +151,31 @@
                         <input type="text" name="landmark" class="form-input" placeholder="Nearby landmark (optional)">
                     </div>
                     <div class="form-group">
+                        <label class="form-label">Pin Location on Map</label>
+                        <div class="location-picker">
+                            <div class="location-actions">
+                                <button type="button" class="btn-location" onclick="useMyLocation()">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <circle cx="12" cy="12" r="3"></circle>
+                                        <line x1="12" y1="2" x2="12" y2="6"></line>
+                                        <line x1="12" y1="18" x2="12" y2="22"></line>
+                                        <line x1="2" y1="12" x2="6" y2="12"></line>
+                                        <line x1="18" y1="12" x2="22" y2="12"></line>
+                                    </svg>
+                                    Use My Location
+                                </button>
+                                <span class="location-status" id="locationStatus"></span>
+                            </div>
+                            <div id="locationMap" class="location-map"></div>
+                            <input type="hidden" name="latitude" id="complaintLatitude">
+                            <input type="hidden" name="longitude" id="complaintLongitude">
+                            <div class="location-coords" id="locationCoords" style="display: none;">
+                                <small>📍 <span id="coordsDisplay"></span></small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
                         <label class="form-label">Description *</label>
                         <textarea name="description" class="form-textarea" required placeholder="Please describe the issue in detail"></textarea>
                     </div>

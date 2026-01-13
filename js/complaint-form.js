@@ -1,6 +1,10 @@
 // Citizen Complaint Form - Supabase Integration
 // This file handles the public complaint submission form
 
+// Location picker state
+let locationMap = null;
+let locationMarker = null;
+
 // ML Classification for auto-routing
 const CLASSIFICATION_RULES = [
     {
@@ -278,7 +282,9 @@ async function handleComplaintSubmit(event) {
             landmark: form.querySelector('[name="landmark"]')?.value,
             name: form.querySelector('[name="name"]')?.value,
             phone: form.querySelector('[name="phone"]')?.value,
-            email: form.querySelector('[name="email"]')?.value
+            email: form.querySelector('[name="email"]')?.value,
+            latitude: form.querySelector('[name="latitude"]')?.value || null,
+            longitude: form.querySelector('[name="longitude"]')?.value || null
         };
 
         console.log('Submitting complaint:', formData);
@@ -371,6 +377,185 @@ async function trackComplaint(complaintNumber) {
     }
 }
 
+// Initialize location map in the complaint form
+function initLocationMap() {
+    const mapContainer = document.getElementById('locationMap');
+    if (!mapContainer || locationMap) return;
+
+    // Default center (Bengaluru)
+    const defaultLat = 12.9716;
+    const defaultLng = 77.5946;
+
+    // Check if Leaflet is available
+    if (typeof L === 'undefined') {
+        mapContainer.innerHTML = '<p style="text-align: center; padding: 2rem; color: #64748b;">Map loading...</p>';
+        return;
+    }
+
+    // Initialize map
+    locationMap = L.map('locationMap').setView([defaultLat, defaultLng], 12);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors',
+        maxZoom: 19
+    }).addTo(locationMap);
+
+    // Add click handler to place marker
+    locationMap.on('click', function(e) {
+        setLocationMarker(e.latlng.lat, e.latlng.lng);
+    });
+
+    // Add instruction overlay
+    const instructionDiv = L.DomUtil.create('div', 'map-instruction');
+    instructionDiv.innerHTML = 'Click on map to set location';
+    instructionDiv.style.cssText = 'position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.7); color: white; padding: 4px 12px; border-radius: 4px; font-size: 0.75rem; z-index: 1000; pointer-events: none;';
+    mapContainer.appendChild(instructionDiv);
+}
+
+// Set marker at specified location
+function setLocationMarker(lat, lng) {
+    if (!locationMap) return;
+
+    // Remove existing marker
+    if (locationMarker) {
+        locationMap.removeLayer(locationMarker);
+    }
+
+    // Create custom icon
+    const markerIcon = L.divIcon({
+        className: 'custom-marker',
+        html: '<div style="background: #dc2626; width: 24px; height: 24px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); border: 3px solid white; box-shadow: 0 2px 6px rgba(0,0,0,0.3);"></div>',
+        iconSize: [24, 24],
+        iconAnchor: [12, 24]
+    });
+
+    // Add new marker
+    locationMarker = L.marker([lat, lng], {
+        icon: markerIcon,
+        draggable: true
+    }).addTo(locationMap);
+
+    // Update on drag
+    locationMarker.on('dragend', function(e) {
+        const pos = e.target.getLatLng();
+        updateLocationFields(pos.lat, pos.lng);
+    });
+
+    // Update form fields
+    updateLocationFields(lat, lng);
+
+    // Center map on marker
+    locationMap.setView([lat, lng], 16);
+}
+
+// Update hidden form fields with coordinates
+function updateLocationFields(lat, lng) {
+    const latField = document.getElementById('complaintLatitude');
+    const lngField = document.getElementById('complaintLongitude');
+    const coordsDisplay = document.getElementById('coordsDisplay');
+    const coordsContainer = document.getElementById('locationCoords');
+
+    if (latField) latField.value = lat.toFixed(8);
+    if (lngField) lngField.value = lng.toFixed(8);
+
+    if (coordsDisplay && coordsContainer) {
+        coordsDisplay.textContent = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+        coordsContainer.style.display = 'block';
+    }
+}
+
+// Use device GPS to get current location
+function useMyLocation() {
+    const statusEl = document.getElementById('locationStatus');
+    const btn = event.target.closest('.btn-location');
+
+    if (!navigator.geolocation) {
+        if (statusEl) {
+            statusEl.textContent = 'Geolocation not supported';
+            statusEl.className = 'location-status error';
+        }
+        return;
+    }
+
+    // Show loading state
+    if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner" style="width:16px;height:16px;border:2px solid white;border-top-color:transparent;border-radius:50%;animation:spin 1s linear infinite;display:inline-block;"></span> Getting location...';
+    }
+    if (statusEl) {
+        statusEl.textContent = '';
+        statusEl.className = 'location-status';
+    }
+
+    // Add spinner animation if not exists
+    if (!document.getElementById('spinnerStyle')) {
+        const style = document.createElement('style');
+        style.id = 'spinnerStyle';
+        style.textContent = '@keyframes spin { to { transform: rotate(360deg); } }';
+        document.head.appendChild(style);
+    }
+
+    navigator.geolocation.getCurrentPosition(
+        function(position) {
+            const lat = position.coords.latitude;
+            const lng = position.coords.longitude;
+
+            // Initialize map if needed
+            if (!locationMap) {
+                initLocationMap();
+                // Wait for map to initialize
+                setTimeout(() => {
+                    setLocationMarker(lat, lng);
+                }, 100);
+            } else {
+                setLocationMarker(lat, lng);
+            }
+
+            // Update status
+            if (statusEl) {
+                statusEl.textContent = 'Location captured!';
+                statusEl.className = 'location-status success';
+            }
+
+            // Restore button
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="3"></circle><line x1="12" y1="2" x2="12" y2="6"></line><line x1="12" y1="18" x2="12" y2="22"></line><line x1="2" y1="12" x2="6" y2="12"></line><line x1="18" y1="12" x2="22" y2="12"></line></svg> Use My Location';
+            }
+        },
+        function(error) {
+            let message = 'Unable to get location';
+            switch(error.code) {
+                case error.PERMISSION_DENIED:
+                    message = 'Location permission denied';
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    message = 'Location unavailable';
+                    break;
+                case error.TIMEOUT:
+                    message = 'Location request timed out';
+                    break;
+            }
+
+            if (statusEl) {
+                statusEl.textContent = message;
+                statusEl.className = 'location-status error';
+            }
+
+            // Restore button
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="3"></circle><line x1="12" y1="2" x2="12" y2="6"></line><line x1="12" y1="18" x2="12" y2="22"></line><line x1="2" y1="12" x2="6" y2="12"></line><line x1="18" y1="12" x2="22" y2="12"></line></svg> Use My Location';
+            }
+        },
+        {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 60000
+        }
+    );
+}
+
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize Supabase connection
@@ -383,6 +568,24 @@ document.addEventListener('DOMContentLoaded', function() {
         complaintForm.removeEventListener('submit', submitComplaint);
         complaintForm.addEventListener('submit', handleComplaintSubmit);
     }
+
+    // Initialize location map when modal opens
+    const complaintModal = document.getElementById('complaintModal');
+    if (complaintModal) {
+        // Use MutationObserver to detect when modal becomes visible
+        const observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                if (mutation.attributeName === 'style' || mutation.attributeName === 'class') {
+                    const isVisible = complaintModal.style.display !== 'none' &&
+                                     complaintModal.classList.contains('active');
+                    if (isVisible && !locationMap) {
+                        setTimeout(initLocationMap, 100);
+                    }
+                }
+            });
+        });
+        observer.observe(complaintModal, { attributes: true });
+    }
 });
 
 // Export functions for use in other scripts
@@ -391,8 +594,12 @@ window.ComplaintForm = {
     classify: classifyComplaint,
     track: trackComplaint,
     init: initComplaintFormWithSupabase,
-    handleSubmit: handleComplaintSubmit
+    handleSubmit: handleComplaintSubmit,
+    useMyLocation: useMyLocation,
+    initLocationMap: initLocationMap
 };
 
-// Expose handleComplaintSubmit globally for inline form handlers
+// Expose functions globally for inline handlers
 window.handleComplaintSubmit = handleComplaintSubmit;
+window.useMyLocation = useMyLocation;
+window.initLocationMap = initLocationMap;
