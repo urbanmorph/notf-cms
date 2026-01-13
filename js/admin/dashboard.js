@@ -3,6 +3,19 @@ let adminUser = null;
 let statusChart = null;
 let departmentChart = null;
 
+// Get corporation code from URL
+function getCorporationFromURL() {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('corp');
+}
+
+// Update URL with corporation code without reloading
+function updateURLWithCorporation(corpCode) {
+    const url = new URL(window.location);
+    url.searchParams.set('corp', corpCode);
+    window.history.replaceState({}, '', url);
+}
+
 // Initialize dashboard
 document.addEventListener('DOMContentLoaded', async function() {
     await waitForSupabase();
@@ -10,6 +23,22 @@ document.addEventListener('DOMContentLoaded', async function() {
     // Check authentication
     adminUser = await requireAdmin();
     if (!adminUser) return;
+
+    // Get corp from URL and verify it matches the user's corporation
+    const urlCorp = getCorporationFromURL();
+    const userCorp = adminUser.corporation?.code;
+
+    if (urlCorp && userCorp && urlCorp !== userCorp) {
+        // URL corp doesn't match user's corporation - redirect to correct one
+        console.log(`Corporation mismatch: URL has ${urlCorp}, user belongs to ${userCorp}`);
+        window.location.href = `dashboard.html?corp=${userCorp}`;
+        return;
+    }
+
+    // Ensure URL has the corp parameter
+    if (!urlCorp && userCorp) {
+        updateURLWithCorporation(userCorp);
+    }
 
     // Update UI with user info
     updateUserInfo();
@@ -40,7 +69,11 @@ function updateUserInfo() {
     document.getElementById('userAvatar').textContent = (adminUser.name || 'A').charAt(0).toUpperCase();
 
     if (adminUser.corporation) {
-        document.getElementById('sidebarCorporation').textContent = adminUser.corporation.short_name || adminUser.corporation.name;
+        const corpName = adminUser.corporation.short_name || adminUser.corporation.name;
+        document.getElementById('sidebarCorporation').textContent = corpName;
+
+        // Update page title to include corporation name
+        document.title = `${corpName} - Admin Dashboard`;
     }
 }
 

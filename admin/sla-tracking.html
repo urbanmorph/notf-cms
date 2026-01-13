@@ -4,6 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SLA Tracking - GBA Admin</title>
+    <script>
+        // Preserve corporation parameter in navigation links
+        document.addEventListener('DOMContentLoaded', function() {
+            const params = new URLSearchParams(window.location.search);
+            const corp = params.get('corp');
+            if (corp) {
+                document.querySelectorAll('.sidebar-nav a, .admin-content a[href*=".html"]').forEach(link => {
+                    const href = link.getAttribute('href');
+                    if (href && href.endsWith('.html') && !href.includes('?')) {
+                        link.setAttribute('href', href + '?corp=' + corp);
+                    }
+                });
+            }
+        });
+    </script>
     <link rel="stylesheet" href="../css/styles.css">
     <link rel="stylesheet" href="../css/admin.css">
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>

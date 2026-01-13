@@ -15,6 +15,22 @@
                 <img src="../images/gba-logo.png" alt="GBA Logo" class="login-logo" onerror="this.style.display='none'">
                 <h1>GBA Admin Portal</h1>
                 <p>Complaint Management System</p>
+                <!-- Show expected corporation from URL -->
+                <div id="expectedCorporation" class="expected-corp" style="display: none;">
+                    <span id="expectedCorpName"></span>
+                </div>
+            </div>
+
+            <!-- Corporation info shown after successful login -->
+            <div id="corporationInfo" class="corporation-info" style="display: none;">
+                <div class="corp-badge">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                    </svg>
+                    <span id="corporationName">Loading...</span>
+                </div>
+                <p class="login-message" id="loginMessage">Signing in...</p>
             </div>
 
             <form id="loginForm" class="login-form" onsubmit="return handleLogin(event)">
@@ -87,10 +103,105 @@
         </div>
     </div>
 
+    <style>
+        .corporation-info {
+            text-align: center;
+            padding: 2rem;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .corp-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #23a2a5, #1a7a7c);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            box-shadow: 0 4px 12px rgba(35, 162, 165, 0.3);
+        }
+
+        .corp-badge svg {
+            stroke: white;
+        }
+
+        .login-message {
+            color: #666;
+            margin: 1rem 0 0;
+            font-size: 0.95rem;
+        }
+
+        .login-message::after {
+            content: '';
+            animation: dots 1.5s infinite;
+        }
+
+        @keyframes dots {
+            0%, 20% { content: ''; }
+            40% { content: '.'; }
+            60% { content: '..'; }
+            80%, 100% { content: '...'; }
+        }
+
+        .expected-corp {
+            margin-top: 1rem;
+            padding: 8px 16px;
+            background: #f0f9f9;
+            border: 1px solid #23a2a5;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            color: #1a7a7c;
+        }
+
+        .expected-corp span {
+            font-weight: 600;
+        }
+
+        .corp-mismatch-error {
+            background: #fef2f2;
+            border: 1px solid #ef4444;
+            color: #dc2626;
+            padding: 12px 16px;
+            border-radius: 6px;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+        }
+    </style>
+
     <script src="../js/supabase-config.js"></script>
     <script>
+        // Corporation name mapping
+        const corpNames = {
+            'north': 'Bengaluru North Corporation',
+            'south': 'Bengaluru South Corporation',
+            'east': 'Bengaluru East Corporation',
+            'west': 'Bengaluru West Corporation',
+            'central': 'Bengaluru Central Corporation'
+        };
+
+        // Get expected corporation from URL
+        function getExpectedCorporation() {
+            const params = new URLSearchParams(window.location.search);
+            return params.get('corp');
+        }
+
         // Check if already logged in on page load
         document.addEventListener('DOMContentLoaded', async function() {
+            // Show expected corporation if specified in URL
+            const expectedCorp = getExpectedCorporation();
+            if (expectedCorp && corpNames[expectedCorp]) {
+                document.getElementById('expectedCorpName').textContent = corpNames[expectedCorp];
+                document.getElementById('expectedCorporation').style.display = 'block';
+            }
+
             try {
                 // Wait for Supabase to be ready
                 await waitForSupabase();
@@ -107,8 +218,25 @@
                 }
 
                 if (user) {
-                    console.log('Valid authenticated user found, redirecting to dashboard...');
-                    window.location.href = 'dashboard.html';
+                    console.log('Valid authenticated user found, fetching admin profile...');
+                    // Get admin user profile to determine corporation
+                    const { data: adminUser, error: adminError } = await supabaseClient
+                        .from('admin_users')
+                        .select('*, corporation:corporations(*)')
+                        .eq('user_id', user.id)
+                        .eq('is_active', true)
+                        .single();
+
+                    if (adminError || !adminUser) {
+                        console.log('Admin profile not found, staying on login');
+                        await supabaseClient.auth.signOut();
+                        return;
+                    }
+
+                    // Redirect to corporation-specific dashboard
+                    const corpCode = adminUser.corporation?.code || 'north';
+                    console.log('Redirecting to dashboard for corporation:', corpCode);
+                    window.location.href = `dashboard.html?corp=${corpCode}`;
                 } else {
                     console.log('No valid session, staying on login page');
                 }
@@ -211,11 +339,33 @@
 
                 console.log('Admin user found:', adminUser.name, adminUser);
 
+                // Get expected corporation from URL
+                const expectedCorp = getExpectedCorporation();
+                const userCorpCode = adminUser.corporation?.code;
+
+                // Check if user's corporation matches the expected one (if specified)
+                if (expectedCorp && userCorpCode && expectedCorp !== userCorpCode) {
+                    console.error('Corporation mismatch: expected', expectedCorp, 'but user belongs to', userCorpCode);
+                    await supabaseClient.auth.signOut();
+                    throw new Error(`Access denied. You are not authorized for ${corpNames[expectedCorp] || expectedCorp}. Your account is associated with ${adminUser.corporation?.name || userCorpCode}.`);
+                }
+
                 // Store admin info in session storage
                 sessionStorage.setItem('adminUser', JSON.stringify(adminUser));
 
-                // Redirect to dashboard
-                window.location.href = 'dashboard.html';
+                // Show corporation info before redirecting
+                const corpName = adminUser.corporation?.name || adminUser.corporation?.short_name || 'GBA';
+                const corpCode = adminUser.corporation?.code || 'north';
+
+                document.getElementById('loginForm').style.display = 'none';
+                document.getElementById('corporationInfo').style.display = 'block';
+                document.getElementById('corporationName').textContent = corpName;
+                document.getElementById('loginMessage').textContent = `Welcome, ${adminUser.name}! Redirecting to dashboard...`;
+
+                // Redirect to corporation-specific dashboard after brief delay
+                setTimeout(() => {
+                    window.location.href = `dashboard.html?corp=${corpCode}`;
+                }, 1500);
 
             } catch (error) {
                 console.error('Login error:', error);
