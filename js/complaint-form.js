@@ -158,7 +158,7 @@ async function initComplaintFormWithSupabase() {
     await loadCategories();
 }
 
-// Load issue categories from Supabase (hierarchical)
+// Load issue categories from Supabase (hierarchical with optgroup)
 async function loadCategories() {
     if (!window.supabaseClient) return;
 
@@ -187,48 +187,33 @@ async function loadCategories() {
             sub: subCategories || []
         };
 
-        // Update the main category dropdown
+        // Build grouped select with optgroups
         const issueTypeSelect = document.getElementById('issueType');
         if (issueTypeSelect && mainCategories) {
-            let optionsHTML = '<option value="">Select Category</option>';
-            mainCategories.forEach(cat => {
-                optionsHTML += `<option value="${cat.id}" data-code="${cat.code}">${cat.name}</option>`;
-            });
-            issueTypeSelect.innerHTML = optionsHTML;
-        }
+            let optionsHTML = '<option value="">Select Issue Type</option>';
 
-        // Add change listener to populate subcategories
-        if (issueTypeSelect) {
-            issueTypeSelect.addEventListener('change', populateSubcategories);
+            mainCategories.forEach(category => {
+                const subs = subCategories?.filter(s => s.parent_id === category.id) || [];
+
+                if (subs.length > 0) {
+                    // Category has subcategories - use optgroup
+                    optionsHTML += `<optgroup label="${category.name}">`;
+                    subs.forEach(sub => {
+                        optionsHTML += `<option value="${sub.id}" data-code="${sub.code}" data-parent="${category.id}">${sub.name}</option>`;
+                    });
+                    optionsHTML += '</optgroup>';
+                } else {
+                    // Category has no subcategories - add as direct option
+                    optionsHTML += `<option value="${category.id}" data-code="${category.code}">${category.name}</option>`;
+                }
+            });
+
+            issueTypeSelect.innerHTML = optionsHTML;
         }
 
     } catch (error) {
         console.error('Error loading categories:', error);
     }
-}
-
-// Populate subcategory dropdown based on selected main category
-function populateSubcategories() {
-    const mainCategoryId = document.getElementById('issueType')?.value;
-    const subCategorySelect = document.getElementById('subCategory');
-
-    if (!subCategorySelect) return;
-
-    if (!mainCategoryId) {
-        subCategorySelect.innerHTML = '<option value="">Select subcategory</option>';
-        subCategorySelect.disabled = true;
-        return;
-    }
-
-    const subcategories = window.categoriesData?.sub?.filter(s => s.parent_id === mainCategoryId) || [];
-
-    let optionsHTML = '<option value="">Select subcategory</option>';
-    subcategories.forEach(sub => {
-        optionsHTML += `<option value="${sub.id}" data-code="${sub.code}">${sub.name}</option>`;
-    });
-
-    subCategorySelect.innerHTML = optionsHTML;
-    subCategorySelect.disabled = subcategories.length === 0;
 }
 
 // Submit complaint to Supabase
@@ -252,8 +237,8 @@ async function submitComplaintToSupabase(formData) {
         throw new Error('Unable to identify corporation. Please try again.');
     }
 
-    // Category ID - use subcategory if selected, otherwise main category
-    const categoryId = formData.subCategory || formData.issueType || null;
+    // Category ID from grouped select
+    const categoryId = formData.categoryId || null;
 
     // ML Classification for auto-routing
     const classification = classifyComplaint(formData.title || formData.categoryName, formData.description);
@@ -333,14 +318,14 @@ async function handleComplaintSubmit(event) {
         }
 
         // Gather form data from named fields
-        const mainCategorySelect = form.querySelector('[name="issueType"]');
-        const subCategorySelect = form.querySelector('[name="subCategory"]');
+        const categorySelect = form.querySelector('[name="issueType"]');
+        const selectedOption = categorySelect?.selectedOptions?.[0];
 
         const formData = {
             corporation: form.querySelector('[name="corporation"]')?.value || document.getElementById('complaintCorporation')?.value,
-            issueType: mainCategorySelect?.value,
-            subCategory: subCategorySelect?.value || null,
-            categoryName: subCategorySelect?.selectedOptions?.[0]?.text || mainCategorySelect?.selectedOptions?.[0]?.text || 'General',
+            categoryId: categorySelect?.value || null,
+            categoryName: selectedOption?.text || 'General',
+            categoryCode: selectedOption?.dataset?.code || null,
             title: form.querySelector('[name="title"]')?.value || null,
             description: form.querySelector('[name="description"]')?.value,
             address: form.querySelector('[name="address"]')?.value,
