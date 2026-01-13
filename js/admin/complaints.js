@@ -1,5 +1,7 @@
 // Complaints Management JavaScript
 let adminUser = null;
+let fullAdminProfile = null;
+let currentCorporation = null;
 let complaints = [];
 let departments = [];
 let officers = [];
@@ -9,12 +11,41 @@ let totalComplaints = 0;
 let selectedComplaints = new Set();
 let currentAssignComplaint = null;
 
+// Get corporation code from URL
+function getCorporationFromURL() {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('corp');
+}
+
 // Initialize
 document.addEventListener('DOMContentLoaded', async function() {
     await waitForSupabase();
 
     adminUser = await requireAdmin();
     if (!adminUser) return;
+
+    // Get full profile with multi-corporation access
+    const { data: { user } } = await supabaseClient.auth.getUser();
+    if (user) {
+        fullAdminProfile = await getFullAdminProfile(user.id);
+    }
+
+    // Handle multi-corporation access
+    const urlCorp = getCorporationFromURL();
+    const userCorp = adminUser.corporation?.code;
+    const allCorps = fullAdminProfile?.all_corporations || [];
+
+    if (urlCorp) {
+        currentCorporation = allCorps.find(c => c.code === urlCorp) || adminUser.corporation;
+    } else {
+        currentCorporation = adminUser.corporation || (allCorps.length > 0 ? allCorps[0] : null);
+    }
+
+    // Update adminUser.corporation_id to match the currently viewed corporation
+    if (currentCorporation) {
+        adminUser.corporation_id = currentCorporation.id;
+        adminUser.corporation = currentCorporation;
+    }
 
     updateUserInfo();
     await loadDepartments();
@@ -24,10 +55,15 @@ document.addEventListener('DOMContentLoaded', async function() {
     const urlParams = new URLSearchParams(window.location.search);
     const searchQuery = urlParams.get('search');
     const assignId = urlParams.get('assign');
+    const viewId = urlParams.get('view');
 
     if (searchQuery) {
         document.getElementById('searchInput').value = searchQuery;
         applyFilters();
+    }
+
+    if (viewId) {
+        viewComplaint(viewId);
     }
 
     if (assignId) {

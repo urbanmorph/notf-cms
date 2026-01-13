@@ -498,7 +498,7 @@ function setupRealtimeSubscriptions() {
 
 // View complaint details
 function viewComplaint(id) {
-    window.location.href = `complaint-detail.html?id=${id}`;
+    window.location.href = `complaints.html?view=${id}`;
 }
 
 // Open assign modal
