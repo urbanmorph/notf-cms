@@ -100,15 +100,34 @@ function submitAdminLogin(event) {
     event.preventDefault();
     const username = document.getElementById('adminUsername').value;
     const password = document.getElementById('adminPassword').value;
-    
+
     // Here you would validate credentials with your backend
     console.log('Login attempt:', username);
-    
+
     // For demo purposes
     if (username && password) {
         alert('Login functionality will be implemented in the backend phase.');
         closeModal('adminModal');
     }
+}
+
+// Track complaint submission
+function trackComplaint(event) {
+    event.preventDefault();
+    const complaintId = document.getElementById('trackComplaintId').value;
+    const phone = document.getElementById('trackPhone').value;
+
+    // For demo purposes - show a sample response
+    const trackResult = document.getElementById('trackResult');
+    trackResult.style.display = 'block';
+    trackResult.innerHTML = `
+        <div class="track-status">
+            <h4>Complaint Status</h4>
+            <p><strong>Reference ID:</strong> ${complaintId}</p>
+            <p><strong>Status:</strong> <span class="status-badge pending">Pending Backend Integration</span></p>
+            <p class="text-muted">Complaint tracking will be fully functional once backend integration is complete.</p>
+        </div>
+    `;
 }
 
 document.addEventListener('DOMContentLoaded', function() {
