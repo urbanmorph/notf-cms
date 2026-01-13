@@ -158,45 +158,59 @@ async function initComplaintFormWithSupabase() {
     await loadCategories();
 }
 
-// Load issue categories from Supabase
+// Load issue categories from Supabase (hierarchical with optgroups)
 async function loadCategories() {
     if (!window.supabaseClient) return;
 
     try {
-        const { data: departments, error } = await window.supabaseClient
-            .from('departments')
-            .select(`
-                id,
-                code,
-                name,
-                issue_categories (
-                    id,
-                    code,
-                    name
-                )
-            `)
-            .order('name');
+        // Load main categories (parent_id IS NULL)
+        const { data: mainCategories, error: mainError } = await window.supabaseClient
+            .from('issue_categories')
+            .select('id, code, name')
+            .is('parent_id', null)
+            .order('display_order');
 
-        if (error) throw error;
+        if (mainError) throw mainError;
+
+        // Load all subcategories
+        const { data: subCategories, error: subError } = await window.supabaseClient
+            .from('issue_categories')
+            .select('id, code, name, parent_id')
+            .not('parent_id', 'is', null)
+            .order('display_order');
+
+        if (subError) throw subError;
 
         // Store for later use
-        window.departmentsData = departments;
+        window.categoriesData = { main: mainCategories, sub: subCategories };
 
         // Update the issue type dropdown if it exists
         const issueTypeSelect = document.getElementById('issueType');
-        if (issueTypeSelect && departments) {
-            // Keep existing options or rebuild
-            const currentOptions = issueTypeSelect.innerHTML;
-            if (!currentOptions.includes('data-loaded')) {
-                let optionsHTML = '<option value="" data-loaded="true">Select Issue Type</option>';
-                departments.forEach(dept => {
-                    optionsHTML += `<option value="${dept.code}">${dept.name}</option>`;
-                });
-                issueTypeSelect.innerHTML = optionsHTML;
-            }
+        if (issueTypeSelect && mainCategories) {
+            let optionsHTML = '<option value="">Select Issue Type</option>';
+
+            mainCategories.forEach(category => {
+                // Get subcategories for this main category
+                const subs = subCategories?.filter(s => s.parent_id === category.id) || [];
+
+                if (subs.length > 0) {
+                    // Create optgroup with subcategories
+                    optionsHTML += `<optgroup label="${category.name}">`;
+                    subs.forEach(sub => {
+                        optionsHTML += `<option value="${sub.id}">${sub.name}</option>`;
+                    });
+                    optionsHTML += '</optgroup>';
+                } else {
+                    // Main category without subcategories - add as direct option
+                    optionsHTML += `<option value="${category.id}">${category.name}</option>`;
+                }
+            });
+
+            issueTypeSelect.innerHTML = optionsHTML;
         }
     } catch (error) {
         console.error('Error loading categories:', error);
+        // Keep the loading placeholder visible on error
     }
 }
 
@@ -221,17 +235,20 @@ async function submitComplaintToSupabase(formData) {
         throw new Error('Unable to identify corporation. Please try again.');
     }
 
-    // Get department ID based on issue type
+    // formData.issueType is now a category UUID
+    // Look up the category to get its department
+    let categoryId = null;
     let departmentId = null;
     if (formData.issueType) {
-        const { data: deptData } = await window.supabaseClient
-            .from('departments')
-            .select('id')
-            .eq('code', formData.issueType)
+        const { data: categoryData } = await window.supabaseClient
+            .from('issue_categories')
+            .select('id, department_id')
+            .eq('id', formData.issueType)
             .single();
 
-        if (deptData) {
-            departmentId = deptData.id;
+        if (categoryData) {
+            categoryId = categoryData.id;
+            departmentId = categoryData.department_id;
         }
     }
 
@@ -256,8 +273,9 @@ async function submitComplaintToSupabase(formData) {
     // Build complaint object
     const complaint = {
         corporation_id: corpData.id,
+        category_id: categoryId,
         department_id: departmentId || mlDepartmentId,
-        title: formData.title || `${formData.issueType} Issue`,
+        title: formData.title || 'Civic Issue',
         description: formData.description,
         address: formData.address,
         landmark: formData.landmark,
