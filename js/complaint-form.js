@@ -158,7 +158,7 @@ async function initComplaintFormWithSupabase() {
     await loadCategories();
 }
 
-// Load issue categories from Supabase (hierarchical with optgroup)
+// Load issue categories from Supabase (hierarchical with optgroups)
 async function loadCategories() {
     if (!window.supabaseClient) return;
 
@@ -182,37 +182,35 @@ async function loadCategories() {
         if (subError) throw subError;
 
         // Store for later use
-        window.categoriesData = {
-            main: mainCategories || [],
-            sub: subCategories || []
-        };
+        window.categoriesData = { main: mainCategories, sub: subCategories };
 
-        // Build grouped select with optgroups
+        // Update the issue type dropdown if it exists
         const issueTypeSelect = document.getElementById('issueType');
         if (issueTypeSelect && mainCategories) {
             let optionsHTML = '<option value="">Select Issue Type</option>';
 
             mainCategories.forEach(category => {
+                // Get subcategories for this main category
                 const subs = subCategories?.filter(s => s.parent_id === category.id) || [];
 
                 if (subs.length > 0) {
-                    // Category has subcategories - use optgroup
+                    // Create optgroup with subcategories
                     optionsHTML += `<optgroup label="${category.name}">`;
                     subs.forEach(sub => {
-                        optionsHTML += `<option value="${sub.id}" data-code="${sub.code}" data-parent="${category.id}">${sub.name}</option>`;
+                        optionsHTML += `<option value="${sub.id}">${sub.name}</option>`;
                     });
                     optionsHTML += '</optgroup>';
                 } else {
-                    // Category has no subcategories - add as direct option
-                    optionsHTML += `<option value="${category.id}" data-code="${category.code}">${category.name}</option>`;
+                    // Main category without subcategories - add as direct option
+                    optionsHTML += `<option value="${category.id}">${category.name}</option>`;
                 }
             });
 
             issueTypeSelect.innerHTML = optionsHTML;
         }
-
     } catch (error) {
         console.error('Error loading categories:', error);
+        // Keep the loading placeholder visible on error
     }
 }
 
@@ -237,24 +235,38 @@ async function submitComplaintToSupabase(formData) {
         throw new Error('Unable to identify corporation. Please try again.');
     }
 
-    // Category ID from grouped select
-    const categoryId = formData.categoryId || null;
+    // formData.issueType is now a category UUID
+    // Look up the category to get its department
+    let categoryId = null;
+    let departmentId = null;
+    if (formData.issueType) {
+        const { data: categoryData } = await window.supabaseClient
+            .from('issue_categories')
+            .select('id, department_id')
+            .eq('id', formData.issueType)
+            .single();
 
-    // ML Classification for auto-routing
-    const classification = classifyComplaint(formData.title || formData.categoryName, formData.description);
-    const priority = determinePriority(formData.title || formData.categoryName, formData.description);
+        if (categoryData) {
+            categoryId = categoryData.id;
+            departmentId = categoryData.department_id;
+        }
+    }
 
-    // Get ML suggested category ID based on keywords
-    let mlCategoryId = null;
-    if (classification.department && window.categoriesData) {
-        // Try to find a matching category by code
-        const matchingCat = window.categoriesData.sub?.find(c =>
-            c.code.includes(classification.department)
-        ) || window.categoriesData.main?.find(c =>
-            c.code.includes(classification.department)
-        );
-        if (matchingCat) {
-            mlCategoryId = matchingCat.id;
+    // ML Classification
+    const classification = classifyComplaint(formData.title || formData.issueType, formData.description);
+    const priority = determinePriority(formData.title || formData.issueType, formData.description);
+
+    // Get ML suggested department ID
+    let mlDepartmentId = null;
+    if (classification.department) {
+        const { data: mlDept } = await window.supabaseClient
+            .from('departments')
+            .select('id')
+            .eq('code', classification.department)
+            .single();
+
+        if (mlDept) {
+            mlDepartmentId = mlDept.id;
         }
     }
 
@@ -262,8 +274,8 @@ async function submitComplaintToSupabase(formData) {
     const complaint = {
         corporation_id: corpData.id,
         category_id: categoryId,
-        ml_category_id: mlCategoryId,
-        title: formData.title || formData.categoryName || 'Citizen Complaint',
+        department_id: departmentId || mlDepartmentId,
+        title: formData.title || 'Civic Issue',
         description: formData.description,
         address: formData.address,
         landmark: formData.landmark,
@@ -272,6 +284,7 @@ async function submitComplaintToSupabase(formData) {
         citizen_email: formData.email,
         status: 'new',
         priority: priority,
+        ml_department_id: mlDepartmentId,
         ml_confidence: classification.confidence
     };
 
@@ -318,15 +331,10 @@ async function handleComplaintSubmit(event) {
         }
 
         // Gather form data from named fields
-        const categorySelect = form.querySelector('[name="issueType"]');
-        const selectedOption = categorySelect?.selectedOptions?.[0];
-
         const formData = {
             corporation: form.querySelector('[name="corporation"]')?.value || document.getElementById('complaintCorporation')?.value,
-            categoryId: categorySelect?.value || null,
-            categoryName: selectedOption?.text || 'General',
-            categoryCode: selectedOption?.dataset?.code || null,
-            title: form.querySelector('[name="title"]')?.value || null,
+            issueType: form.querySelector('[name="issueType"]')?.value,
+            title: form.querySelector('[name="issueType"]')?.selectedOptions?.[0]?.text || form.querySelector('[name="issueType"]')?.value,
             description: form.querySelector('[name="description"]')?.value,
             address: form.querySelector('[name="address"]')?.value,
             landmark: form.querySelector('[name="landmark"]')?.value,
