@@ -5,6 +5,46 @@
 let locationMap = null;
 let locationMarker = null;
 
+// Corporation center coordinates (calculated from GeoJSON boundaries)
+const CORPORATION_CENTERS = {
+    'north': { lat: 13.064921, lng: 77.576663, zoom: 12 },
+    'south': { lat: 12.892644, lng: 77.590320, zoom: 12 },
+    'east': { lat: 12.993589, lng: 77.708538, zoom: 12 },
+    'west': { lat: 12.958023, lng: 77.528152, zoom: 12 },
+    'central': { lat: 12.964367, lng: 77.612152, zoom: 13 },
+    'default': { lat: 12.9716, lng: 77.5946, zoom: 11 }  // Bengaluru overall center
+};
+
+// Detect current corporation from page
+function getCurrentCorporation() {
+    // Check data-page attribute on body
+    const bodyPage = document.body.dataset.page;
+    if (bodyPage && CORPORATION_CENTERS[bodyPage]) {
+        return bodyPage;
+    }
+
+    // Check hidden form field
+    const corpField = document.getElementById('complaintCorporation');
+    if (corpField) {
+        const value = corpField.value.toLowerCase();
+        if (value.includes('north')) return 'north';
+        if (value.includes('south')) return 'south';
+        if (value.includes('east')) return 'east';
+        if (value.includes('west')) return 'west';
+        if (value.includes('central')) return 'central';
+    }
+
+    // Check URL
+    const path = window.location.pathname.toLowerCase();
+    if (path.includes('north')) return 'north';
+    if (path.includes('south')) return 'south';
+    if (path.includes('east')) return 'east';
+    if (path.includes('west')) return 'west';
+    if (path.includes('central')) return 'central';
+
+    return 'default';
+}
+
 // ML Classification for auto-routing
 const CLASSIFICATION_RULES = [
     {
@@ -382,9 +422,9 @@ function initLocationMap() {
     const mapContainer = document.getElementById('locationMap');
     if (!mapContainer || locationMap) return;
 
-    // Default center (Bengaluru)
-    const defaultLat = 12.9716;
-    const defaultLng = 77.5946;
+    // Get corporation-specific center coordinates
+    const corp = getCurrentCorporation();
+    const center = CORPORATION_CENTERS[corp] || CORPORATION_CENTERS['default'];
 
     // Check if Leaflet is available
     if (typeof L === 'undefined') {
@@ -392,8 +432,8 @@ function initLocationMap() {
         return;
     }
 
-    // Initialize map
-    locationMap = L.map('locationMap').setView([defaultLat, defaultLng], 12);
+    // Initialize map with corporation center
+    locationMap = L.map('locationMap').setView([center.lat, center.lng], center.zoom);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '© OpenStreetMap contributors',
