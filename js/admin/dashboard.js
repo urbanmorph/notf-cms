@@ -106,7 +106,12 @@ async function loadDashboardData() {
 // Load statistics
 async function loadStats() {
     try {
-        const corporationId = adminUser.corporation_id;
+        const corporationId = adminUser?.corporation_id;
+
+        if (!corporationId) {
+            console.warn('No corporation_id found for admin user');
+            return;
+        }
 
         // Get total complaints
         const { count: total } = await supabaseClient
@@ -158,6 +163,19 @@ async function loadStats() {
 // Load recent complaints
 async function loadRecentComplaints() {
     try {
+        // Check if corporation_id exists
+        if (!adminUser?.corporation_id) {
+            console.warn('No corporation_id found for admin user');
+            document.getElementById('recentComplaintsTable').innerHTML = `
+                <tr>
+                    <td colspan="8" style="text-align: center; padding: 40px; color: #7f8c8d;">
+                        No corporation assigned. Contact administrator.
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+
         const { data: complaints, error } = await supabaseClient
             .from('complaints')
             .select(`
@@ -229,7 +247,12 @@ async function loadRecentComplaints() {
 // Load charts
 async function loadCharts() {
     try {
-        const corporationId = adminUser.corporation_id;
+        const corporationId = adminUser?.corporation_id;
+
+        if (!corporationId) {
+            console.warn('No corporation_id found for admin user');
+            return;
+        }
 
         // Get status distribution
         const { data: statusData } = await supabaseClient
@@ -364,6 +387,11 @@ function createDepartmentChart(data) {
 
 // Set up real-time subscriptions
 function setupRealtimeSubscriptions() {
+    if (!adminUser?.corporation_id) {
+        console.warn('No corporation_id found, skipping real-time subscriptions');
+        return;
+    }
+
     // Subscribe to new complaints
     supabaseClient
         .channel('complaints-changes')
@@ -404,11 +432,21 @@ function toggleSidebar() {
 // Handle logout
 async function handleLogout() {
     try {
+        // Get corporation code before signing out
+        const corpCode = adminUser?.corporation?.code;
         await signOut();
         sessionStorage.removeItem('adminUser');
-        window.location.href = 'login.html';
+
+        // Redirect to corporation page instead of login
+        if (corpCode) {
+            window.location.href = `../${corpCode}.html`;
+        } else {
+            window.location.href = '../index.html';
+        }
     } catch (error) {
         console.error('Logout error:', error);
+        // Fall back to index page on error
+        window.location.href = '../index.html';
     }
 }
 
