@@ -40,10 +40,16 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     // Check if user has access to the requested corporation
     if (urlCorp) {
-        const hasAccess = hasMultiCorpAccess &&
-            (fullAdminProfile?.role === 'super_admin' || allCorps.some(c => c.code === urlCorp));
+        // User has access if:
+        // 1. It's their primary corporation
+        // 2. They're a super_admin
+        // 3. It's in their list of accessible corporations
+        const isPrimaryCorp = urlCorp === userCorp;
+        const isSuperAdmin = fullAdminProfile?.role === 'super_admin';
+        const isInAccessList = allCorps.some(c => c.code === urlCorp);
+        const hasAccess = isPrimaryCorp || isSuperAdmin || isInAccessList;
 
-        if (!hasAccess && urlCorp !== userCorp) {
+        if (!hasAccess) {
             // User doesn't have access to this corporation
             console.log(`Access denied: User doesn't have access to ${urlCorp}`);
             window.location.href = `dashboard.html?corp=${userCorp}`;
