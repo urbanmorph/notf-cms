@@ -108,7 +108,7 @@
 
                 if (user) {
                     console.log('Valid authenticated user found, redirecting to dashboard...');
-                    window.location.href = '/admin/dashboard.html';
+                    window.location.href = 'dashboard.html';
                 } else {
                     console.log('No valid session, staying on login page');
                 }
@@ -215,7 +215,7 @@
                 sessionStorage.setItem('adminUser', JSON.stringify(adminUser));
 
                 // Redirect to dashboard
-                window.location.href = '/admin/dashboard.html';
+                window.location.href = 'dashboard.html';
 
             } catch (error) {
                 console.error('Login error:', error);
@@ -249,7 +249,7 @@
 
             try {
                 const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
-                    redirectTo: window.location.origin + '/admin/reset-password.html'
+                    redirectTo: window.location.href.replace('login.html', 'reset-password.html')
                 });
 
                 if (error) throw error;

@@ -89,7 +89,7 @@ async function getAdminProfile(userId) {
 async function requireAdmin() {
     const session = await getSession();
     if (!session) {
-        window.location.href = '/admin/login.html';
+        window.location.href = 'login.html';
         return null;
     }
 
@@ -99,7 +99,7 @@ async function requireAdmin() {
     } catch (error) {
         console.error('Not an admin user:', error);
         await signOut();
-        window.location.href = '/admin/login.html';
+        window.location.href = 'login.html';
         return null;
     }
 }
