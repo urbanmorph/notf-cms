@@ -211,7 +211,7 @@ body {
 }
 /* Hero Section */
 .hero {
-    background: linear-gradient(135deg, var(--accent-yellow) 0%, var(--accent-pink) 100%);
+    background: var(--accent-yellow);
     color: var(--text-primary);
     padding: 3rem 0;
     text-align: center;
@@ -238,7 +238,7 @@ body {
 }
 
 .stat-card {
-    background: var(--primary-dark);
+    background: var(--primary-color); /* Teal #23A2A5 */
     color: white;
     padding: 1.5rem;
     border-radius: 0.5rem;
@@ -249,27 +249,6 @@ body {
 .stat-card:hover {
     transform: translateY(-2px);
     box-shadow: var(--shadow-lg);
-}
-
-/* Alternating stat card colors using brand palette */
-.stat-card:nth-child(1) {
-    background: var(--primary-dark); /* Green #0D7576 */
-    color: white;
-}
-
-.stat-card:nth-child(2) {
-    background: var(--primary-color); /* Teal #23A2A5 */
-    color: white;
-}
-
-.stat-card:nth-child(3) {
-    background: var(--accent-yellow); /* Yellow #FBC831 */
-    color: var(--text-primary);
-}
-
-.stat-card:nth-child(4) {
-    background: var(--accent-pink); /* Pink #F7A782 */
-    color: var(--text-primary);
 }
 
 .stat-number {
