@@ -871,6 +871,7 @@
             // Load data
             await loadUnassignedComplaints();
             await loadRecentAssignments();
+            await updateNewCount();
         }
 
         async function loadUnassignedComplaints() {
@@ -988,6 +989,20 @@
         function formatDate(dateStr) {
             if (!dateStr) return '-';
             return new Date(dateStr).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+        }
+
+        async function updateNewCount() {
+            const { count } = await supabaseClient
+                .from('complaints')
+                .select('*', { count: 'exact', head: true })
+                .eq('corporation_id', adminUser.corporation_id)
+                .eq('status', 'new');
+
+            const badge = document.getElementById('newComplaintsCount');
+            if (badge) {
+                badge.textContent = count || 0;
+                badge.style.display = count > 0 ? 'inline' : 'none';
+            }
         }
 
         function toggleAutoAssign() {
