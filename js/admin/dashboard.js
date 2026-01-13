@@ -1,5 +1,7 @@
 // Admin Dashboard JavaScript
 let adminUser = null;
+let fullAdminProfile = null;
+let currentCorporation = null;
 let statusChart = null;
 let departmentChart = null;
 
@@ -24,24 +26,49 @@ document.addEventListener('DOMContentLoaded', async function() {
     adminUser = await requireAdmin();
     if (!adminUser) return;
 
-    // Get corp from URL and verify it matches the user's corporation
+    // Get full profile with multi-corporation access
+    const { data: { user } } = await supabaseClient.auth.getUser();
+    if (user) {
+        fullAdminProfile = await getFullAdminProfile(user.id);
+    }
+
+    // Get corp from URL
     const urlCorp = getCorporationFromURL();
     const userCorp = adminUser.corporation?.code;
+    const allCorps = fullAdminProfile?.all_corporations || [];
+    const hasMultiCorpAccess = allCorps.length > 1 || fullAdminProfile?.role === 'super_admin';
 
-    if (urlCorp && userCorp && urlCorp !== userCorp) {
-        // URL corp doesn't match user's corporation - redirect to correct one
-        console.log(`Corporation mismatch: URL has ${urlCorp}, user belongs to ${userCorp}`);
-        window.location.href = `dashboard.html?corp=${userCorp}`;
-        return;
+    // Check if user has access to the requested corporation
+    if (urlCorp) {
+        const hasAccess = hasMultiCorpAccess &&
+            (fullAdminProfile?.role === 'super_admin' || allCorps.some(c => c.code === urlCorp));
+
+        if (!hasAccess && urlCorp !== userCorp) {
+            // User doesn't have access to this corporation
+            console.log(`Access denied: User doesn't have access to ${urlCorp}`);
+            window.location.href = `dashboard.html?corp=${userCorp}`;
+            return;
+        }
+
+        // Set current corporation based on URL
+        currentCorporation = allCorps.find(c => c.code === urlCorp) || adminUser.corporation;
+    } else {
+        // No corp in URL, use user's primary corporation
+        currentCorporation = adminUser.corporation;
+        if (userCorp) {
+            updateURLWithCorporation(userCorp);
+        }
     }
 
-    // Ensure URL has the corp parameter
-    if (!urlCorp && userCorp) {
-        updateURLWithCorporation(userCorp);
+    // Update adminUser.corporation_id to match the currently viewed corporation
+    if (currentCorporation && currentCorporation.id !== adminUser.corporation_id) {
+        adminUser.corporation_id = currentCorporation.id;
+        adminUser.corporation = currentCorporation;
     }
 
-    // Update UI with user info
+    // Update UI with user info and corporation switcher
     updateUserInfo();
+    setupCorporationSwitcher();
 
     // Load dashboard data
     await loadDashboardData();
@@ -68,13 +95,67 @@ function updateUserInfo() {
     document.getElementById('userRole').textContent = formatRole(adminUser.role);
     document.getElementById('userAvatar').textContent = (adminUser.name || 'A').charAt(0).toUpperCase();
 
-    if (adminUser.corporation) {
-        const corpName = adminUser.corporation.short_name || adminUser.corporation.name;
+    // Use currentCorporation for display (may differ from user's primary corp)
+    const displayCorp = currentCorporation || adminUser.corporation;
+    if (displayCorp) {
+        const corpName = displayCorp.short_name || displayCorp.name;
         document.getElementById('sidebarCorporation').textContent = corpName;
 
         // Update page title to include corporation name
         document.title = `${corpName} - Admin Dashboard`;
     }
+}
+
+// Setup corporation switcher for multi-corp users
+function setupCorporationSwitcher() {
+    const allCorps = fullAdminProfile?.all_corporations || [];
+    const hasMultiCorpAccess = allCorps.length > 1 || fullAdminProfile?.role === 'super_admin';
+
+    if (!hasMultiCorpAccess) {
+        // Single corp user - hide switcher
+        document.getElementById('corpSwitcher').style.display = 'none';
+        return;
+    }
+
+    // Show and populate the switcher
+    const switcher = document.getElementById('corpSwitcher');
+    const select = document.getElementById('corpSelect');
+
+    switcher.style.display = 'block';
+
+    // Clear existing options
+    select.innerHTML = '';
+
+    // Add corporations to dropdown
+    allCorps.forEach(corp => {
+        const option = document.createElement('option');
+        option.value = corp.code;
+        option.textContent = corp.short_name || corp.name;
+        if (corp.is_primary) {
+            option.textContent += ' (Primary)';
+        }
+        // Select the current corporation
+        if (currentCorporation && corp.code === currentCorporation.code) {
+            option.selected = true;
+        }
+        select.appendChild(option);
+    });
+}
+
+// Switch to a different corporation
+function switchCorporation(corpCode) {
+    if (!corpCode) return;
+
+    const allCorps = fullAdminProfile?.all_corporations || [];
+    const targetCorp = allCorps.find(c => c.code === corpCode);
+
+    if (!targetCorp) {
+        console.error('Corporation not found:', corpCode);
+        return;
+    }
+
+    // Redirect to the new corporation's dashboard
+    window.location.href = `dashboard.html?corp=${corpCode}`;
 }
 
 // Format role for display
@@ -432,8 +513,8 @@ function toggleSidebar() {
 // Handle logout
 async function handleLogout() {
     try {
-        // Get corporation code before signing out
-        const corpCode = adminUser?.corporation?.code;
+        // Get corporation code before signing out - use current viewed corp
+        const corpCode = currentCorporation?.code || adminUser?.corporation?.code;
         await signOut();
         sessionStorage.removeItem('adminUser');
 

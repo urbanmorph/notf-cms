@@ -85,6 +85,82 @@ async function getAdminProfile(userId) {
     return data;
 }
 
+// Get all corporations a user has access to (primary + additional)
+async function getUserCorporations(adminUserId) {
+    // Get additional corporations from junction table
+    const { data: additionalCorps, error } = await supabaseClient
+        .from('admin_user_corporations')
+        .select(`
+            corporation_id,
+            is_primary,
+            can_manage,
+            corporation:corporations(*)
+        `)
+        .eq('admin_user_id', adminUserId);
+
+    if (error) {
+        console.warn('Error fetching additional corporations:', error);
+        return [];
+    }
+
+    return additionalCorps || [];
+}
+
+// Get full admin profile with all corporation access
+async function getFullAdminProfile(userId) {
+    // Get base profile
+    const profile = await getAdminProfile(userId);
+    if (!profile) return null;
+
+    // Get additional corporations
+    const additionalCorps = await getUserCorporations(profile.id);
+
+    // Build list of all accessible corporations
+    const corporations = [];
+
+    // Add primary corporation first
+    if (profile.corporation) {
+        corporations.push({
+            ...profile.corporation,
+            is_primary: true,
+            can_manage: true
+        });
+    }
+
+    // Add additional corporations
+    additionalCorps.forEach(ac => {
+        if (ac.corporation && !corporations.find(c => c.id === ac.corporation.id)) {
+            corporations.push({
+                ...ac.corporation,
+                is_primary: ac.is_primary,
+                can_manage: ac.can_manage
+            });
+        }
+    });
+
+    // Check if super_admin (has access to all)
+    if (profile.role === 'super_admin') {
+        const { data: allCorps } = await supabaseClient
+            .from('corporations')
+            .select('*')
+            .order('name');
+
+        if (allCorps) {
+            profile.all_corporations = allCorps.map(c => ({
+                ...c,
+                is_primary: c.id === profile.corporation_id,
+                can_manage: true
+            }));
+        }
+    } else {
+        profile.all_corporations = corporations;
+    }
+
+    profile.has_multi_corp_access = profile.all_corporations.length > 1;
+
+    return profile;
+}
+
 // Check if user is authenticated and is an admin
 async function requireAdmin() {
     const session = await getSession();
@@ -115,6 +191,8 @@ window.SupabaseConfig = {
     getCurrentUser,
     getSession,
     getAdminProfile,
+    getFullAdminProfile,
+    getUserCorporations,
     requireAdmin
 };
 
@@ -122,3 +200,5 @@ window.SupabaseConfig = {
 window.waitForSupabase = waitForSupabase;
 window.initSupabase = initSupabase;
 window.getSession = getSession;
+window.getFullAdminProfile = getFullAdminProfile;
+window.getUserCorporations = getUserCorporations;

@@ -339,32 +339,59 @@
 
                 console.log('Admin user found:', adminUser.name, adminUser);
 
+                // Get full profile with multi-corporation access
+                const fullProfile = await getFullAdminProfile(data.user.id);
+                const allCorps = fullProfile?.all_corporations || [];
+                const hasMultiCorpAccess = allCorps.length > 1;
+
                 // Get expected corporation from URL
                 const expectedCorp = getExpectedCorporation();
                 const userCorpCode = adminUser.corporation?.code;
 
-                // Check if user's corporation matches the expected one (if specified)
-                if (expectedCorp && userCorpCode && expectedCorp !== userCorpCode) {
-                    console.error('Corporation mismatch: expected', expectedCorp, 'but user belongs to', userCorpCode);
-                    await supabaseClient.auth.signOut();
-                    throw new Error(`Access denied. You are not authorized for ${corpNames[expectedCorp] || expectedCorp}. Your account is associated with ${adminUser.corporation?.name || userCorpCode}.`);
+                // Check if user has access to the expected corporation
+                if (expectedCorp) {
+                    const hasAccessToExpected = allCorps.some(c => c.code === expectedCorp) ||
+                                                fullProfile?.role === 'super_admin';
+
+                    if (!hasAccessToExpected) {
+                        console.error('Corporation mismatch: expected', expectedCorp, 'but user has no access');
+                        await supabaseClient.auth.signOut();
+                        throw new Error(`Access denied. You are not authorized for ${corpNames[expectedCorp] || expectedCorp}.`);
+                    }
                 }
 
-                // Store admin info in session storage
-                sessionStorage.setItem('adminUser', JSON.stringify(adminUser));
+                // Store full admin info in session storage (including multi-corp access)
+                sessionStorage.setItem('adminUser', JSON.stringify(fullProfile));
 
-                // Show corporation info before redirecting
-                const corpName = adminUser.corporation?.name || adminUser.corporation?.short_name || 'GBA';
-                const corpCode = adminUser.corporation?.code || 'north';
+                // Determine which corporation to redirect to
+                let targetCorpCode = expectedCorp || userCorpCode || 'north';
+                let targetCorpName = corpNames[targetCorpCode] || adminUser.corporation?.name || 'GBA';
+
+                // If user has multi-corp access and no specific corp requested, use primary
+                if (hasMultiCorpAccess && !expectedCorp) {
+                    const primaryCorp = allCorps.find(c => c.is_primary) || allCorps[0];
+                    if (primaryCorp) {
+                        targetCorpCode = primaryCorp.code;
+                        targetCorpName = primaryCorp.name;
+                    }
+                }
 
                 document.getElementById('loginForm').style.display = 'none';
                 document.getElementById('corporationInfo').style.display = 'block';
-                document.getElementById('corporationName').textContent = corpName;
-                document.getElementById('loginMessage').textContent = `Welcome, ${adminUser.name}! Redirecting to dashboard...`;
+                document.getElementById('corporationName').textContent = targetCorpName;
+
+                // Show message indicating multi-corp access if applicable
+                if (hasMultiCorpAccess) {
+                    document.getElementById('loginMessage').textContent =
+                        `Welcome, ${adminUser.name}! You have access to ${allCorps.length} corporations. Redirecting...`;
+                } else {
+                    document.getElementById('loginMessage').textContent =
+                        `Welcome, ${adminUser.name}! Redirecting to dashboard...`;
+                }
 
                 // Redirect to corporation-specific dashboard after brief delay
                 setTimeout(() => {
-                    window.location.href = `dashboard.html?corp=${corpCode}`;
+                    window.location.href = `dashboard.html?corp=${targetCorpCode}`;
                 }, 1500);
 
             } catch (error) {

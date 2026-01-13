@@ -295,6 +295,28 @@ CREATE TABLE admin_users (
 );
 
 -- =====================================================
+-- ADMIN USER CORPORATIONS (Multi-Corporation Access)
+-- =====================================================
+-- Junction table for users who need access to multiple corporations
+-- Note: admin_users.corporation_id is the PRIMARY/default corporation
+-- This table allows ADDITIONAL corporation access
+
+CREATE TABLE admin_user_corporations (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    admin_user_id UUID NOT NULL REFERENCES admin_users(id) ON DELETE CASCADE,
+    corporation_id UUID NOT NULL REFERENCES corporations(id) ON DELETE CASCADE,
+    is_primary BOOLEAN DEFAULT false,
+    can_manage BOOLEAN DEFAULT true,  -- Can manage complaints (vs read-only)
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    created_by UUID REFERENCES admin_users(id),
+    UNIQUE(admin_user_id, corporation_id)
+);
+
+-- Index for faster lookups
+CREATE INDEX idx_admin_user_corps_admin ON admin_user_corporations(admin_user_id);
+CREATE INDEX idx_admin_user_corps_corp ON admin_user_corporations(corporation_id);
+
+-- =====================================================
 -- COMPLAINTS TABLE
 -- =====================================================
 
@@ -519,29 +541,48 @@ ALTER TABLE complaints ENABLE ROW LEVEL SECURITY;
 ALTER TABLE admin_users ENABLE ROW LEVEL SECURITY;
 ALTER TABLE complaint_history ENABLE ROW LEVEL SECURITY;
 ALTER TABLE complaint_comments ENABLE ROW LEVEL SECURITY;
+ALTER TABLE admin_user_corporations ENABLE ROW LEVEL SECURITY;
 
--- Policy: Admins can see complaints for their corporation
+-- Helper function to get all corporations a user has access to
+CREATE OR REPLACE FUNCTION get_user_corporation_ids(user_uuid UUID)
+RETURNS SETOF UUID AS $$
+BEGIN
+    RETURN QUERY
+    -- Primary corporation from admin_users
+    SELECT au.corporation_id FROM admin_users au WHERE au.user_id = user_uuid AND au.corporation_id IS NOT NULL
+    UNION
+    -- Additional corporations from junction table
+    SELECT auc.corporation_id FROM admin_user_corporations auc
+    JOIN admin_users au ON auc.admin_user_id = au.id
+    WHERE au.user_id = user_uuid;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Policy: Admins can see complaints for their corporations (primary + additional)
 CREATE POLICY admin_view_complaints ON complaints
     FOR SELECT
     USING (
-        corporation_id IN (
-            SELECT corporation_id FROM admin_users
-            WHERE user_id = auth.uid()
-        )
+        -- Check primary corporation OR additional corporations
+        corporation_id IN (SELECT get_user_corporation_ids(auth.uid()))
         OR
+        -- Super admins can see all
         EXISTS (
             SELECT 1 FROM admin_users
             WHERE user_id = auth.uid() AND role = 'super_admin'
         )
     );
 
--- Policy: Admins can update complaints for their corporation
+-- Policy: Admins can update complaints for their corporations
 CREATE POLICY admin_update_complaints ON complaints
     FOR UPDATE
     USING (
+        -- Check primary corporation OR additional corporations with manage permission
         corporation_id IN (
-            SELECT corporation_id FROM admin_users
-            WHERE user_id = auth.uid()
+            SELECT corporation_id FROM admin_users WHERE user_id = auth.uid()
+            UNION
+            SELECT auc.corporation_id FROM admin_user_corporations auc
+            JOIN admin_users au ON auc.admin_user_id = au.id
+            WHERE au.user_id = auth.uid() AND auc.can_manage = true
         )
         OR
         EXISTS (
@@ -555,12 +596,34 @@ CREATE POLICY public_insert_complaints ON complaints
     FOR INSERT
     WITH CHECK (true);
 
--- Policy: Admins can view their own profile
+-- Policy: Admins can view their own profile and commissioners can see their corp admins
 CREATE POLICY admin_view_profile ON admin_users
     FOR SELECT
     USING (
         user_id = auth.uid()
         OR
+        EXISTS (
+            SELECT 1 FROM admin_users
+            WHERE user_id = auth.uid() AND role IN ('super_admin', 'commissioner')
+        )
+    );
+
+-- Policy: Admins can view their own corporation assignments
+CREATE POLICY admin_view_own_corporations ON admin_user_corporations
+    FOR SELECT
+    USING (
+        admin_user_id IN (SELECT id FROM admin_users WHERE user_id = auth.uid())
+        OR
+        EXISTS (
+            SELECT 1 FROM admin_users
+            WHERE user_id = auth.uid() AND role IN ('super_admin', 'commissioner')
+        )
+    );
+
+-- Policy: Only super_admin and commissioner can manage corporation assignments
+CREATE POLICY admin_manage_corporations ON admin_user_corporations
+    FOR ALL
+    USING (
         EXISTS (
             SELECT 1 FROM admin_users
             WHERE user_id = auth.uid() AND role IN ('super_admin', 'commissioner')
@@ -573,7 +636,7 @@ CREATE POLICY admin_view_history ON complaint_history
     USING (
         complaint_id IN (
             SELECT id FROM complaints WHERE corporation_id IN (
-                SELECT corporation_id FROM admin_users WHERE user_id = auth.uid()
+                SELECT get_user_corporation_ids(auth.uid())
             )
         )
     );
@@ -584,7 +647,7 @@ CREATE POLICY admin_view_comments ON complaint_comments
     USING (
         complaint_id IN (
             SELECT id FROM complaints WHERE corporation_id IN (
-                SELECT corporation_id FROM admin_users WHERE user_id = auth.uid()
+                SELECT get_user_corporation_ids(auth.uid())
             )
         )
     );

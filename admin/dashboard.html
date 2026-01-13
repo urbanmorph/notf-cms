@@ -37,6 +37,14 @@
                 </div>
             </div>
 
+            <!-- Corporation Switcher (shown for multi-corp users) -->
+            <div id="corpSwitcher" class="corp-switcher" style="display: none;">
+                <label for="corpSelect">Switch Corporation:</label>
+                <select id="corpSelect" onchange="switchCorporation(this.value)">
+                    <!-- Options populated by JS -->
+                </select>
+            </div>
+
             <nav class="sidebar-nav">
                 <div class="nav-section">
                     <div class="nav-section-title">Overview</div>
@@ -343,6 +351,63 @@
             </div>
         </main>
     </div>
+
+    <style>
+        /* Corporation Switcher Styles */
+        .corp-switcher {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--admin-border);
+            background: rgba(35, 162, 165, 0.05);
+        }
+
+        .corp-switcher label {
+            display: block;
+            font-size: 0.75rem;
+            color: var(--admin-text-light);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .corp-switcher select {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--admin-border);
+            border-radius: 6px;
+            background: white;
+            font-size: 0.9rem;
+            color: var(--admin-text);
+            cursor: pointer;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .corp-switcher select:hover {
+            border-color: var(--admin-primary);
+        }
+
+        .corp-switcher select:focus {
+            outline: none;
+            border-color: var(--admin-primary);
+            box-shadow: 0 0 0 3px rgba(35, 162, 165, 0.15);
+        }
+
+        .corp-switcher select option {
+            padding: 8px;
+        }
+
+        /* Multi-corp indicator badge */
+        .multi-corp-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: linear-gradient(135deg, #23a2a5, #1a7a7c);
+            color: white;
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 10px;
+            margin-left: 8px;
+        }
+    </style>
 
     <script src="../js/supabase-config.js"></script>
     <script src="../js/admin/dashboard.js"></script>
