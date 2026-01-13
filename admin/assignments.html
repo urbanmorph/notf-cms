@@ -800,6 +800,17 @@
 
     <script src="../js/supabase-config.js"></script>
     <script>
+        let adminUser = null;
+        let fullAdminProfile = null;
+        let currentCorporation = null;
+        let unassignedComplaints = [];
+
+        // Get corporation code from URL
+        function getCorporationFromURL() {
+            const params = new URLSearchParams(window.location.search);
+            return params.get('corp');
+        }
+
         // Initialize page
         document.addEventListener('DOMContentLoaded', async function() {
             try {
@@ -811,34 +822,157 @@
         });
 
         async function initializePage() {
-            // Load user info
-            const adminUser = sessionStorage.getItem('adminUser');
-            if (adminUser) {
-                const user = JSON.parse(adminUser);
-                document.getElementById('userName').textContent = user.name || 'Admin';
-                document.getElementById('userAvatar').textContent = (user.name || 'A').charAt(0).toUpperCase();
-                document.getElementById('sidebarCorporation').textContent = user.corporation?.name || 'Corporation';
+            // Check authentication
+            adminUser = await requireAdmin();
+            if (!adminUser) return;
+
+            // Get full profile with multi-corporation access
+            const { data: { user } } = await supabaseClient.auth.getUser();
+            if (user) {
+                fullAdminProfile = await getFullAdminProfile(user.id);
             }
 
-            // Load unassigned complaints count
+            // Handle multi-corporation access
+            const urlCorp = getCorporationFromURL();
+            const allCorps = fullAdminProfile?.all_corporations || [];
+
+            if (urlCorp) {
+                currentCorporation = allCorps.find(c => c.code === urlCorp) || adminUser.corporation;
+            } else {
+                currentCorporation = adminUser.corporation || (allCorps.length > 0 ? allCorps[0] : null);
+            }
+
+            // Update adminUser.corporation_id
+            if (currentCorporation) {
+                adminUser.corporation_id = currentCorporation.id;
+                adminUser.corporation = currentCorporation;
+            }
+
+            // Update UI
+            document.getElementById('userName').textContent = adminUser.name || 'Admin';
+            document.getElementById('userAvatar').textContent = (adminUser.name || 'A').charAt(0).toUpperCase();
+            document.getElementById('sidebarCorporation').textContent = currentCorporation?.name || 'Corporation';
+
+            // Load data
             await loadUnassignedComplaints();
             await loadRecentAssignments();
         }
 
         async function loadUnassignedComplaints() {
-            // Placeholder - would fetch from Supabase
-            document.getElementById('unassignedCount').textContent = '0';
+            try {
+                const { data, error, count } = await supabaseClient
+                    .from('complaints')
+                    .select(`
+                        *,
+                        category:issue_categories!complaints_category_id_fkey(name),
+                        ml_department:departments!complaints_ml_department_id_fkey(name)
+                    `, { count: 'exact' })
+                    .eq('corporation_id', adminUser.corporation_id)
+                    .is('assigned_to', null)
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                unassignedComplaints = data || [];
+                document.getElementById('unassignedCount').textContent = count || 0;
+
+                const tableBody = document.getElementById('unassignedTable');
+
+                if (unassignedComplaints.length === 0) {
+                    tableBody.innerHTML = `
+                        <tr>
+                            <td colspan="8" style="text-align: center; padding: 40px; color: #666;">
+                                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1">
+                                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                                </svg>
+                                <p style="margin-top: 12px;">No unassigned complaints</p>
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+
+                tableBody.innerHTML = unassignedComplaints.map(c => `
+                    <tr>
+                        <td><input type="checkbox" class="unassigned-checkbox" value="${c.id}"></td>
+                        <td><span class="complaint-id">${c.complaint_number || 'N/A'}</span></td>
+                        <td>${c.category?.name || 'Uncategorized'}</td>
+                        <td>${c.address || c.ward || 'N/A'}</td>
+                        <td title="${c.description || ''}">${truncateText(c.title || c.description, 40)}</td>
+                        <td>${formatDate(c.created_at)}</td>
+                        <td>${c.ml_department?.name ? `<span class="ml-suggestion">${c.ml_department.name}</span>` : '-'}</td>
+                        <td>
+                            <button class="action-btn" onclick="openAssignModal('${c.id}')" title="Assign">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="8.5" cy="7" r="4"></circle>
+                                    <line x1="20" y1="8" x2="20" y2="14"></line>
+                                    <line x1="23" y1="11" x2="17" y2="11"></line>
+                                </svg>
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+
+            } catch (error) {
+                console.error('Error loading unassigned complaints:', error);
+                document.getElementById('unassignedCount').textContent = '0';
+            }
         }
 
         async function loadRecentAssignments() {
-            // Placeholder - would fetch from Supabase
-            document.getElementById('recentAssignmentsTable').innerHTML = `
-                <tr>
-                    <td colspan="8" style="text-align: center; padding: 40px; color: #666;">
-                        No recent assignments
-                    </td>
-                </tr>
-            `;
+            try {
+                const { data, error } = await supabaseClient
+                    .from('complaints')
+                    .select(`
+                        *,
+                        department:departments!complaints_department_id_fkey(name),
+                        assigned_officer:admin_users!complaints_assigned_to_fkey(name)
+                    `)
+                    .eq('corporation_id', adminUser.corporation_id)
+                    .not('assigned_to', 'is', null)
+                    .order('assigned_at', { ascending: false })
+                    .limit(10);
+
+                if (error) throw error;
+
+                const tableBody = document.getElementById('recentAssignmentsTable');
+
+                if (!data || data.length === 0) {
+                    tableBody.innerHTML = `
+                        <tr>
+                            <td colspan="8" style="text-align: center; padding: 40px; color: #666;">
+                                No recent assignments
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+
+                tableBody.innerHTML = data.map(c => `
+                    <tr>
+                        <td><span class="complaint-id">${c.complaint_number || 'N/A'}</span></td>
+                        <td>${c.department?.name || 'N/A'}</td>
+                        <td>${c.assigned_officer?.name || 'N/A'}</td>
+                        <td><span class="status-badge ${c.status}">${c.status}</span></td>
+                        <td>${formatDate(c.assigned_at)}</td>
+                    </tr>
+                `).join('');
+
+            } catch (error) {
+                console.error('Error loading recent assignments:', error);
+            }
+        }
+
+        function truncateText(text, maxLength) {
+            if (!text) return '-';
+            return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
+        }
+
+        function formatDate(dateStr) {
+            if (!dateStr) return '-';
+            return new Date(dateStr).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
         }
 
         function toggleAutoAssign() {
