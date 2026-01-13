@@ -448,6 +448,15 @@ async function handleComplaintSubmit(event) {
             throw new Error('Please provide the location of the issue.');
         }
 
+        // Validate location is within corporation boundary
+        if (formData.latitude && formData.longitude && corporationBoundary) {
+            const lat = parseFloat(formData.latitude);
+            const lng = parseFloat(formData.longitude);
+            if (!isPointInBoundary(lat, lng)) {
+                throw new Error('The selected location is outside this corporation\'s area. Please select a location within the boundary or use the appropriate corporation\'s complaint form.');
+            }
+        }
+
         // Submit to Supabase
         const result = await submitComplaintToSupabase(formData);
 
@@ -600,6 +609,44 @@ function showBoundaryError() {
     }
 }
 
+// Clear location fields when boundary validation fails
+function clearLocationFields() {
+    const latField = document.getElementById('complaintLatitude');
+    const lngField = document.getElementById('complaintLongitude');
+    const coordsContainer = document.getElementById('locationCoords');
+
+    if (latField) latField.value = '';
+    if (lngField) lngField.value = '';
+    if (coordsContainer) coordsContainer.style.display = 'none';
+
+    // Remove marker from map
+    if (locationMarker && locationMap) {
+        locationMap.removeLayer(locationMarker);
+        locationMarker = null;
+    }
+}
+
+// Reverse geocode coordinates to get address
+async function reverseGeocode(lat, lng) {
+    try {
+        const response = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`
+        );
+        if (!response.ok) return;
+
+        const data = await response.json();
+        if (data.display_name) {
+            const addressInput = document.querySelector('[name="address"]');
+            if (addressInput && !addressInput.value) {
+                // Only update if address field is empty (user didn't type anything)
+                addressInput.value = data.display_name.split(',').slice(0, 3).join(', ');
+            }
+        }
+    } catch (error) {
+        console.error('Reverse geocoding error:', error);
+    }
+}
+
 // Display boundary polygon on the map
 function showBoundaryOnMap() {
     if (!locationMap || !corporationBoundary) return;
@@ -702,20 +749,25 @@ function showGeocodeSuggestions(results, addressInput) {
         item.className = 'geocode-suggestion-item';
         item.textContent = result.display_name;
 
-        item.addEventListener('click', () => {
+        item.addEventListener('click', async () => {
             const lat = parseFloat(result.lat);
             const lng = parseFloat(result.lon);
 
-            // Update the input field with selected address (shortened)
-            addressInput.value = result.display_name.split(',').slice(0, 3).join(', ');
-
-            // Initialize map if needed and set marker
+            // Initialize map if needed (to load boundary)
             if (!locationMap) {
-                initLocationMap();
-                setTimeout(() => setLocationMarker(lat, lng), 200);
-            } else {
-                setLocationMarker(lat, lng);
+                await initLocationMap();
             }
+
+            // Check boundary BEFORE updating address
+            if (corporationBoundary && !isPointInBoundary(lat, lng)) {
+                showBoundaryError();
+                removeGeocodeSuggestions();
+                return; // Don't update address or place marker
+            }
+
+            // Location is valid - update address and place marker
+            addressInput.value = result.display_name.split(',').slice(0, 3).join(', ');
+            setLocationMarker(lat, lng, true); // skipValidation since we already checked
 
             removeGeocodeSuggestions();
         });
@@ -822,7 +874,7 @@ async function initLocationMap() {
 
 // Set marker at specified location (with boundary validation)
 function setLocationMarker(lat, lng, skipValidation = false) {
-    if (!locationMap) return;
+    if (!locationMap) return false;
 
     // Validate against corporation boundary
     if (!skipValidation && corporationBoundary) {
@@ -831,7 +883,8 @@ function setLocationMarker(lat, lng, skipValidation = false) {
         if (!isInside) {
             // Block the placement and show error
             showBoundaryError();
-            return; // Don't place marker
+            clearLocationFields();
+            return false; // Don't place marker
         }
     }
 
@@ -872,14 +925,21 @@ function setLocationMarker(lat, lng, skipValidation = false) {
             locationMarker.setLatLng([lat, lng]);
         } else {
             updateLocationFields(pos.lat, pos.lng);
+            // Reverse geocode the new position
+            reverseGeocode(pos.lat, pos.lng);
         }
     });
 
     // Update form fields
     updateLocationFields(lat, lng);
 
+    // Reverse geocode to update address field (only if address is empty)
+    reverseGeocode(lat, lng);
+
     // Center map on marker
     locationMap.setView([lat, lng], 16);
+
+    return true;
 }
 
 // Update hidden form fields with coordinates
