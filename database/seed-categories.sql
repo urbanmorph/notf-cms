@@ -13,8 +13,9 @@ CREATE INDEX IF NOT EXISTS idx_issue_categories_parent ON issue_categories(paren
 -- Step 2: Clear existing categories (optional - comment out if you want to keep existing)
 -- TRUNCATE issue_categories CASCADE;
 
--- Step 3: Add unique constraint on code (required for ON CONFLICT)
-ALTER TABLE issue_categories ADD CONSTRAINT issue_categories_code_unique UNIQUE (code);
+-- Step 3: Note - The unique constraint on code has been moved to fix-category-constraints.sql
+-- This allows better handling of hierarchical categories with NULL department_id
+-- Run fix-category-constraints.sql first if you encounter 409 errors
 
 -- Step 4: Insert Main Categories
 INSERT INTO issue_categories (id, name, code, parent_id, display_order) VALUES

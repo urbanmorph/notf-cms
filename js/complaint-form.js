@@ -4,6 +4,8 @@
 // Location picker state
 let locationMap = null;
 let locationMarker = null;
+let corporationBoundary = null;
+let boundaryLayer = null;
 
 // Corporation center coordinates (calculated from GeoJSON boundaries)
 const CORPORATION_CENTERS = {
@@ -98,6 +100,23 @@ const CORPORATION_CODES = {
     'Bengaluru Central City Corporation': 'central'
 };
 
+// Corporation display names for boundary validation messages
+const CORPORATION_NAMES = {
+    'north': 'Bengaluru North City Corporation',
+    'south': 'Bengaluru South City Corporation',
+    'east': 'Bengaluru East City Corporation',
+    'west': 'Bengaluru West City Corporation',
+    'central': 'Bengaluru Central City Corporation'
+};
+
+// Geocoding configuration
+const GEOCODING_CONFIG = {
+    nominatimUrl: 'https://nominatim.openstreetmap.org/search',
+    viewbox: '77.35,12.75,77.85,13.20', // Bengaluru bounding box
+    bounded: 1,
+    debounceMs: 500
+};
+
 // Classify complaint using ML/keyword matching
 function classifyComplaint(title, description) {
     const text = `${title} ${description}`.toLowerCase();
@@ -158,9 +177,65 @@ async function initComplaintFormWithSupabase() {
     await loadCategories();
 }
 
+// Fallback categories if database load fails
+function setFallbackCategories(selectElement) {
+    selectElement.innerHTML = `
+        <option value="">Select Issue Type</option>
+        <optgroup label="Roads, Traffic and Transport">
+            <option value="road_conditions">Road Conditions</option>
+            <option value="traffic_management">Traffic Management</option>
+            <option value="traffic_signals">Signals</option>
+            <option value="footpaths">Footpaths</option>
+            <option value="signage">Signage</option>
+            <option value="street_lights">Street Lights</option>
+        </optgroup>
+        <optgroup label="Water">
+            <option value="water_supply">Water Supply</option>
+            <option value="water_smell">Smell</option>
+            <option value="water_colour">Colour</option>
+            <option value="pipe_leak">Pipe Leak</option>
+        </optgroup>
+        <optgroup label="Drainage">
+            <option value="flooding">Flooding</option>
+            <option value="broken_drain">Broken Drain</option>
+            <option value="sewage_contamination">Sewage Contamination</option>
+        </optgroup>
+        <optgroup label="Power Supply">
+            <option value="power_cut">Power Cut</option>
+            <option value="dangling_wire">Dangling Wire</option>
+            <option value="defective_meter">Defective Meter</option>
+            <option value="transformer">Transformer</option>
+        </optgroup>
+        <optgroup label="Civic Issues">
+            <option value="loud_noise">Loud Noise</option>
+            <option value="stray_animals">Stray Animals</option>
+        </optgroup>
+        <optgroup label="Environment">
+            <option value="air_quality">Air Quality</option>
+            <option value="trees_vegetation">Trees and Vegetation</option>
+        </optgroup>
+        <optgroup label="Buildings">
+            <option value="illegal_construction">Illegal Construction</option>
+            <option value="encroachment">Encroachment</option>
+            <option value="dangerous_building">Dangerous Building</option>
+        </optgroup>
+        <optgroup label="Sewage">
+            <option value="sewage_dumping">Sewage Dumping</option>
+            <option value="drain_overflow">Drain Overflow</option>
+            <option value="water_contamination">Water Contamination</option>
+        </optgroup>
+    `;
+}
+
 // Load issue categories from Supabase (hierarchical with optgroups)
 async function loadCategories() {
-    if (!window.supabaseClient) return;
+    const issueTypeSelect = document.getElementById('issueType');
+
+    if (!window.supabaseClient) {
+        console.warn('Supabase not initialized, using fallback categories');
+        if (issueTypeSelect) setFallbackCategories(issueTypeSelect);
+        return;
+    }
 
     try {
         // Load main categories (parent_id IS NULL)
@@ -170,7 +245,15 @@ async function loadCategories() {
             .is('parent_id', null)
             .order('display_order');
 
-        if (mainError) throw mainError;
+        if (mainError) {
+            console.error('Main categories query error:', mainError);
+            throw mainError;
+        }
+
+        // Check if we actually got data
+        if (!mainCategories || mainCategories.length === 0) {
+            throw new Error('No categories returned from database');
+        }
 
         // Load all subcategories
         const { data: subCategories, error: subError } = await window.supabaseClient
@@ -179,19 +262,21 @@ async function loadCategories() {
             .not('parent_id', 'is', null)
             .order('display_order');
 
-        if (subError) throw subError;
+        if (subError) {
+            console.error('Subcategories query error:', subError);
+            throw subError;
+        }
 
         // Store for later use
-        window.categoriesData = { main: mainCategories, sub: subCategories };
+        window.categoriesData = { main: mainCategories, sub: subCategories || [] };
 
         // Update the issue type dropdown if it exists
-        const issueTypeSelect = document.getElementById('issueType');
-        if (issueTypeSelect && mainCategories) {
+        if (issueTypeSelect) {
             let optionsHTML = '<option value="">Select Issue Type</option>';
 
             mainCategories.forEach(category => {
                 // Get subcategories for this main category
-                const subs = subCategories?.filter(s => s.parent_id === category.id) || [];
+                const subs = (subCategories || []).filter(s => s.parent_id === category.id);
 
                 if (subs.length > 0) {
                     // Create optgroup with subcategories
@@ -207,10 +292,15 @@ async function loadCategories() {
             });
 
             issueTypeSelect.innerHTML = optionsHTML;
+            console.log('Categories loaded successfully:', mainCategories.length, 'main,', (subCategories || []).length, 'sub');
         }
     } catch (error) {
         console.error('Error loading categories:', error);
-        // Keep the loading placeholder visible on error
+        // Use fallback categories on error
+        if (issueTypeSelect) {
+            console.log('Using fallback categories due to error');
+            setFallbackCategories(issueTypeSelect);
+        }
     }
 }
 
@@ -435,8 +525,262 @@ async function trackComplaint(complaintNumber) {
     }
 }
 
+// =====================================================
+// BOUNDARY VALIDATION FUNCTIONS
+// =====================================================
+
+// Load corporation boundary from GeoJSON
+async function loadCorporationBoundary() {
+    const corp = getCurrentCorporation();
+    if (corp === 'default') return null;
+
+    try {
+        const response = await fetch('files/gba_corporation.geojson');
+        if (!response.ok) throw new Error('Failed to load GeoJSON');
+
+        const geojson = await response.json();
+
+        // Find the matching corporation feature
+        const targetName = CORPORATION_NAMES[corp];
+        const feature = geojson.features.find(f => f.properties.namecol === targetName);
+
+        if (feature) {
+            corporationBoundary = feature;
+            console.log('Corporation boundary loaded for:', targetName);
+            return feature;
+        }
+
+        return null;
+    } catch (error) {
+        console.error('Error loading corporation boundary:', error);
+        return null;
+    }
+}
+
+// Check if a point is within the corporation boundary using Turf.js
+function isPointInBoundary(lat, lng) {
+    if (!corporationBoundary) {
+        console.warn('Corporation boundary not loaded');
+        return true; // Allow if boundary not loaded (fail-open)
+    }
+
+    // Check if Turf.js is available
+    if (typeof turf === 'undefined') {
+        console.warn('Turf.js not loaded, skipping boundary check');
+        return true;
+    }
+
+    try {
+        const point = turf.point([lng, lat]); // GeoJSON uses [lng, lat]
+        const polygon = turf.polygon(corporationBoundary.geometry.coordinates);
+        return turf.booleanPointInPolygon(point, polygon);
+    } catch (error) {
+        console.error('Point-in-polygon check failed:', error);
+        return true; // Fail-open on error
+    }
+}
+
+// Show boundary error message
+function showBoundaryError() {
+    const corp = getCurrentCorporation();
+    const corpName = CORPORATION_NAMES[corp] || 'this corporation';
+    const statusEl = document.getElementById('locationStatus');
+
+    if (statusEl) {
+        statusEl.innerHTML = `Location must be within ${corpName} area.<br>Please use the appropriate corporation's complaint form for other areas.`;
+        statusEl.className = 'location-status error';
+
+        // Clear message after 8 seconds
+        setTimeout(() => {
+            if (statusEl.className.includes('error')) {
+                statusEl.textContent = '';
+                statusEl.className = 'location-status';
+            }
+        }, 8000);
+    }
+}
+
+// Display boundary polygon on the map
+function showBoundaryOnMap() {
+    if (!locationMap || !corporationBoundary) return;
+
+    // Remove existing boundary layer
+    if (boundaryLayer) {
+        locationMap.removeLayer(boundaryLayer);
+    }
+
+    // Add boundary with subtle styling
+    boundaryLayer = L.geoJSON(corporationBoundary, {
+        style: {
+            color: '#23A2A5',
+            weight: 2,
+            fillColor: '#23A2A5',
+            fillOpacity: 0.08,
+            dashArray: '5, 5'
+        }
+    }).addTo(locationMap);
+
+    // Fit map to boundary
+    locationMap.fitBounds(boundaryLayer.getBounds(), { padding: [20, 20] });
+}
+
+// =====================================================
+// GEOCODING FUNCTIONS
+// =====================================================
+
+// Debounce utility for input events
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
+// Geocode an address string using Nominatim
+async function geocodeAddress(address) {
+    if (!address || address.length < 5) return null;
+
+    // Append Bengaluru to improve accuracy for local addresses
+    const searchQuery = address.toLowerCase().includes('bengaluru') ||
+                        address.toLowerCase().includes('bangalore')
+        ? address
+        : `${address}, Bengaluru, Karnataka, India`;
+
+    try {
+        const params = new URLSearchParams({
+            q: searchQuery,
+            format: 'json',
+            limit: 5,
+            viewbox: GEOCODING_CONFIG.viewbox,
+            bounded: GEOCODING_CONFIG.bounded,
+            addressdetails: 1
+        });
+
+        const response = await fetch(`${GEOCODING_CONFIG.nominatimUrl}?${params}`, {
+            headers: {
+                'Accept': 'application/json'
+            }
+        });
+
+        if (!response.ok) throw new Error('Geocoding request failed');
+
+        const results = await response.json();
+
+        if (results && results.length > 0) {
+            return {
+                lat: parseFloat(results[0].lat),
+                lng: parseFloat(results[0].lon),
+                displayName: results[0].display_name,
+                allResults: results
+            };
+        }
+
+        return null;
+    } catch (error) {
+        console.error('Geocoding error:', error);
+        return null;
+    }
+}
+
+// Show geocoding suggestions dropdown
+function showGeocodeSuggestions(results, addressInput) {
+    removeGeocodeSuggestions();
+
+    if (!results || results.length === 0) return;
+
+    const suggestionsDiv = document.createElement('div');
+    suggestionsDiv.id = 'geocodeSuggestions';
+    suggestionsDiv.className = 'geocode-suggestions';
+
+    results.forEach((result) => {
+        const item = document.createElement('div');
+        item.className = 'geocode-suggestion-item';
+        item.textContent = result.display_name;
+
+        item.addEventListener('click', () => {
+            const lat = parseFloat(result.lat);
+            const lng = parseFloat(result.lon);
+
+            // Update the input field with selected address (shortened)
+            addressInput.value = result.display_name.split(',').slice(0, 3).join(', ');
+
+            // Initialize map if needed and set marker
+            if (!locationMap) {
+                initLocationMap();
+                setTimeout(() => setLocationMarker(lat, lng), 200);
+            } else {
+                setLocationMarker(lat, lng);
+            }
+
+            removeGeocodeSuggestions();
+        });
+
+        suggestionsDiv.appendChild(item);
+    });
+
+    // Position relative to the form group
+    const formGroup = addressInput.closest('.form-group');
+    if (formGroup) {
+        formGroup.style.position = 'relative';
+        formGroup.appendChild(suggestionsDiv);
+    }
+}
+
+// Remove geocoding suggestions dropdown
+function removeGeocodeSuggestions() {
+    const existing = document.getElementById('geocodeSuggestions');
+    if (existing) existing.remove();
+}
+
+// Initialize geocoding on address input field
+function initAddressGeocoding() {
+    const addressInput = document.querySelector('[name="address"]');
+    if (!addressInput) return;
+
+    // Debounced geocoding handler
+    const debouncedGeocode = debounce(async (value) => {
+        if (value.length < 5) {
+            removeGeocodeSuggestions();
+            return;
+        }
+
+        const result = await geocodeAddress(value);
+        if (result && result.allResults) {
+            showGeocodeSuggestions(result.allResults, addressInput);
+        }
+    }, GEOCODING_CONFIG.debounceMs);
+
+    // Listen to input events
+    addressInput.addEventListener('input', (e) => {
+        debouncedGeocode(e.target.value);
+    });
+
+    // Close suggestions when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.form-group')) {
+            removeGeocodeSuggestions();
+        }
+    });
+
+    // Show suggestions on focus if text exists
+    addressInput.addEventListener('focus', () => {
+        if (addressInput.value.length >= 5) {
+            debouncedGeocode(addressInput.value);
+        }
+    });
+}
+
+// =====================================================
+// MAP FUNCTIONS
+// =====================================================
+
 // Initialize location map in the complaint form
-function initLocationMap() {
+async function initLocationMap() {
     const mapContainer = document.getElementById('locationMap');
     if (!mapContainer || locationMap) return;
 
@@ -450,29 +794,53 @@ function initLocationMap() {
         return;
     }
 
+    // Load corporation boundary first
+    await loadCorporationBoundary();
+
     // Initialize map with corporation center
     locationMap = L.map('locationMap').setView([center.lat, center.lng], center.zoom);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap contributors',
+        attribution: '&copy; OpenStreetMap contributors',
         maxZoom: 19
     }).addTo(locationMap);
 
-    // Add click handler to place marker
+    // Show boundary on map
+    showBoundaryOnMap();
+
+    // Add click handler to place marker (with boundary validation)
     locationMap.on('click', function(e) {
         setLocationMarker(e.latlng.lat, e.latlng.lng);
     });
 
     // Add instruction overlay
     const instructionDiv = L.DomUtil.create('div', 'map-instruction');
-    instructionDiv.innerHTML = 'Click on map to set location';
+    instructionDiv.innerHTML = 'Click within the highlighted area to set location';
     instructionDiv.style.cssText = 'position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.7); color: white; padding: 4px 12px; border-radius: 4px; font-size: 0.75rem; z-index: 1000; pointer-events: none;';
     mapContainer.appendChild(instructionDiv);
 }
 
-// Set marker at specified location
-function setLocationMarker(lat, lng) {
+// Set marker at specified location (with boundary validation)
+function setLocationMarker(lat, lng, skipValidation = false) {
     if (!locationMap) return;
+
+    // Validate against corporation boundary
+    if (!skipValidation && corporationBoundary) {
+        const isInside = isPointInBoundary(lat, lng);
+
+        if (!isInside) {
+            // Block the placement and show error
+            showBoundaryError();
+            return; // Don't place marker
+        }
+    }
+
+    // Clear any previous error message
+    const statusEl = document.getElementById('locationStatus');
+    if (statusEl && statusEl.className.includes('error')) {
+        statusEl.textContent = '';
+        statusEl.className = 'location-status';
+    }
 
     // Remove existing marker
     if (locationMarker) {
@@ -493,10 +861,18 @@ function setLocationMarker(lat, lng) {
         draggable: true
     }).addTo(locationMap);
 
-    // Update on drag
+    // Update on drag (with boundary validation)
     locationMarker.on('dragend', function(e) {
         const pos = e.target.getLatLng();
-        updateLocationFields(pos.lat, pos.lng);
+
+        // Validate the dragged position
+        if (corporationBoundary && !isPointInBoundary(pos.lat, pos.lng)) {
+            // Revert to previous position and show error
+            showBoundaryError();
+            locationMarker.setLatLng([lat, lng]);
+        } else {
+            updateLocationFields(pos.lat, pos.lng);
+        }
     });
 
     // Update form fields
@@ -618,6 +994,9 @@ function useMyLocation() {
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize Supabase connection
     initComplaintFormWithSupabase();
+
+    // Initialize address geocoding
+    initAddressGeocoding();
 
     // Override the existing form submission handler
     const complaintForm = document.getElementById('complaintForm');
