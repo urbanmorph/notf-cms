@@ -92,7 +92,7 @@ async function loadComplaints() {
             .select(`
                 *,
                 department:departments!complaints_department_id_fkey(id, name),
-                category:issue_categories(id, name),
+                category:issue_categories!complaints_category_id_fkey(id, name),
                 assigned_officer:admin_users!complaints_assigned_to_fkey(id, name)
             `, { count: 'exact' })
             .eq('corporation_id', adminUser.corporation_id)
@@ -377,7 +377,7 @@ async function viewComplaint(id) {
             .select(`
                 *,
                 department:departments!complaints_department_id_fkey(name),
-                category:issue_categories(name),
+                category:issue_categories!complaints_category_id_fkey(name),
                 assigned_officer:admin_users!complaints_assigned_to_fkey(name, phone, email)
             `)
             .eq('id', id)
