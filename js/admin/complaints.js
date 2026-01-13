@@ -91,7 +91,7 @@ async function loadComplaints() {
             .from('complaints')
             .select(`
                 *,
-                department:departments(id, name),
+                department:departments!complaints_department_id_fkey(id, name),
                 category:issue_categories(id, name),
                 assigned_officer:admin_users!complaints_assigned_to_fkey(id, name)
             `, { count: 'exact' })
@@ -376,7 +376,7 @@ async function viewComplaint(id) {
             .from('complaints')
             .select(`
                 *,
-                department:departments(name),
+                department:departments!complaints_department_id_fkey(name),
                 category:issue_categories(name),
                 assigned_officer:admin_users!complaints_assigned_to_fkey(name, phone, email)
             `)
