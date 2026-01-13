@@ -13,7 +13,10 @@ CREATE INDEX IF NOT EXISTS idx_issue_categories_parent ON issue_categories(paren
 -- Step 2: Clear existing categories (optional - comment out if you want to keep existing)
 -- TRUNCATE issue_categories CASCADE;
 
--- Step 3: Insert Main Categories
+-- Step 3: Add unique constraint on code (required for ON CONFLICT)
+ALTER TABLE issue_categories ADD CONSTRAINT issue_categories_code_unique UNIQUE (code);
+
+-- Step 4: Insert Main Categories
 INSERT INTO issue_categories (id, name, code, parent_id, display_order) VALUES
   ('a1000000-0000-0000-0000-000000000001', 'City Amenities', 'city_amenities', NULL, 1),
   ('a1000000-0000-0000-0000-000000000002', 'Bus Services', 'bus_services', NULL, 2),
@@ -28,7 +31,7 @@ INSERT INTO issue_categories (id, name, code, parent_id, display_order) VALUES
   ('a1000000-0000-0000-0000-000000000011', 'Roads, Traffic and Transport', 'roads_traffic', NULL, 11),
   ('a1000000-0000-0000-0000-000000000012', 'Safety', 'safety', NULL, 12),
   ('a1000000-0000-0000-0000-000000000013', 'Sewage', 'sewage', NULL, 13)
-ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name, code = EXCLUDED.code, display_order = EXCLUDED.display_order;
+ON CONFLICT (code) DO UPDATE SET name = EXCLUDED.name, display_order = EXCLUDED.display_order;
 
 -- =====================================================
 -- CITY AMENITIES Subcategories
