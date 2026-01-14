@@ -1,5 +1,6 @@
 {
   "version": 2,
+  "buildCommand": "npm install",
   "builds": [
     {
       "src": "api/**/*.js",
@@ -7,7 +8,7 @@
     }
   ],
   "images": {
-    "domains": ["nkljmdzaxcpbsmdxlywi.supabase.co"],
+    "domains": ["abblyaukkoxmgzwretvm.supabase.co"],
     "formats": ["image/webp", "image/avif"],
     "minimumCacheTTL": 86400
   }
