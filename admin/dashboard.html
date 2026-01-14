@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -24,6 +24,7 @@
     <link rel="stylesheet" href="../css/admin.css">
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="../js/i18n.js"></script>
 </head>
 <body>
     <div class="admin-layout">
@@ -32,14 +33,14 @@
             <div class="sidebar-header">
                 <img src="../images/gba-logo.png" alt="GBA" class="sidebar-logo" onerror="this.style.display='none'">
                 <div>
-                    <div class="sidebar-title">GBA Admin</div>
+                    <div class="sidebar-title" data-i18n="admin.sidebar.title">GBA Admin</div>
                     <div class="sidebar-subtitle" id="sidebarCorporation">Loading...</div>
                 </div>
             </div>
 
             <!-- Corporation Switcher (shown for multi-corp users) -->
             <div id="corpSwitcher" class="corp-switcher" style="display: none;">
-                <label for="corpSelect">Switch Corporation:</label>
+                <label for="corpSelect" data-i18n="admin.sidebar.switchCorporation">Switch Corporation:</label>
                 <select id="corpSelect" onchange="switchCorporation(this.value)">
                     <!-- Options populated by JS -->
                 </select>
@@ -47,7 +48,7 @@
 
             <nav class="sidebar-nav">
                 <div class="nav-section">
-                    <div class="nav-section-title">Overview</div>
+                    <div class="nav-section-title" data-i18n="admin.sidebar.overview">Overview</div>
                     <a href="dashboard.html" class="nav-item active">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <rect x="3" y="3" width="7" height="7"></rect>
@@ -55,7 +56,7 @@
                             <rect x="14" y="14" width="7" height="7"></rect>
                             <rect x="3" y="14" width="7" height="7"></rect>
                         </svg>
-                        Dashboard
+                        <span data-i18n="admin.sidebar.dashboard">Dashboard</span>
                     </a>
                     <a href="complaints.html" class="nav-item">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -64,13 +65,13 @@
                             <line x1="16" y1="13" x2="8" y2="13"></line>
                             <line x1="16" y1="17" x2="8" y2="17"></line>
                         </svg>
-                        All Complaints
+                        <span data-i18n="admin.sidebar.allComplaints">All Complaints</span>
                         <span class="nav-badge" id="newComplaintsCount">0</span>
                     </a>
                 </div>
 
                 <div class="nav-section">
-                    <div class="nav-section-title">Management</div>
+                    <div class="nav-section-title" data-i18n="admin.sidebar.management">Management</div>
                     <a href="assignments.html" class="nav-item">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
@@ -78,44 +79,44 @@
                             <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
                             <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
                         </svg>
-                        Assignments
+                        <span data-i18n="admin.sidebar.assignments">Assignments</span>
                     </a>
                     <a href="sla-tracking.html" class="nav-item">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <circle cx="12" cy="12" r="10"></circle>
                             <polyline points="12 6 12 12 16 14"></polyline>
                         </svg>
-                        SLA Tracking
+                        <span data-i18n="admin.sidebar.slaTracking">SLA Tracking</span>
                     </a>
                 </div>
 
                 <div class="nav-section">
-                    <div class="nav-section-title">Analytics</div>
+                    <div class="nav-section-title" data-i18n="admin.sidebar.analytics">Analytics</div>
                     <a href="analytics.html" class="nav-item">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <line x1="18" y1="20" x2="18" y2="10"></line>
                             <line x1="12" y1="20" x2="12" y2="4"></line>
                             <line x1="6" y1="20" x2="6" y2="14"></line>
                         </svg>
-                        Reports
+                        <span data-i18n="admin.sidebar.reports">Reports</span>
                     </a>
                     <a href="officers.html" class="nav-item">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                             <circle cx="12" cy="7" r="4"></circle>
                         </svg>
-                        Officer Performance
+                        <span data-i18n="admin.sidebar.officerPerformance">Officer Performance</span>
                     </a>
                 </div>
 
                 <div class="nav-section">
-                    <div class="nav-section-title">Settings</div>
+                    <div class="nav-section-title" data-i18n="admin.sidebar.settings">Settings</div>
                     <a href="settings.html" class="nav-item">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <circle cx="12" cy="12" r="3"></circle>
                             <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
                         </svg>
-                        Settings
+                        <span data-i18n="admin.sidebar.settings">Settings</span>
                     </a>
                 </div>
             </nav>
@@ -124,8 +125,8 @@
                 <div class="sidebar-user">
                     <div class="user-avatar" id="userAvatar">A</div>
                     <div class="user-info">
-                        <div class="user-name" id="userName">Admin User</div>
-                        <div class="user-role" id="userRole">Administrator</div>
+                        <div class="user-name" id="userName" data-i18n="admin.common.adminUser">Admin User</div>
+                        <div class="user-role" id="userRole" data-i18n="admin.common.administrator">Administrator</div>
                     </div>
                 </div>
             </div>
@@ -144,9 +145,9 @@
                         </svg>
                     </button>
                     <div class="header-breadcrumb">
-                        <a href="dashboard.html">Home</a>
+                        <a href="dashboard.html" data-i18n="admin.header.home">Home</a>
                         <span>/</span>
-                        <span class="current">Dashboard</span>
+                        <span class="current" data-i18n="admin.sidebar.dashboard">Dashboard</span>
                     </div>
                 </div>
 
@@ -156,7 +157,7 @@
                             <circle cx="11" cy="11" r="8"></circle>
                             <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                         </svg>
-                        <input type="text" placeholder="Search complaints..." id="globalSearch">
+                        <input type="text" data-i18n-placeholder="admin.header.search" placeholder="Search complaints..." id="globalSearch">
                     </div>
 
                     <div class="header-actions">
@@ -182,8 +183,8 @@
             <div class="admin-content">
                 <div class="page-header">
                     <div>
-                        <h1 class="page-title">Dashboard</h1>
-                        <p class="page-subtitle">Welcome back! Here's an overview of your corporation's complaints.</p>
+                        <h1 class="page-title" data-i18n="admin.dashboard.title">Dashboard</h1>
+                        <p class="page-subtitle" data-i18n="admin.dashboard.subtitle">Welcome back! Here's an overview of your corporation's complaints.</p>
                     </div>
                     <div class="page-actions">
                         <button class="btn btn-secondary" onclick="refreshData()">
@@ -191,7 +192,7 @@
                                 <polyline points="23 4 23 10 17 10"></polyline>
                                 <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
                             </svg>
-                            Refresh
+                            <span data-i18n="admin.dashboard.refresh">Refresh</span>
                         </button>
                     </div>
                 </div>
@@ -206,7 +207,7 @@
                             </svg>
                         </div>
                         <div class="stat-content">
-                            <div class="stat-label">Total Complaints</div>
+                            <div class="stat-label" data-i18n="admin.dashboard.totalComplaints">Total Complaints</div>
                             <div class="stat-value" id="statTotal">--</div>
                             <div class="stat-change positive" id="statTotalChange">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -225,10 +226,10 @@
                             </svg>
                         </div>
                         <div class="stat-content">
-                            <div class="stat-label">Pending</div>
+                            <div class="stat-label" data-i18n="admin.dashboard.pending">Pending</div>
                             <div class="stat-value" id="statPending">--</div>
                             <div class="stat-change" id="statPendingChange">
-                                <span>Awaiting action</span>
+                                <span data-i18n="admin.dashboard.awaitingAction">Awaiting action</span>
                             </div>
                         </div>
                     </div>
@@ -241,10 +242,10 @@
                             </svg>
                         </div>
                         <div class="stat-content">
-                            <div class="stat-label">In Progress</div>
+                            <div class="stat-label" data-i18n="admin.dashboard.inProgress">In Progress</div>
                             <div class="stat-value" id="statInProgress">--</div>
                             <div class="stat-change" id="statInProgressChange">
-                                <span>Being worked on</span>
+                                <span data-i18n="admin.dashboard.beingWorkedOn">Being worked on</span>
                             </div>
                         </div>
                     </div>
@@ -256,10 +257,10 @@
                             </svg>
                         </div>
                         <div class="stat-content">
-                            <div class="stat-label">Resolved</div>
+                            <div class="stat-label" data-i18n="admin.dashboard.resolved">Resolved</div>
                             <div class="stat-value" id="statResolved">--</div>
                             <div class="stat-change positive" id="statResolvedChange">
-                                <span>This month</span>
+                                <span data-i18n="admin.dashboard.thisMonth">This month</span>
                             </div>
                         </div>
                     </div>
@@ -273,10 +274,10 @@
                             </svg>
                         </div>
                         <div class="stat-content">
-                            <div class="stat-label">SLA Breached</div>
+                            <div class="stat-label" data-i18n="admin.dashboard.slaBreached">SLA Breached</div>
                             <div class="stat-value" id="statSLABreached">--</div>
                             <div class="stat-change negative" id="statSLAChange">
-                                <span>Needs attention</span>
+                                <span data-i18n="admin.dashboard.needsAttention">Needs attention</span>
                             </div>
                         </div>
                     </div>
@@ -290,10 +291,10 @@
                             </svg>
                         </div>
                         <div class="stat-content">
-                            <div class="stat-label">Resolution Rate</div>
+                            <div class="stat-label" data-i18n="admin.dashboard.resolutionRate">Resolution Rate</div>
                             <div class="stat-value" id="statResolutionRate">--%</div>
                             <div class="stat-change positive" id="statResolutionChange">
-                                <span>Overall</span>
+                                <span data-i18n="admin.dashboard.overall">Overall</span>
                             </div>
                         </div>
                     </div>
@@ -302,13 +303,13 @@
                 <!-- Charts Row -->
                 <div class="analytics-grid">
                     <div class="chart-card">
-                        <h4>Complaints by Status</h4>
+                        <h4 data-i18n="admin.dashboard.complaintsByStatus">Complaints by Status</h4>
                         <div class="chart-container">
                             <canvas id="statusChart"></canvas>
                         </div>
                     </div>
                     <div class="chart-card">
-                        <h4>Complaints by Department</h4>
+                        <h4 data-i18n="admin.dashboard.complaintsByDepartment">Complaints by Department</h4>
                         <div class="chart-container">
                             <canvas id="departmentChart"></canvas>
                         </div>
@@ -318,23 +319,23 @@
                 <!-- Recent Complaints Table -->
                 <div class="data-card" style="margin-top: 24px;">
                     <div class="card-header">
-                        <h3 class="card-title">Recent Complaints</h3>
+                        <h3 class="card-title" data-i18n="admin.dashboard.recentComplaints">Recent Complaints</h3>
                         <div class="card-actions">
-                            <a href="complaints.html" class="btn btn-secondary btn-sm">View All</a>
+                            <a href="complaints.html" class="btn btn-secondary btn-sm" data-i18n="admin.dashboard.viewAll">View All</a>
                         </div>
                     </div>
                     <div class="table-container">
                         <table class="data-table">
                             <thead>
                                 <tr>
-                                    <th>Complaint ID</th>
-                                    <th>Title</th>
-                                    <th>Category</th>
-                                    <th>Status</th>
-                                    <th>Priority</th>
-                                    <th>SLA</th>
-                                    <th>Created</th>
-                                    <th>Actions</th>
+                                    <th data-i18n="admin.dashboard.complaintId">Complaint ID</th>
+                                    <th data-i18n="admin.dashboard.title_col">Title</th>
+                                    <th data-i18n="admin.dashboard.category">Category</th>
+                                    <th data-i18n="admin.dashboard.status">Status</th>
+                                    <th data-i18n="admin.dashboard.priority">Priority</th>
+                                    <th data-i18n="admin.dashboard.sla">SLA</th>
+                                    <th data-i18n="admin.dashboard.created">Created</th>
+                                    <th data-i18n="admin.dashboard.actions">Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="recentComplaintsTable">

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -22,6 +22,7 @@
     <link rel="stylesheet" href="../css/styles.css">
     <link rel="stylesheet" href="../css/admin.css">
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="../js/i18n.js"></script>
 </head>
 <body>
     <div class="admin-layout">
@@ -30,14 +31,14 @@
             <div class="sidebar-header">
                 <img src="../images/gba-logo.png" alt="GBA" class="sidebar-logo" onerror="this.style.display='none'">
                 <div>
-                    <div class="sidebar-title">GBA Admin</div>
+                    <div class="sidebar-title" data-i18n="admin.sidebar.title">GBA Admin</div>
                     <div class="sidebar-subtitle" id="sidebarCorporation">Loading...</div>
                 </div>
             </div>
 
             <nav class="sidebar-nav">
                 <div class="nav-section">
-                    <div class="nav-section-title">Overview</div>
+                    <div class="nav-section-title" data-i18n="admin.sidebar.overview">Overview</div>
                     <a href="dashboard.html" class="nav-item">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <rect x="3" y="3" width="7" height="7"></rect>
@@ -45,7 +46,7 @@
                             <rect x="14" y="14" width="7" height="7"></rect>
                             <rect x="3" y="14" width="7" height="7"></rect>
                         </svg>
-                        Dashboard
+                        <span data-i18n="admin.sidebar.dashboard">Dashboard</span>
                     </a>
                     <a href="complaints.html" class="nav-item">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -54,13 +55,13 @@
                             <line x1="16" y1="13" x2="8" y2="13"></line>
                             <line x1="16" y1="17" x2="8" y2="17"></line>
                         </svg>
-                        All Complaints
+                        <span data-i18n="admin.sidebar.allComplaints">All Complaints</span>
                         <span class="nav-badge" id="newComplaintsCount">0</span>
                     </a>
                 </div>
 
                 <div class="nav-section">
-                    <div class="nav-section-title">Management</div>
+                    <div class="nav-section-title" data-i18n="admin.sidebar.management">Management</div>
                     <a href="assignments.html" class="nav-item active">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
@@ -68,33 +69,33 @@
                             <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
                             <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
                         </svg>
-                        Assignments
+                        <span data-i18n="admin.sidebar.assignments">Assignments</span>
                     </a>
                     <a href="sla-tracking.html" class="nav-item">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <circle cx="12" cy="12" r="10"></circle>
                             <polyline points="12 6 12 12 16 14"></polyline>
                         </svg>
-                        SLA Tracking
+                        <span data-i18n="admin.sidebar.slaTracking">SLA Tracking</span>
                     </a>
                 </div>
 
                 <div class="nav-section">
-                    <div class="nav-section-title">Analytics</div>
+                    <div class="nav-section-title" data-i18n="admin.sidebar.analytics">Analytics</div>
                     <a href="analytics.html" class="nav-item">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <line x1="18" y1="20" x2="18" y2="10"></line>
                             <line x1="12" y1="20" x2="12" y2="4"></line>
                             <line x1="6" y1="20" x2="6" y2="14"></line>
                         </svg>
-                        Reports
+                        <span data-i18n="admin.sidebar.reports">Reports</span>
                     </a>
                     <a href="officers.html" class="nav-item">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                             <circle cx="12" cy="7" r="4"></circle>
                         </svg>
-                        Officer Performance
+                        <span data-i18n="admin.sidebar.officerPerformance">Officer Performance</span>
                     </a>
                 </div>
             </nav>
@@ -103,8 +104,8 @@
                 <div class="sidebar-user">
                     <div class="user-avatar" id="userAvatar">A</div>
                     <div class="user-info">
-                        <div class="user-name" id="userName">Admin User</div>
-                        <div class="user-role" id="userRole">Administrator</div>
+                        <div class="user-name" id="userName" data-i18n="admin.common.adminUser">Admin User</div>
+                        <div class="user-role" id="userRole" data-i18n="admin.common.administrator">Administrator</div>
                     </div>
                 </div>
             </div>
@@ -123,9 +124,9 @@
                         </svg>
                     </button>
                     <div class="header-breadcrumb">
-                        <a href="dashboard.html">Home</a>
+                        <a href="dashboard.html" data-i18n="admin.header.home">Home</a>
                         <span>/</span>
-                        <span class="current">Assignments</span>
+                        <span class="current" data-i18n="admin.sidebar.assignments">Assignments</span>
                     </div>
                 </div>
 
@@ -146,8 +147,8 @@
             <div class="admin-content">
                 <div class="page-header">
                     <div>
-                        <h1 class="page-title">Assignment Management</h1>
-                        <p class="page-subtitle">Auto-assign and manage complaint routing to officers</p>
+                        <h1 class="page-title" data-i18n="admin.assignments.title">Assignment Management</h1>
+                        <p class="page-subtitle" data-i18n="admin.assignments.subtitle">Auto-assign and manage complaint routing to officers</p>
                     </div>
                     <div class="page-actions">
                         <button class="btn btn-primary" onclick="runAutoAssign()">
@@ -156,7 +157,7 @@
                                 <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
                                 <line x1="12" y1="17" x2="12.01" y2="17"></line>
                             </svg>
-                            Auto-Assign Unassigned
+                            <span data-i18n="admin.assignments.autoAssignUnassigned">Auto-Assign Unassigned</span>
                         </button>
                     </div>
                 </div>
@@ -169,48 +170,48 @@
                                 <circle cx="12" cy="12" r="3"></circle>
                                 <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
                             </svg>
-                            ML Auto-Assignment Settings
+                            <span data-i18n="admin.assignments.mlAutoAssignSettings">ML Auto-Assignment Settings</span>
                         </h3>
                         <label class="toggle-switch">
                             <input type="checkbox" id="autoAssignEnabled" onchange="toggleAutoAssign()">
                             <span class="toggle-slider"></span>
-                            <span class="toggle-label">Auto-assign enabled</span>
+                            <span class="toggle-label" data-i18n="admin.assignments.autoAssignEnabled">Auto-assign enabled</span>
                         </label>
                     </div>
                     <div class="card-body">
                         <div class="settings-grid">
                             <div class="setting-item">
-                                <label>Category-based Routing</label>
-                                <p class="setting-description">Route complaints to departments based on issue category</p>
+                                <label data-i18n="admin.assignments.categoryBasedRouting">Category-based Routing</label>
+                                <p class="setting-description" data-i18n="admin.assignments.categoryRoutingDesc">Route complaints to departments based on issue category</p>
                                 <select id="categoryRouting" class="form-select">
-                                    <option value="auto">Automatic (ML-based)</option>
-                                    <option value="rules">Rule-based</option>
-                                    <option value="manual">Manual only</option>
+                                    <option value="auto" data-i18n="admin.assignments.automatic">Automatic (ML-based)</option>
+                                    <option value="rules" data-i18n="admin.assignments.ruleBased">Rule-based</option>
+                                    <option value="manual" data-i18n="admin.assignments.manualOnly">Manual only</option>
                                 </select>
                             </div>
                             <div class="setting-item">
-                                <label>Zone-based Assignment</label>
-                                <p class="setting-description">Assign to officers based on geographic zones/wards</p>
+                                <label data-i18n="admin.assignments.zoneBasedAssignment">Zone-based Assignment</label>
+                                <p class="setting-description" data-i18n="admin.assignments.zoneAssignmentDesc">Assign to officers based on geographic zones/wards</p>
                                 <select id="zoneRouting" class="form-select">
-                                    <option value="enabled">Enabled</option>
-                                    <option value="disabled">Disabled</option>
+                                    <option value="enabled" data-i18n="admin.assignments.enabled">Enabled</option>
+                                    <option value="disabled" data-i18n="admin.assignments.disabled">Disabled</option>
                                 </select>
                             </div>
                             <div class="setting-item">
-                                <label>Load Balancing</label>
-                                <p class="setting-description">Distribute complaints evenly among available officers</p>
+                                <label data-i18n="admin.assignments.loadBalancing">Load Balancing</label>
+                                <p class="setting-description" data-i18n="admin.assignments.loadBalancingDesc">Distribute complaints evenly among available officers</p>
                                 <select id="loadBalancing" class="form-select">
-                                    <option value="workload">By Current Workload</option>
-                                    <option value="roundrobin">Round Robin</option>
-                                    <option value="performance">By Performance Score</option>
+                                    <option value="workload" data-i18n="admin.assignments.byWorkload">By Current Workload</option>
+                                    <option value="roundrobin" data-i18n="admin.assignments.roundRobin">Round Robin</option>
+                                    <option value="performance" data-i18n="admin.assignments.byPerformance">By Performance Score</option>
                                 </select>
                             </div>
                             <div class="setting-item">
-                                <label>Priority Escalation</label>
-                                <p class="setting-description">Auto-escalate high priority complaints</p>
+                                <label data-i18n="admin.assignments.priorityEscalation">Priority Escalation</label>
+                                <p class="setting-description" data-i18n="admin.assignments.escalationDesc">Auto-escalate high priority complaints</p>
                                 <select id="priorityEscalation" class="form-select">
-                                    <option value="enabled">Enabled</option>
-                                    <option value="disabled">Disabled</option>
+                                    <option value="enabled" data-i18n="admin.assignments.enabled">Enabled</option>
+                                    <option value="disabled" data-i18n="admin.assignments.disabled">Disabled</option>
                                 </select>
                             </div>
                         </div>
@@ -229,20 +230,20 @@
                                 <line x1="3" y1="12" x2="3.01" y2="12"></line>
                                 <line x1="3" y1="18" x2="3.01" y2="18"></line>
                             </svg>
-                            Category to Department Mapping
+                            <span data-i18n="admin.assignments.categoryToDepartment">Category to Department Mapping</span>
                         </h3>
-                        <button class="btn btn-sm btn-secondary" onclick="saveMappings()">Save Mappings</button>
+                        <button class="btn btn-sm btn-secondary" onclick="saveMappings()" data-i18n="admin.assignments.saveMappings">Save Mappings</button>
                     </div>
                     <div class="card-body">
                         <div class="mapping-table">
                             <table class="data-table">
                                 <thead>
                                     <tr>
-                                        <th>Issue Category</th>
-                                        <th>Primary Department</th>
-                                        <th>Secondary Department</th>
-                                        <th>Default Priority</th>
-                                        <th>SLA (Hours)</th>
+                                        <th data-i18n="admin.assignments.issueCategory">Issue Category</th>
+                                        <th data-i18n="admin.assignments.primaryDepartment">Primary Department</th>
+                                        <th data-i18n="admin.assignments.secondaryDepartment">Secondary Department</th>
+                                        <th data-i18n="admin.assignments.defaultPriority">Default Priority</th>
+                                        <th data-i18n="admin.assignments.slaHours">SLA (Hours)</th>
                                     </tr>
                                 </thead>
                                 <tbody id="mappingTableBody">
@@ -445,12 +446,12 @@
                                 <line x1="12" y1="8" x2="12" y2="12"></line>
                                 <line x1="12" y1="16" x2="12.01" y2="16"></line>
                             </svg>
-                            Unassigned Complaints
+                            <span data-i18n="admin.assignments.unassignedComplaints">Unassigned Complaints</span>
                             <span class="badge badge-warning" id="unassignedCount">0</span>
                         </h3>
                         <div class="card-actions">
-                            <button class="btn btn-sm btn-secondary" onclick="refreshUnassigned()">Refresh</button>
-                            <button class="btn btn-sm btn-primary" onclick="assignSelected()">Assign Selected</button>
+                            <button class="btn btn-sm btn-secondary" onclick="refreshUnassigned()" data-i18n="admin.dashboard.refresh">Refresh</button>
+                            <button class="btn btn-sm btn-primary" onclick="assignSelected()" data-i18n="admin.assignments.assignSelectedBtn">Assign Selected</button>
                         </div>
                     </div>
                     <div class="card-body">
@@ -459,13 +460,13 @@
                                 <thead>
                                     <tr>
                                         <th><input type="checkbox" id="selectAllUnassigned" onchange="toggleSelectAllUnassigned()"></th>
-                                        <th>ID</th>
-                                        <th>Category</th>
-                                        <th>Location/Ward</th>
-                                        <th>Description</th>
-                                        <th>Submitted</th>
-                                        <th>ML Suggestion</th>
-                                        <th>Actions</th>
+                                        <th data-i18n="admin.assignments.id">ID</th>
+                                        <th data-i18n="admin.dashboard.category">Category</th>
+                                        <th data-i18n="admin.assignments.locationWard">Location/Ward</th>
+                                        <th data-i18n="admin.assignments.description">Description</th>
+                                        <th data-i18n="admin.assignments.submitted">Submitted</th>
+                                        <th data-i18n="admin.assignments.mlSuggestion">ML Suggestion</th>
+                                        <th data-i18n="admin.complaints.actions">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody id="unassignedTable">
@@ -491,7 +492,7 @@
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
                             </svg>
-                            Recent Assignments
+                            <span data-i18n="admin.assignments.recentAssignments">Recent Assignments</span>
                         </h3>
                     </div>
                     <div class="card-body">
@@ -499,14 +500,14 @@
                             <table class="data-table">
                                 <thead>
                                     <tr>
-                                        <th>Complaint ID</th>
-                                        <th>Category</th>
-                                        <th>Assigned To</th>
-                                        <th>Department</th>
-                                        <th>Assigned By</th>
-                                        <th>Method</th>
-                                        <th>Assigned At</th>
-                                        <th>Status</th>
+                                        <th data-i18n="admin.complaints.complaintId">Complaint ID</th>
+                                        <th data-i18n="admin.dashboard.category">Category</th>
+                                        <th data-i18n="admin.complaints.assignedTo">Assigned To</th>
+                                        <th data-i18n="admin.complaints.department">Department</th>
+                                        <th data-i18n="admin.assignments.assignedBy">Assigned By</th>
+                                        <th data-i18n="admin.assignments.method">Method</th>
+                                        <th data-i18n="admin.assignments.assignedAt">Assigned At</th>
+                                        <th data-i18n="admin.complaints.status">Status</th>
                                     </tr>
                                 </thead>
                                 <tbody id="recentAssignmentsTable">
@@ -528,7 +529,7 @@
     <div id="assignModal" class="modal" style="display: none;">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>Assign Complaint</h3>
+                <h3 data-i18n="admin.complaints.assignComplaint">Assign Complaint</h3>
                 <button class="modal-close" onclick="closeAssignModal()">&times;</button>
             </div>
             <div class="modal-body">
@@ -536,9 +537,9 @@
 
                 <form id="assignForm">
                     <div class="form-group">
-                        <label for="assignDepartment">Department *</label>
+                        <label for="assignDepartment" data-i18n="admin.complaints.departmentRequired">Department *</label>
                         <select id="assignDepartment" required onchange="loadOfficersForDepartment()">
-                            <option value="">Select Department</option>
+                            <option value="" data-i18n="admin.complaints.selectDepartment">Select Department</option>
                             <option value="engineering">Engineering</option>
                             <option value="water">Water Department</option>
                             <option value="drainage">Drainage</option>
@@ -552,25 +553,25 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="assignOfficer">Assign To *</label>
+                        <label for="assignOfficer" data-i18n="admin.complaints.assignToRequired">Assign To *</label>
                         <select id="assignOfficer" required>
-                            <option value="">Select Officer</option>
+                            <option value="" data-i18n="admin.complaints.selectOfficer">Select Officer</option>
                         </select>
                     </div>
 
                     <div class="form-group">
-                        <label for="assignPriority">Priority</label>
+                        <label for="assignPriority" data-i18n="admin.complaints.priority">Priority</label>
                         <select id="assignPriority">
-                            <option value="medium">Medium</option>
-                            <option value="low">Low</option>
-                            <option value="high">High</option>
-                            <option value="critical">Critical</option>
+                            <option value="medium" data-i18n="admin.complaints.priorityMedium">Medium</option>
+                            <option value="low" data-i18n="admin.complaints.priorityLow">Low</option>
+                            <option value="high" data-i18n="admin.complaints.priorityHigh">High</option>
+                            <option value="critical" data-i18n="admin.complaints.priorityCritical">Critical</option>
                         </select>
                     </div>
 
                     <div class="form-group">
-                        <label for="assignNotes">Notes</label>
-                        <textarea id="assignNotes" placeholder="Add any notes for the officer..."></textarea>
+                        <label for="assignNotes" data-i18n="admin.complaints.notes">Notes</label>
+                        <textarea id="assignNotes" data-i18n-placeholder="admin.complaints.notesPlaceholder" placeholder="Add any notes for the officer..."></textarea>
                     </div>
 
                     <!-- ML Suggestion -->
@@ -581,18 +582,18 @@
                                 <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
                                 <line x1="12" y1="17" x2="12.01" y2="17"></line>
                             </svg>
-                            AI Recommendation
+                            <span data-i18n="admin.assignments.aiRecommendation">AI Recommendation</span>
                         </div>
                         <div class="ml-suggestion-content">
                             <p id="mlSuggestionText">Based on category "Roads & Potholes" and location "Ward 45", we recommend assigning to <strong>Engineering Department</strong> - Officer Ramesh Kumar (current workload: 5 complaints).</p>
-                            <button type="button" class="btn btn-sm btn-secondary" onclick="applyMLSuggestion()">Apply Suggestion</button>
+                            <button type="button" class="btn btn-sm btn-secondary" onclick="applyMLSuggestion()" data-i18n="admin.complaints.applySuggestion">Apply Suggestion</button>
                         </div>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeAssignModal()">Cancel</button>
-                <button class="btn btn-primary" onclick="submitAssignment()">Assign</button>
+                <button class="btn btn-secondary" onclick="closeAssignModal()" data-i18n="admin.common.cancel">Cancel</button>
+                <button class="btn btn-primary" onclick="submitAssignment()" data-i18n="admin.complaints.assign">Assign</button>
             </div>
         </div>
     </div>
@@ -601,15 +602,15 @@
     <div id="autoAssignModal" class="modal" style="display: none;">
         <div class="modal-content modal-sm">
             <div class="modal-header">
-                <h3>Auto-Assignment in Progress</h3>
+                <h3 data-i18n="admin.assignments.autoAssignInProgress">Auto-Assignment in Progress</h3>
             </div>
             <div class="modal-body" style="text-align: center; padding: 30px;">
                 <div class="spinner-large"></div>
-                <p id="autoAssignStatus" style="margin-top: 20px;">Analyzing complaints...</p>
+                <p id="autoAssignStatus" style="margin-top: 20px;" data-i18n="admin.assignments.analyzingComplaints">Analyzing complaints...</p>
                 <div class="progress-bar" style="margin-top: 16px;">
                     <div id="autoAssignProgress" class="progress-fill" style="width: 0%;"></div>
                 </div>
-                <p id="autoAssignStats" style="margin-top: 12px; font-size: 0.9rem; color: #666;">0 of 0 processed</p>
+                <p id="autoAssignStats" style="margin-top: 12px; font-size: 0.9rem; color: #666;"><span data-i18n="admin.assignments.processed">0 of 0 processed</span></p>
             </div>
         </div>
     </div>

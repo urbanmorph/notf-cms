@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -23,6 +23,7 @@
     <link rel="stylesheet" href="../css/admin.css">
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="../js/i18n.js"></script>
 </head>
 <body>
     <div class="admin-layout">
@@ -31,14 +32,14 @@
             <div class="sidebar-header">
                 <img src="../images/gba-logo.png" alt="GBA" class="sidebar-logo" onerror="this.style.display='none'">
                 <div>
-                    <div class="sidebar-title">GBA Admin</div>
+                    <div class="sidebar-title" data-i18n="admin.sidebar.title">GBA Admin</div>
                     <div class="sidebar-subtitle" id="sidebarCorporation">Loading...</div>
                 </div>
             </div>
 
             <nav class="sidebar-nav">
                 <div class="nav-section">
-                    <div class="nav-section-title">Overview</div>
+                    <div class="nav-section-title" data-i18n="admin.sidebar.overview">Overview</div>
                     <a href="dashboard.html" class="nav-item">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <rect x="3" y="3" width="7" height="7"></rect>
@@ -46,51 +47,51 @@
                             <rect x="14" y="14" width="7" height="7"></rect>
                             <rect x="3" y="14" width="7" height="7"></rect>
                         </svg>
-                        Dashboard
+                        <span data-i18n="admin.sidebar.dashboard">Dashboard</span>
                     </a>
                     <a href="complaints.html" class="nav-item">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
                             <polyline points="14 2 14 8 20 8"></polyline>
                         </svg>
-                        All Complaints
+                        <span data-i18n="admin.sidebar.allComplaints">All Complaints</span>
                     </a>
                 </div>
 
                 <div class="nav-section">
-                    <div class="nav-section-title">Management</div>
+                    <div class="nav-section-title" data-i18n="admin.sidebar.management">Management</div>
                     <a href="assignments.html" class="nav-item">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                             <circle cx="9" cy="7" r="4"></circle>
                         </svg>
-                        Assignments
+                        <span data-i18n="admin.sidebar.assignments">Assignments</span>
                     </a>
                     <a href="sla-tracking.html" class="nav-item active">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <circle cx="12" cy="12" r="10"></circle>
                             <polyline points="12 6 12 12 16 14"></polyline>
                         </svg>
-                        SLA Tracking
+                        <span data-i18n="admin.sidebar.slaTracking">SLA Tracking</span>
                     </a>
                 </div>
 
                 <div class="nav-section">
-                    <div class="nav-section-title">Analytics</div>
+                    <div class="nav-section-title" data-i18n="admin.sidebar.analytics">Analytics</div>
                     <a href="analytics.html" class="nav-item">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <line x1="18" y1="20" x2="18" y2="10"></line>
                             <line x1="12" y1="20" x2="12" y2="4"></line>
                             <line x1="6" y1="20" x2="6" y2="14"></line>
                         </svg>
-                        Reports
+                        <span data-i18n="admin.sidebar.reports">Reports</span>
                     </a>
                     <a href="officers.html" class="nav-item">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                             <circle cx="12" cy="7" r="4"></circle>
                         </svg>
-                        Officer Performance
+                        <span data-i18n="admin.sidebar.officerPerformance">Officer Performance</span>
                     </a>
                 </div>
             </nav>
@@ -99,8 +100,8 @@
                 <div class="sidebar-user">
                     <div class="user-avatar" id="userAvatar">A</div>
                     <div class="user-info">
-                        <div class="user-name" id="userName">Admin User</div>
-                        <div class="user-role" id="userRole">Administrator</div>
+                        <div class="user-name" id="userName" data-i18n="admin.common.adminUser">Admin User</div>
+                        <div class="user-role" id="userRole" data-i18n="admin.common.administrator">Administrator</div>
                     </div>
                 </div>
             </div>
@@ -118,9 +119,9 @@
                         </svg>
                     </button>
                     <div class="header-breadcrumb">
-                        <a href="dashboard.html">Home</a>
+                        <a href="dashboard.html" data-i18n="admin.header.home">Home</a>
                         <span>/</span>
-                        <span class="current">SLA Tracking</span>
+                        <span class="current" data-i18n="admin.sidebar.slaTracking">SLA Tracking</span>
                     </div>
                 </div>
                 <div class="header-right">
@@ -137,8 +138,8 @@
             <div class="admin-content">
                 <div class="page-header">
                     <div>
-                        <h1 class="page-title">SLA Tracking</h1>
-                        <p class="page-subtitle">Monitor service level agreements and prevent breaches</p>
+                        <h1 class="page-title" data-i18n="admin.sla.title">SLA Tracking</h1>
+                        <p class="page-subtitle" data-i18n="admin.sla.subtitle">Monitor service level agreements and prevent breaches</p>
                     </div>
                 </div>
 
@@ -152,9 +153,9 @@
                             </svg>
                         </div>
                         <div class="stat-content">
-                            <div class="stat-label">Within SLA</div>
+                            <div class="stat-label" data-i18n="admin.sla.withinSla">Within SLA</div>
                             <div class="stat-value" id="withinSLA">--</div>
-                            <div class="stat-change positive">On track</div>
+                            <div class="stat-change positive" data-i18n="admin.sla.onTrack">On track</div>
                         </div>
                     </div>
 
@@ -167,9 +168,9 @@
                             </svg>
                         </div>
                         <div class="stat-content">
-                            <div class="stat-label">At Risk</div>
+                            <div class="stat-label" data-i18n="admin.sla.atRisk">At Risk</div>
                             <div class="stat-value" id="atRisk">--</div>
-                            <div class="stat-change negative">< 12 hours left</div>
+                            <div class="stat-change negative" data-i18n="admin.sla.lessThan12Hours">< 12 hours left</div>
                         </div>
                     </div>
 
@@ -182,9 +183,9 @@
                             </svg>
                         </div>
                         <div class="stat-content">
-                            <div class="stat-label">Breached</div>
+                            <div class="stat-label" data-i18n="admin.sla.breached">Breached</div>
                             <div class="stat-value" id="breached">--</div>
-                            <div class="stat-change negative">Needs attention</div>
+                            <div class="stat-change negative" data-i18n="admin.sla.needsAttention">Needs attention</div>
                         </div>
                     </div>
 
@@ -197,9 +198,9 @@
                             </svg>
                         </div>
                         <div class="stat-content">
-                            <div class="stat-label">Overall SLA Rate</div>
+                            <div class="stat-label" data-i18n="admin.sla.overallSlaRate">Overall SLA Rate</div>
                             <div class="stat-value" id="overallSLA">--%</div>
-                            <div class="stat-change" id="slaTarget">Target: 90%</div>
+                            <div class="stat-change" id="slaTarget" data-i18n="admin.analytics.target">Target: 90%</div>
                         </div>
                     </div>
                 </div>
@@ -207,13 +208,13 @@
                 <!-- SLA by Department Chart -->
                 <div class="analytics-grid">
                     <div class="chart-card">
-                        <h4>SLA Compliance by Department</h4>
+                        <h4 data-i18n="admin.sla.slaComplianceByDept">SLA Compliance by Department</h4>
                         <div class="chart-container">
                             <canvas id="slaDeptChart"></canvas>
                         </div>
                     </div>
                     <div class="chart-card">
-                        <h4>SLA Trend (Last 30 Days)</h4>
+                        <h4 data-i18n="admin.sla.slaTrend">SLA Trend (Last 30 Days)</h4>
                         <div class="chart-container">
                             <canvas id="slaTrendChart"></canvas>
                         </div>
@@ -224,28 +225,28 @@
                 <div class="data-card" style="margin-top: 24px;">
                     <div class="card-header">
                         <h3 class="card-title">
-                            <span class="alert-icon">⚠️</span> At Risk & Breached Complaints
+                            <span class="alert-icon">⚠️</span> <span data-i18n="admin.sla.atRiskBreachedComplaints">At Risk & Breached Complaints</span>
                         </h3>
                         <div class="card-actions">
                             <select id="riskFilter" onchange="filterRiskComplaints()">
-                                <option value="all">All</option>
-                                <option value="at_risk">At Risk Only</option>
-                                <option value="breached">Breached Only</option>
+                                <option value="all" data-i18n="admin.sla.filterAll">All</option>
+                                <option value="at_risk" data-i18n="admin.sla.filterAtRisk">At Risk Only</option>
+                                <option value="breached" data-i18n="admin.sla.filterBreached">Breached Only</option>
                             </select>
                         </div>
                     </div>
                     <table class="data-table">
                         <thead>
                             <tr>
-                                <th>Status</th>
-                                <th>Complaint ID</th>
-                                <th>Title</th>
-                                <th>Department</th>
-                                <th>Assigned To</th>
-                                <th>Created</th>
-                                <th>SLA Deadline</th>
-                                <th>Time Left/Overdue</th>
-                                <th>Actions</th>
+                                <th data-i18n="admin.complaints.status">Status</th>
+                                <th data-i18n="admin.complaints.complaintId">Complaint ID</th>
+                                <th data-i18n="admin.complaints.titleCol">Title</th>
+                                <th data-i18n="admin.complaints.department">Department</th>
+                                <th data-i18n="admin.complaints.assignedTo">Assigned To</th>
+                                <th data-i18n="admin.complaints.created">Created</th>
+                                <th data-i18n="admin.sla.slaDeadline">SLA Deadline</th>
+                                <th data-i18n="admin.sla.timeLeftOverdue">Time Left/Overdue</th>
+                                <th data-i18n="admin.complaints.actions">Actions</th>
                             </tr>
                         </thead>
                         <tbody id="riskTable">
@@ -259,17 +260,17 @@
                 <!-- Department SLA Details -->
                 <div class="data-card" style="margin-top: 24px;">
                     <div class="card-header">
-                        <h3 class="card-title">Department SLA Configuration</h3>
+                        <h3 class="card-title" data-i18n="admin.sla.departmentSlaConfig">Department SLA Configuration</h3>
                     </div>
                     <table class="data-table">
                         <thead>
                             <tr>
-                                <th>Department</th>
-                                <th>Default SLA (Hours)</th>
-                                <th>Total Complaints</th>
-                                <th>Within SLA</th>
-                                <th>Breached</th>
-                                <th>Compliance Rate</th>
+                                <th data-i18n="admin.complaints.department">Department</th>
+                                <th data-i18n="admin.sla.defaultSlaHours">Default SLA (Hours)</th>
+                                <th data-i18n="admin.sla.totalComplaints">Total Complaints</th>
+                                <th data-i18n="admin.sla.withinSla">Within SLA</th>
+                                <th data-i18n="admin.sla.breached">Breached</th>
+                                <th data-i18n="admin.sla.complianceRate">Compliance Rate</th>
                             </tr>
                         </thead>
                         <tbody id="deptSLATable">

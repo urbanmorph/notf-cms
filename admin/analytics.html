@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -23,6 +23,7 @@
     <link rel="stylesheet" href="../css/admin.css">
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="../js/i18n.js"></script>
 </head>
 <body>
     <div class="admin-layout">
@@ -31,14 +32,14 @@
             <div class="sidebar-header">
                 <img src="../images/gba-logo.png" alt="GBA" class="sidebar-logo" onerror="this.style.display='none'">
                 <div>
-                    <div class="sidebar-title">GBA Admin</div>
+                    <div class="sidebar-title" data-i18n="admin.sidebar.title">GBA Admin</div>
                     <div class="sidebar-subtitle" id="sidebarCorporation">Loading...</div>
                 </div>
             </div>
 
             <nav class="sidebar-nav">
                 <div class="nav-section">
-                    <div class="nav-section-title">Overview</div>
+                    <div class="nav-section-title" data-i18n="admin.sidebar.overview">Overview</div>
                     <a href="dashboard.html" class="nav-item">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <rect x="3" y="3" width="7" height="7"></rect>
@@ -46,33 +47,33 @@
                             <rect x="14" y="14" width="7" height="7"></rect>
                             <rect x="3" y="14" width="7" height="7"></rect>
                         </svg>
-                        Dashboard
+                        <span data-i18n="admin.sidebar.dashboard">Dashboard</span>
                     </a>
                     <a href="complaints.html" class="nav-item">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
                             <polyline points="14 2 14 8 20 8"></polyline>
                         </svg>
-                        All Complaints
+                        <span data-i18n="admin.sidebar.allComplaints">All Complaints</span>
                     </a>
                 </div>
 
                 <div class="nav-section">
-                    <div class="nav-section-title">Analytics</div>
+                    <div class="nav-section-title" data-i18n="admin.sidebar.analytics">Analytics</div>
                     <a href="analytics.html" class="nav-item active">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <line x1="18" y1="20" x2="18" y2="10"></line>
                             <line x1="12" y1="20" x2="12" y2="4"></line>
                             <line x1="6" y1="20" x2="6" y2="14"></line>
                         </svg>
-                        Reports
+                        <span data-i18n="admin.sidebar.reports">Reports</span>
                     </a>
                     <a href="officers.html" class="nav-item">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                             <circle cx="12" cy="7" r="4"></circle>
                         </svg>
-                        Officer Performance
+                        <span data-i18n="admin.sidebar.officerPerformance">Officer Performance</span>
                     </a>
                 </div>
             </nav>
@@ -81,8 +82,8 @@
                 <div class="sidebar-user">
                     <div class="user-avatar" id="userAvatar">A</div>
                     <div class="user-info">
-                        <div class="user-name" id="userName">Admin User</div>
-                        <div class="user-role" id="userRole">Administrator</div>
+                        <div class="user-name" id="userName" data-i18n="admin.common.adminUser">Admin User</div>
+                        <div class="user-role" id="userRole" data-i18n="admin.common.administrator">Administrator</div>
                     </div>
                 </div>
             </div>
@@ -100,9 +101,9 @@
                         </svg>
                     </button>
                     <div class="header-breadcrumb">
-                        <a href="dashboard.html">Home</a>
+                        <a href="dashboard.html" data-i18n="admin.header.home">Home</a>
                         <span>/</span>
-                        <span class="current">Analytics & Reports</span>
+                        <span class="current" data-i18n="admin.analytics.title">Analytics & Reports</span>
                     </div>
                 </div>
                 <div class="header-right">
@@ -119,15 +120,15 @@
             <div class="admin-content">
                 <div class="page-header">
                     <div>
-                        <h1 class="page-title">Analytics & Reports</h1>
-                        <p class="page-subtitle">Comprehensive analytics for your corporation's complaint management</p>
+                        <h1 class="page-title" data-i18n="admin.analytics.title">Analytics & Reports</h1>
+                        <p class="page-subtitle" data-i18n="admin.analytics.subtitle">Comprehensive analytics for your corporation's complaint management</p>
                     </div>
                     <div class="page-actions">
                         <select id="dateRangeSelect" class="date-range-select" onchange="updateAnalytics()">
-                            <option value="7">Last 7 Days</option>
-                            <option value="30" selected>Last 30 Days</option>
-                            <option value="90">Last 90 Days</option>
-                            <option value="365">Last Year</option>
+                            <option value="7" data-i18n="admin.officers.last7Days">Last 7 Days</option>
+                            <option value="30" selected data-i18n="admin.officers.last30Days">Last 30 Days</option>
+                            <option value="90" data-i18n="admin.officers.last90Days">Last 90 Days</option>
+                            <option value="365" data-i18n="admin.analytics.lastYear">Last Year</option>
                         </select>
                         <button class="btn btn-secondary" onclick="exportReport()">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -135,7 +136,7 @@
                                 <polyline points="7 10 12 15 17 10"></polyline>
                                 <line x1="12" y1="15" x2="12" y2="3"></line>
                             </svg>
-                            Export Report
+                            <span data-i18n="admin.analytics.exportReport">Export Report</span>
                         </button>
                     </div>
                 </div>
@@ -149,7 +150,7 @@
                             </svg>
                         </div>
                         <div class="stat-content">
-                            <div class="stat-label">Total Received</div>
+                            <div class="stat-label" data-i18n="admin.analytics.totalReceived">Total Received</div>
                             <div class="stat-value" id="kpiTotal">--</div>
                             <div class="stat-change" id="kpiTotalChange">Loading...</div>
                         </div>
@@ -162,7 +163,7 @@
                             </svg>
                         </div>
                         <div class="stat-content">
-                            <div class="stat-label">Resolved</div>
+                            <div class="stat-label" data-i18n="admin.dashboard.resolved">Resolved</div>
                             <div class="stat-value" id="kpiResolved">--</div>
                             <div class="stat-change positive" id="kpiResolvedChange">Loading...</div>
                         </div>
@@ -176,9 +177,9 @@
                             </svg>
                         </div>
                         <div class="stat-content">
-                            <div class="stat-label">Avg Resolution Time</div>
+                            <div class="stat-label" data-i18n="admin.analytics.avgResolutionTime">Avg Resolution Time</div>
                             <div class="stat-value" id="kpiAvgTime">--</div>
-                            <div class="stat-change" id="kpiAvgTimeChange">In hours</div>
+                            <div class="stat-change" id="kpiAvgTimeChange" data-i18n="admin.analytics.inHours">In hours</div>
                         </div>
                     </div>
 
@@ -191,9 +192,9 @@
                             </svg>
                         </div>
                         <div class="stat-content">
-                            <div class="stat-label">SLA Compliance</div>
+                            <div class="stat-label" data-i18n="admin.analytics.slaCompliance">SLA Compliance</div>
                             <div class="stat-value" id="kpiSLA">--%</div>
-                            <div class="stat-change" id="kpiSLAChange">Target: 90%</div>
+                            <div class="stat-change" id="kpiSLAChange" data-i18n="admin.analytics.target">Target: 90%</div>
                         </div>
                     </div>
                 </div>
@@ -201,28 +202,28 @@
                 <!-- Charts Grid -->
                 <div class="analytics-grid">
                     <div class="chart-card">
-                        <h4>Complaints Trend</h4>
+                        <h4 data-i18n="admin.analytics.complaintsTrend">Complaints Trend</h4>
                         <div class="chart-container">
                             <canvas id="trendChart"></canvas>
                         </div>
                     </div>
 
                     <div class="chart-card">
-                        <h4>Resolution Rate Trend</h4>
+                        <h4 data-i18n="admin.analytics.resolutionRateTrend">Resolution Rate Trend</h4>
                         <div class="chart-container">
                             <canvas id="resolutionTrendChart"></canvas>
                         </div>
                     </div>
 
                     <div class="chart-card">
-                        <h4>Complaints by Department</h4>
+                        <h4 data-i18n="admin.analytics.complaintsByDepartment">Complaints by Department</h4>
                         <div class="chart-container">
                             <canvas id="departmentChart"></canvas>
                         </div>
                     </div>
 
                     <div class="chart-card">
-                        <h4>Priority Distribution</h4>
+                        <h4 data-i18n="admin.analytics.priorityDistribution">Priority Distribution</h4>
                         <div class="chart-container">
                             <canvas id="priorityChart"></canvas>
                         </div>
@@ -232,18 +233,18 @@
                 <!-- Department Performance Table -->
                 <div class="data-card" style="margin-top: 24px;">
                     <div class="card-header">
-                        <h3 class="card-title">Department Performance</h3>
+                        <h3 class="card-title" data-i18n="admin.analytics.departmentPerformance">Department Performance</h3>
                     </div>
                     <table class="data-table">
                         <thead>
                             <tr>
-                                <th>Department</th>
-                                <th>Total</th>
-                                <th>Resolved</th>
-                                <th>Pending</th>
-                                <th>Resolution Rate</th>
-                                <th>Avg Time (hrs)</th>
-                                <th>SLA Compliance</th>
+                                <th data-i18n="admin.complaints.department">Department</th>
+                                <th data-i18n="admin.analytics.total">Total</th>
+                                <th data-i18n="admin.dashboard.resolved">Resolved</th>
+                                <th data-i18n="admin.analytics.pending">Pending</th>
+                                <th data-i18n="admin.officers.resolutionRateCol">Resolution Rate</th>
+                                <th data-i18n="admin.analytics.avgTimeHrs">Avg Time (hrs)</th>
+                                <th data-i18n="admin.officers.slaCompliance">SLA Compliance</th>
                             </tr>
                         </thead>
                         <tbody id="departmentTable">
@@ -257,7 +258,7 @@
                 <!-- Top Issues -->
                 <div class="data-card" style="margin-top: 24px;">
                     <div class="card-header">
-                        <h3 class="card-title">Top Issue Categories</h3>
+                        <h3 class="card-title" data-i18n="admin.analytics.topIssueCategories">Top Issue Categories</h3>
                     </div>
                     <div id="topIssuesContainer" class="top-issues-grid">
                         <!-- Populated dynamically -->

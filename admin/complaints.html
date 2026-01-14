@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -22,6 +22,7 @@
     <link rel="stylesheet" href="../css/styles.css">
     <link rel="stylesheet" href="../css/admin.css">
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="../js/i18n.js"></script>
 </head>
 <body>
     <div class="admin-layout">
@@ -30,14 +31,14 @@
             <div class="sidebar-header">
                 <img src="../images/gba-logo.png" alt="GBA" class="sidebar-logo" onerror="this.style.display='none'">
                 <div>
-                    <div class="sidebar-title">GBA Admin</div>
+                    <div class="sidebar-title" data-i18n="admin.sidebar.title">GBA Admin</div>
                     <div class="sidebar-subtitle" id="sidebarCorporation">Loading...</div>
                 </div>
             </div>
 
             <nav class="sidebar-nav">
                 <div class="nav-section">
-                    <div class="nav-section-title">Overview</div>
+                    <div class="nav-section-title" data-i18n="admin.sidebar.overview">Overview</div>
                     <a href="dashboard.html" class="nav-item">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <rect x="3" y="3" width="7" height="7"></rect>
@@ -45,7 +46,7 @@
                             <rect x="14" y="14" width="7" height="7"></rect>
                             <rect x="3" y="14" width="7" height="7"></rect>
                         </svg>
-                        Dashboard
+                        <span data-i18n="admin.sidebar.dashboard">Dashboard</span>
                     </a>
                     <a href="complaints.html" class="nav-item active">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -54,13 +55,13 @@
                             <line x1="16" y1="13" x2="8" y2="13"></line>
                             <line x1="16" y1="17" x2="8" y2="17"></line>
                         </svg>
-                        All Complaints
+                        <span data-i18n="admin.sidebar.allComplaints">All Complaints</span>
                         <span class="nav-badge" id="newComplaintsCount">0</span>
                     </a>
                 </div>
 
                 <div class="nav-section">
-                    <div class="nav-section-title">Management</div>
+                    <div class="nav-section-title" data-i18n="admin.sidebar.management">Management</div>
                     <a href="assignments.html" class="nav-item">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
@@ -68,33 +69,33 @@
                             <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
                             <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
                         </svg>
-                        Assignments
+                        <span data-i18n="admin.sidebar.assignments">Assignments</span>
                     </a>
                     <a href="sla-tracking.html" class="nav-item">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <circle cx="12" cy="12" r="10"></circle>
                             <polyline points="12 6 12 12 16 14"></polyline>
                         </svg>
-                        SLA Tracking
+                        <span data-i18n="admin.sidebar.slaTracking">SLA Tracking</span>
                     </a>
                 </div>
 
                 <div class="nav-section">
-                    <div class="nav-section-title">Analytics</div>
+                    <div class="nav-section-title" data-i18n="admin.sidebar.analytics">Analytics</div>
                     <a href="analytics.html" class="nav-item">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <line x1="18" y1="20" x2="18" y2="10"></line>
                             <line x1="12" y1="20" x2="12" y2="4"></line>
                             <line x1="6" y1="20" x2="6" y2="14"></line>
                         </svg>
-                        Reports
+                        <span data-i18n="admin.sidebar.reports">Reports</span>
                     </a>
                     <a href="officers.html" class="nav-item">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                             <circle cx="12" cy="7" r="4"></circle>
                         </svg>
-                        Officer Performance
+                        <span data-i18n="admin.sidebar.officerPerformance">Officer Performance</span>
                     </a>
                 </div>
             </nav>
@@ -103,8 +104,8 @@
                 <div class="sidebar-user">
                     <div class="user-avatar" id="userAvatar">A</div>
                     <div class="user-info">
-                        <div class="user-name" id="userName">Admin User</div>
-                        <div class="user-role" id="userRole">Administrator</div>
+                        <div class="user-name" id="userName" data-i18n="admin.common.adminUser">Admin User</div>
+                        <div class="user-role" id="userRole" data-i18n="admin.common.administrator">Administrator</div>
                     </div>
                 </div>
             </div>
@@ -123,9 +124,9 @@
                         </svg>
                     </button>
                     <div class="header-breadcrumb">
-                        <a href="dashboard.html">Home</a>
+                        <a href="dashboard.html" data-i18n="admin.header.home">Home</a>
                         <span>/</span>
-                        <span class="current">All Complaints</span>
+                        <span class="current" data-i18n="admin.sidebar.allComplaints">All Complaints</span>
                     </div>
                 </div>
 
@@ -146,8 +147,8 @@
             <div class="admin-content">
                 <div class="page-header">
                     <div>
-                        <h1 class="page-title">All Complaints</h1>
-                        <p class="page-subtitle">Manage and track all complaints for your corporation</p>
+                        <h1 class="page-title" data-i18n="admin.complaints.title">All Complaints</h1>
+                        <p class="page-subtitle" data-i18n="admin.complaints.subtitle">Manage and track all complaints for your corporation</p>
                     </div>
                     <div class="page-actions">
                         <button class="btn btn-secondary" onclick="exportComplaints()">
@@ -156,7 +157,7 @@
                                 <polyline points="7 10 12 15 17 10"></polyline>
                                 <line x1="12" y1="15" x2="12" y2="3"></line>
                             </svg>
-                            Export
+                            <span data-i18n="admin.complaints.export">Export</span>
                         </button>
                     </div>
                 </div>
@@ -166,50 +167,50 @@
                     <!-- Filters -->
                     <div class="table-filters">
                         <div class="filter-group">
-                            <label>Search:</label>
-                            <input type="text" id="searchInput" placeholder="ID, title, or citizen name...">
+                            <label data-i18n="admin.complaints.search">Search:</label>
+                            <input type="text" id="searchInput" data-i18n-placeholder="admin.complaints.searchPlaceholder" placeholder="ID, title, or citizen name...">
                         </div>
                         <div class="filter-group">
-                            <label>Status:</label>
+                            <label data-i18n="admin.complaints.statusFilter">Status:</label>
                             <select id="statusFilter">
-                                <option value="">All Status</option>
-                                <option value="new">New</option>
-                                <option value="assigned">Assigned</option>
-                                <option value="in_progress">In Progress</option>
-                                <option value="resolved">Resolved</option>
-                                <option value="closed">Closed</option>
-                                <option value="rejected">Rejected</option>
+                                <option value="" data-i18n="admin.complaints.allStatus">All Status</option>
+                                <option value="new" data-i18n="admin.complaints.statusNew">New</option>
+                                <option value="assigned" data-i18n="admin.complaints.statusAssigned">Assigned</option>
+                                <option value="in_progress" data-i18n="admin.complaints.statusInProgress">In Progress</option>
+                                <option value="resolved" data-i18n="admin.complaints.statusResolved">Resolved</option>
+                                <option value="closed" data-i18n="admin.complaints.statusClosed">Closed</option>
+                                <option value="rejected" data-i18n="admin.complaints.statusRejected">Rejected</option>
                             </select>
                         </div>
                         <div class="filter-group">
-                            <label>Department:</label>
+                            <label data-i18n="admin.complaints.departmentFilter">Department:</label>
                             <select id="departmentFilter">
-                                <option value="">All Departments</option>
+                                <option value="" data-i18n="admin.complaints.allDepartments">All Departments</option>
                             </select>
                         </div>
                         <div class="filter-group">
-                            <label>Priority:</label>
+                            <label data-i18n="admin.complaints.priorityFilter">Priority:</label>
                             <select id="priorityFilter">
-                                <option value="">All Priorities</option>
-                                <option value="critical">Critical</option>
-                                <option value="high">High</option>
-                                <option value="medium">Medium</option>
-                                <option value="low">Low</option>
+                                <option value="" data-i18n="admin.complaints.allPriorities">All Priorities</option>
+                                <option value="critical" data-i18n="admin.complaints.priorityCritical">Critical</option>
+                                <option value="high" data-i18n="admin.complaints.priorityHigh">High</option>
+                                <option value="medium" data-i18n="admin.complaints.priorityMedium">Medium</option>
+                                <option value="low" data-i18n="admin.complaints.priorityLow">Low</option>
                             </select>
                         </div>
                         <div class="filter-group">
-                            <label>Date Range:</label>
+                            <label data-i18n="admin.complaints.dateFilter">Date Range:</label>
                             <select id="dateFilter">
-                                <option value="">All Time</option>
-                                <option value="today">Today</option>
-                                <option value="week">This Week</option>
-                                <option value="month">This Month</option>
-                                <option value="quarter">This Quarter</option>
+                                <option value="" data-i18n="admin.complaints.allTime">All Time</option>
+                                <option value="today" data-i18n="admin.complaints.today">Today</option>
+                                <option value="week" data-i18n="admin.complaints.thisWeek">This Week</option>
+                                <option value="month" data-i18n="admin.complaints.thisMonth">This Month</option>
+                                <option value="quarter" data-i18n="admin.complaints.thisQuarter">This Quarter</option>
                             </select>
                         </div>
                         <div class="filter-group">
-                            <button class="btn btn-sm btn-secondary" onclick="clearFilters()">Clear</button>
-                            <button class="btn btn-sm btn-primary" onclick="applyFilters()">Apply</button>
+                            <button class="btn btn-sm btn-secondary" onclick="clearFilters()" data-i18n="admin.common.clear">Clear</button>
+                            <button class="btn btn-sm btn-primary" onclick="applyFilters()" data-i18n="admin.common.apply">Apply</button>
                         </div>
                     </div>
 
@@ -221,15 +222,15 @@
                                     <th>
                                         <input type="checkbox" id="selectAll" onchange="toggleSelectAll()">
                                     </th>
-                                    <th>Complaint ID</th>
-                                    <th>Title</th>
-                                    <th>Department</th>
-                                    <th>Status</th>
-                                    <th>Priority</th>
-                                    <th>Assigned To</th>
-                                    <th>SLA</th>
-                                    <th>Created</th>
-                                    <th>Actions</th>
+                                    <th data-i18n="admin.complaints.complaintId">Complaint ID</th>
+                                    <th data-i18n="admin.complaints.titleCol">Title</th>
+                                    <th data-i18n="admin.complaints.department">Department</th>
+                                    <th data-i18n="admin.complaints.status">Status</th>
+                                    <th data-i18n="admin.complaints.priority">Priority</th>
+                                    <th data-i18n="admin.complaints.assignedTo">Assigned To</th>
+                                    <th data-i18n="admin.complaints.sla">SLA</th>
+                                    <th data-i18n="admin.complaints.created">Created</th>
+                                    <th data-i18n="admin.complaints.actions">Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="complaintsTable">
@@ -244,7 +245,7 @@
 
                     <!-- Pagination -->
                     <div class="table-pagination">
-                        <div class="pagination-info" id="paginationInfo">
+                        <div class="pagination-info" id="paginationInfo" data-i18n="admin.complaints.showing">
                             Showing 0 of 0 complaints
                         </div>
                         <div class="pagination-controls" id="paginationControls">
@@ -255,10 +256,10 @@
 
                 <!-- Bulk Actions Bar (shown when items selected) -->
                 <div id="bulkActionsBar" class="bulk-actions-bar" style="display: none;">
-                    <span id="selectedCount">0 selected</span>
-                    <button class="btn btn-sm btn-primary" onclick="bulkAssign()">Assign Selected</button>
-                    <button class="btn btn-sm btn-secondary" onclick="bulkUpdateStatus()">Update Status</button>
-                    <button class="btn btn-sm btn-danger" onclick="clearSelection()">Clear Selection</button>
+                    <span id="selectedCount" data-i18n="admin.complaints.selected">0 selected</span>
+                    <button class="btn btn-sm btn-primary" onclick="bulkAssign()" data-i18n="admin.complaints.assignSelected">Assign Selected</button>
+                    <button class="btn btn-sm btn-secondary" onclick="bulkUpdateStatus()" data-i18n="admin.complaints.updateStatus">Update Status</button>
+                    <button class="btn btn-sm btn-danger" onclick="clearSelection()" data-i18n="admin.complaints.clearSelection">Clear Selection</button>
                 </div>
             </div>
         </main>
@@ -268,7 +269,7 @@
     <div id="assignModal" class="modal" style="display: none;">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>Assign Complaint</h3>
+                <h3 data-i18n="admin.complaints.assignComplaint">Assign Complaint</h3>
                 <button class="modal-close" onclick="closeAssignModal()">&times;</button>
             </div>
             <div class="modal-body">
@@ -276,32 +277,32 @@
 
                 <form id="assignForm">
                     <div class="form-group">
-                        <label for="assignDepartment">Department *</label>
+                        <label for="assignDepartment" data-i18n="admin.complaints.departmentRequired">Department *</label>
                         <select id="assignDepartment" required onchange="loadOfficersForDepartment()">
-                            <option value="">Select Department</option>
+                            <option value="" data-i18n="admin.complaints.selectDepartment">Select Department</option>
                         </select>
                     </div>
 
                     <div class="form-group">
-                        <label for="assignOfficer">Assign To *</label>
+                        <label for="assignOfficer" data-i18n="admin.complaints.assignToRequired">Assign To *</label>
                         <select id="assignOfficer" required>
-                            <option value="">Select Officer</option>
+                            <option value="" data-i18n="admin.complaints.selectOfficer">Select Officer</option>
                         </select>
                     </div>
 
                     <div class="form-group">
-                        <label for="assignPriority">Priority</label>
+                        <label for="assignPriority" data-i18n="admin.complaints.priority">Priority</label>
                         <select id="assignPriority">
-                            <option value="medium">Medium</option>
-                            <option value="low">Low</option>
-                            <option value="high">High</option>
-                            <option value="critical">Critical</option>
+                            <option value="medium" data-i18n="admin.complaints.priorityMedium">Medium</option>
+                            <option value="low" data-i18n="admin.complaints.priorityLow">Low</option>
+                            <option value="high" data-i18n="admin.complaints.priorityHigh">High</option>
+                            <option value="critical" data-i18n="admin.complaints.priorityCritical">Critical</option>
                         </select>
                     </div>
 
                     <div class="form-group">
-                        <label for="assignNotes">Notes</label>
-                        <textarea id="assignNotes" placeholder="Add any notes for the officer..."></textarea>
+                        <label for="assignNotes" data-i18n="admin.complaints.notes">Notes</label>
+                        <textarea id="assignNotes" data-i18n-placeholder="admin.complaints.notesPlaceholder" placeholder="Add any notes for the officer..."></textarea>
                     </div>
 
                     <!-- ML Suggestion -->
@@ -312,18 +313,18 @@
                                 <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
                                 <line x1="12" y1="17" x2="12.01" y2="17"></line>
                             </svg>
-                            AI Suggestion
+                            <span data-i18n="admin.complaints.aiSuggestion">AI Suggestion</span>
                         </div>
                         <div class="ml-suggestion-content">
                             <p id="mlSuggestionText"></p>
-                            <button type="button" class="btn btn-sm btn-secondary" onclick="applyMLSuggestion()">Apply Suggestion</button>
+                            <button type="button" class="btn btn-sm btn-secondary" onclick="applyMLSuggestion()" data-i18n="admin.complaints.applySuggestion">Apply Suggestion</button>
                         </div>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeAssignModal()">Cancel</button>
-                <button class="btn btn-primary" onclick="submitAssignment()">Assign</button>
+                <button class="btn btn-secondary" onclick="closeAssignModal()" data-i18n="admin.common.cancel">Cancel</button>
+                <button class="btn btn-primary" onclick="submitAssignment()" data-i18n="admin.complaints.assign">Assign</button>
             </div>
         </div>
     </div>
@@ -332,15 +333,15 @@
     <div id="detailModal" class="modal" style="display: none;">
         <div class="modal-content modal-lg">
             <div class="modal-header">
-                <h3 id="detailModalTitle">Complaint Details</h3>
+                <h3 id="detailModalTitle" data-i18n="admin.complaints.complaintDetails">Complaint Details</h3>
                 <button class="modal-close" onclick="closeDetailModal()">&times;</button>
             </div>
             <div class="modal-body" id="detailModalBody">
                 <!-- Content loaded dynamically -->
             </div>
             <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeDetailModal()">Close</button>
-                <button class="btn btn-primary" onclick="assignFromDetail()">Assign</button>
+                <button class="btn btn-secondary" onclick="closeDetailModal()" data-i18n="admin.common.close">Close</button>
+                <button class="btn btn-primary" onclick="assignFromDetail()" data-i18n="admin.complaints.assign">Assign</button>
             </div>
         </div>
     </div>
