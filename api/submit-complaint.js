@@ -87,7 +87,7 @@ module.exports = async function handler(req, res) {
         // Build complaint object
         const complaintData = {
             corporation_id: corporationId,
-            category_id: complaint.category_id,
+            category_id: complaint.category_id || null,  // Allow null if not provided
             title: complaint.title || 'Civic Issue',  // Default title if not provided
             description: complaint.description,
             address: complaint.address,
