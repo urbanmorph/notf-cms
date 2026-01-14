@@ -97,3 +97,60 @@ When making CSS changes, bump the version query parameter in HTML files for cach
 ```html
 <link rel="stylesheet" href="css/styles.css?v=6">
 ```
+
+## Deployment
+
+### Production URLs
+
+**Primary Site (Vercel):**
+- Main site: https://notf-cms.vercel.app
+- Chat interface: https://notf-cms.vercel.app/chat-complaint.html?corp=north
+- API endpoint: https://notf-cms.vercel.app/api/submit-complaint
+
+**GitHub Pages (Legacy):**
+- https://urbanmorph.github.io/notf-cms
+
+### Vercel Configuration
+
+**Environment Variables:**
+- `SUPABASE_URL` = https://abblyaukkoxmgzwretvm.supabase.co
+- `SUPABASE_SERVICE_KEY` = (stored securely in Vercel dashboard)
+
+**Serverless Functions:**
+- Located in `/api/` directory
+- `/api/submit-complaint.js` - Handles complaint submission with hidden API keys
+
+**Deployment:**
+- Auto-deploys from `main` branch
+- Vercel dashboard: https://vercel.com/sathyas-projects-5dfd8e1a/notf-cms
+
+### Supabase Backend
+
+**Project URL:** https://abblyaukkoxmgzwretvm.supabase.co
+**Database:** PostgreSQL
+**Storage Bucket:** `notf-cms` (for complaint photo attachments)
+
+**Key Tables:**
+- `complaints` - Main complaint records
+- `issue_categories` - Complaint categories
+- `complaint_attachments` - Photo metadata
+- `corporations` - Corporation data
+- `admin_users` - Admin user accounts
+
+### Architecture
+
+**Client → Vercel Serverless Function → Supabase**
+- Client-side code calls `/api/submit-complaint`
+- Serverless function validates data and uses hidden service key
+- Function submits to Supabase and returns ticket number
+- API keys never exposed to browser (secure!)
+
+### Testing Checklist
+
+After deployment:
+- [ ] Test chat interface on all 5 corporations
+- [ ] Verify complaint submission generates real ticket numbers
+- [ ] Check browser console - no exposed API keys
+- [ ] Verify photos upload to Supabase storage
+- [ ] Test geo-fencing (reject out-of-boundary locations)
+- [ ] Test on mobile devices
