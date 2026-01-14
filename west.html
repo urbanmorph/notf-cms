@@ -176,8 +176,15 @@
                         <textarea name="description" class="form-textarea" required placeholder="Please describe the issue in detail"></textarea>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Upload Photo (Optional)</label>
-                        <input type="file" name="photo" class="form-file" accept="image/*">
+                        <label class="form-label">Upload Photo (Optional, max 2 MB)</label>
+                        <input type="file"
+                               id="complaintPhoto"
+                               name="photo"
+                               class="form-file"
+                               accept="image/jpeg,image/png,image/webp,image/heic"
+                               capture="environment">
+                        <div id="photoError" class="error-message" style="display:none; color: #dc3545; font-size: 14px; margin-top: 8px;"></div>
+                        <div id="photoPreview" class="photo-preview" style="display:none; margin-top: 15px;"></div>
                     </div>
                     <button type="submit" class="btn-primary" id="submitComplaintBtn">Submit Complaint</button>
                 </form>

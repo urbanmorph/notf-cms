@@ -1,6 +1,10 @@
 // Citizen Complaint Form - Supabase Integration
 // This file handles the public complaint submission form
 
+// Photo upload constants
+const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2 MB
+const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/heic', 'image/heif'];
+
 // Location picker state
 let locationMap = null;
 let locationMarker = null;
@@ -399,6 +403,55 @@ async function submitComplaintToSupabase(formData) {
     return data;
 }
 
+// Upload complaint photo to Supabase Storage
+async function uploadComplaintPhoto(file, complaintId) {
+    if (!window.supabaseClient) {
+        throw new Error('Database connection not available');
+    }
+
+    // Sanitize filename - replace spaces and special chars
+    const sanitizedName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
+    const fileName = `${complaintId}_${Date.now()}_${sanitizedName}`;
+    const filePath = `complaints/${complaintId}/${fileName}`;
+
+    // Upload to Supabase Storage
+    const { data, error } = await window.supabaseClient.storage
+        .from('notf-cms')
+        .upload(filePath, file, {
+            cacheControl: '3600',
+            upsert: false
+        });
+
+    if (error) {
+        console.error('Photo upload error:', error);
+        throw new Error('Failed to upload photo: ' + error.message);
+    }
+
+    // Get public URL
+    const { data: urlData } = window.supabaseClient.storage
+        .from('notf-cms')
+        .getPublicUrl(filePath);
+
+    // Insert record in complaint_attachments table
+    const { error: attachmentError } = await window.supabaseClient
+        .from('complaint_attachments')
+        .insert({
+            complaint_id: complaintId,
+            file_name: file.name,
+            file_path: filePath,
+            file_type: file.type,
+            file_size: file.size,
+            public_url: urlData.publicUrl
+        });
+
+    if (attachmentError) {
+        console.error('Attachment record error:', attachmentError);
+        // Don't throw - photo is uploaded, just metadata failed
+    }
+
+    return { filePath, publicUrl: urlData.publicUrl };
+}
+
 // Enhanced complaint form submission handler
 async function handleComplaintSubmit(event) {
     event.preventDefault();
@@ -408,7 +461,13 @@ async function handleComplaintSubmit(event) {
     const submitBtn = form.querySelector('button[type="submit"]');
     const originalText = submitBtn ? submitBtn.textContent : 'Submit';
 
-    // Show loading state
+    // Prevent double submission
+    if (submitBtn && submitBtn.disabled) {
+        console.log('Submission already in progress, ignoring duplicate submit');
+        return false;
+    }
+
+    // Show loading state and disable immediately
     if (submitBtn) {
         submitBtn.disabled = true;
         submitBtn.textContent = 'Submitting...';
@@ -460,6 +519,22 @@ async function handleComplaintSubmit(event) {
         // Submit to Supabase
         const result = await submitComplaintToSupabase(formData);
 
+        // Upload photo if one was selected
+        const photoInput = form.querySelector('[name="photo"]');
+        if (photoInput && photoInput.files && photoInput.files.length > 0) {
+            try {
+                if (submitBtn) {
+                    submitBtn.textContent = 'Uploading photo...';
+                }
+                await uploadComplaintPhoto(photoInput.files[0], result.id);
+                console.log('Photo uploaded successfully');
+            } catch (photoError) {
+                console.error('Photo upload failed:', photoError);
+                // Don't fail the whole submission if photo fails
+                alert('Complaint submitted but photo upload failed. You can contact support with your complaint number to add the photo later.');
+            }
+        }
+
         // Show success message
         const complaintNumber = result.complaint_number || 'Generated';
         showSuccessMessage(complaintNumber, formData.phone);
@@ -469,6 +544,12 @@ async function handleComplaintSubmit(event) {
             closeModal('complaintModal');
         }
         form.reset();
+
+        // Clear photo preview
+        const photoError = document.getElementById('photoError');
+        const photoPreview = document.getElementById('photoPreview');
+        if (photoError) photoError.style.display = 'none';
+        if (photoPreview) photoPreview.style.display = 'none';
 
     } catch (error) {
         console.error('Submission error:', error);
@@ -1060,10 +1141,66 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Override the existing form submission handler
     const complaintForm = document.getElementById('complaintForm');
-    if (complaintForm) {
-        // Remove existing handler and add new one
+    if (complaintForm && !complaintForm.dataset.handlerAttached) {
+        // Mark that we've attached the handler
+        complaintForm.dataset.handlerAttached = 'true';
+
+        // Remove old handler if exists and add new one
         complaintForm.removeEventListener('submit', submitComplaint);
         complaintForm.addEventListener('submit', handleComplaintSubmit);
+    }
+
+    // Initialize photo upload validation and preview
+    const photoInput = document.getElementById('complaintPhoto');
+    if (photoInput) {
+        photoInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            const errorDiv = document.getElementById('photoError');
+            const previewDiv = document.getElementById('photoPreview');
+
+            // Clear previous errors and preview
+            if (errorDiv) errorDiv.style.display = 'none';
+            if (previewDiv) previewDiv.style.display = 'none';
+
+            if (!file) return;
+
+            // Validate file type
+            if (!ALLOWED_MIME_TYPES.includes(file.type)) {
+                if (errorDiv) {
+                    errorDiv.textContent = 'Invalid file type. Please upload JPG, PNG, WebP, or HEIC images only.';
+                    errorDiv.style.display = 'block';
+                }
+                e.target.value = ''; // Clear input
+                return;
+            }
+
+            // Validate file size
+            if (file.size > MAX_FILE_SIZE) {
+                const sizeMB = (file.size / (1024 * 1024)).toFixed(1);
+                if (errorDiv) {
+                    errorDiv.textContent = `Image too large (${sizeMB} MB). Maximum size is 2 MB. Please compress or choose a smaller image.`;
+                    errorDiv.style.display = 'block';
+                }
+                e.target.value = ''; // Clear input
+                return;
+            }
+
+            // Show preview
+            if (previewDiv) {
+                const reader = new FileReader();
+                reader.onload = function(ev) {
+                    const sizeKB = (file.size / 1024).toFixed(0);
+                    previewDiv.innerHTML = `
+                        <img src="${ev.target.result}" alt="Preview" style="max-width: 200px; max-height: 200px; border-radius: 8px; border: 2px solid #ddd;">
+                        <p style="margin-top: 8px; font-size: 14px; color: #666;">
+                            <strong>${file.name}</strong> (${sizeKB} KB)
+                        </p>
+                    `;
+                    previewDiv.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
     }
 
     // Initialize location map when modal opens
