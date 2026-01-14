@@ -84,22 +84,36 @@ module.exports = async function handler(req, res) {
             }
         }
 
+        // Build complaint object
+        const complaintData = {
+            corporation_id: corporationId,
+            category_id: complaint.category_id,
+            title: complaint.title || 'Civic Issue',  // Default title if not provided
+            description: complaint.description,
+            address: complaint.address,
+            landmark: complaint.landmark || '',
+            citizen_name: complaint.citizen_name || null,
+            citizen_phone: complaint.citizen_phone || null,
+            citizen_email: complaint.citizen_email || null,
+            status: 'new'
+        };
+
+        // Add optional fields if provided
+        if (complaint.latitude && complaint.longitude) {
+            complaintData.latitude = complaint.latitude;
+            complaintData.longitude = complaint.longitude;
+        }
+        if (complaint.department_id) {
+            complaintData.department_id = complaint.department_id;
+        }
+        if (complaint.priority) {
+            complaintData.priority = complaint.priority;
+        }
+
         // Insert complaint into database
         const { data, error } = await supabase
             .from('complaints')
-            .insert({
-                corporation_id: corporationId,
-                category_id: complaint.category_id,
-                description: complaint.description,
-                address: complaint.address,
-                landmark: complaint.landmark,
-                latitude: complaint.latitude,
-                longitude: complaint.longitude,
-                citizen_name: complaint.citizen_name,
-                citizen_phone: complaint.citizen_phone,
-                citizen_email: complaint.citizen_email,
-                status: 'new'
-            })
+            .insert(complaintData)
             .select()
             .single();
 
