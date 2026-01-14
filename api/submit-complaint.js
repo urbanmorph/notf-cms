@@ -45,6 +45,25 @@ module.exports = async function handler(req, res) {
             });
         }
 
+        // Convert corporation code (e.g., "north") to UUID
+        let corporationId = complaint.corporation_id;
+        if (typeof complaint.corporation_id === 'string' && !complaint.corporation_id.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i)) {
+            // It's a code like "north", "south", etc. - look up the UUID
+            const { data: corpData, error: corpError } = await supabase
+                .from('corporations')
+                .select('id')
+                .eq('code', complaint.corporation_id.toLowerCase())
+                .single();
+
+            if (corpError || !corpData) {
+                return res.status(400).json({
+                    error: 'Invalid corporation code: ' + complaint.corporation_id
+                });
+            }
+
+            corporationId = corpData.id;
+        }
+
         // Validate phone number format (if provided)
         if (complaint.citizen_phone) {
             const phoneRegex = /^[6-9]\d{9}$/;
@@ -69,7 +88,7 @@ module.exports = async function handler(req, res) {
         const { data, error } = await supabase
             .from('complaints')
             .insert({
-                corporation_id: complaint.corporation_id,
+                corporation_id: corporationId,
                 category_id: complaint.category_id,
                 description: complaint.description,
                 address: complaint.address,
