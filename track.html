@@ -1,11 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Track Your Complaint - Greater Bengaluru Authority</title>
     <link rel="stylesheet" href="css/styles.css?v=6">
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="js/i18n.js"></script>
     <style>
         .track-hero {
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
@@ -349,7 +350,7 @@
         <div class="container">
             <a href="index.html" class="nav-brand">
                 <img src="images/gba-logo.png" alt="GBA" class="brand-logo">
-                Corporations of Greater Bengaluru
+                <span data-i18n="nav.brand">Corporations of Greater Bengaluru</span>
             </a>
             <div class="hamburger" onclick="toggleMenu()">
                 <span></span>
@@ -357,21 +358,26 @@
                 <span></span>
             </div>
             <div class="nav-tabs" id="navTabs">
-                <a href="index.html" class="nav-tab">Home</a>
+                <a href="index.html" class="nav-tab" data-i18n="nav.home">Home</a>
                 <div class="dropdown">
                     <button class="dropdown-toggle" onclick="toggleDropdown(event)">
-                        Corporations
+                        <span data-i18n="nav.corporations">Corporations</span>
                         <span class="dropdown-arrow">▼</span>
                     </button>
                     <div class="dropdown-menu">
-                        <a href="north.html" class="dropdown-item">Bengaluru North</a>
-                        <a href="south.html" class="dropdown-item">Bengaluru South</a>
-                        <a href="east.html" class="dropdown-item">Bengaluru East</a>
-                        <a href="west.html" class="dropdown-item">Bengaluru West</a>
-                        <a href="central.html" class="dropdown-item">Bengaluru Central</a>
+                        <a href="north.html" class="dropdown-item" data-i18n="corporations.north">Bengaluru North</a>
+                        <a href="south.html" class="dropdown-item" data-i18n="corporations.south">Bengaluru South</a>
+                        <a href="east.html" class="dropdown-item" data-i18n="corporations.east">Bengaluru East</a>
+                        <a href="west.html" class="dropdown-item" data-i18n="corporations.west">Bengaluru West</a>
+                        <a href="central.html" class="dropdown-item" data-i18n="corporations.central">Bengaluru Central</a>
                     </div>
                 </div>
-                <a href="track.html" class="nav-tab active">Track Complaint</a>
+                <a href="track.html" class="nav-tab active" data-i18n="nav.trackComplaint">Track Complaint</a>
+                <button class="lang-toggle" onclick="toggleLanguage()" title="Switch Language">
+                    <span class="lang-en active">EN</span>
+                    <span class="lang-separator">|</span>
+                    <span class="lang-kn">ಕನ್ನಡ</span>
+                </button>
             </div>
         </div>
     </nav>
@@ -379,8 +385,8 @@
     <!-- Hero Section -->
     <section class="track-hero">
         <div class="container">
-            <h1>Track Your Complaint</h1>
-            <p>Enter your complaint number to check the current status and timeline of your grievance.</p>
+            <h1 data-i18n="track.title">Track Your Complaint</h1>
+            <p data-i18n="track.subtitle">Enter your complaint number to check the current status and timeline of your grievance.</p>
         </div>
     </section>
 

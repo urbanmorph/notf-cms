@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,29 +10,34 @@
 <body data-page="south">
         <nav class="navbar">
         <div class="container">
-            <div class="nav-brand"><img src="images/gba-logo.png" alt="GBA" class="brand-logo">Corporations of Greater Bengaluru</div>
+            <div class="nav-brand"><img src="images/gba-logo.png" alt="GBA" class="brand-logo"><span data-i18n="nav.brand">Corporations of Greater Bengaluru</span></div>
             <div class="hamburger" onclick="toggleMenu()">
                 <span></span>
                 <span></span>
                 <span></span>
             </div>
             <div class="nav-tabs" id="navTabs">
-                <a href="index.html" class="nav-tab">Home</a>
+                <a href="index.html" class="nav-tab" data-i18n="nav.home">Home</a>
                 <div class="dropdown">
                     <button class="dropdown-toggle" onclick="toggleDropdown(event)">
-                        Corporations
+                        <span data-i18n="nav.corporations">Corporations</span>
                         <span class="dropdown-arrow">▼</span>
                     </button>
                     <div class="dropdown-menu">
-                        <a href="north.html" class="dropdown-item">Bengaluru North</a>
-                        <a href="south.html" class="dropdown-item">Bengaluru South</a>
-                        <a href="east.html" class="dropdown-item">Bengaluru East</a>
-                        <a href="west.html" class="dropdown-item">Bengaluru West</a>
-                        <a href="central.html" class="dropdown-item">Bengaluru Central</a>
+                        <a href="north.html" class="dropdown-item" data-i18n="corporations.north">Bengaluru North</a>
+                        <a href="south.html" class="dropdown-item" data-i18n="corporations.south">Bengaluru South</a>
+                        <a href="east.html" class="dropdown-item" data-i18n="corporations.east">Bengaluru East</a>
+                        <a href="west.html" class="dropdown-item" data-i18n="corporations.west">Bengaluru West</a>
+                        <a href="central.html" class="dropdown-item" data-i18n="corporations.central">Bengaluru Central</a>
                     </div>
                 </div>
-                <a href="track.html" class="nav-tab">Track Complaint</a>
-                <a href="admin/login.html?corp=south" class="admin-login-btn">Admin</a>
+                <a href="track.html" class="nav-tab" data-i18n="nav.trackComplaint">Track Complaint</a>
+                <a href="admin/login.html?corp=south" class="admin-login-btn" data-i18n="nav.admin">Admin</a>
+                <button class="lang-toggle" onclick="toggleLanguage()" title="Switch Language">
+                    <span class="lang-en active">EN</span>
+                    <span class="lang-separator">|</span>
+                    <span class="lang-kn">ಕನ್ನಡ</span>
+                </button>
             </div>
         </div>
     </nav>
@@ -289,6 +294,7 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="js/i18n.js"></script>
     <script src="js/data.js?v=10"></script>
     <script src="js/charts.js?v=10"></script>
     <script src="js/script.js?v=10"></script>

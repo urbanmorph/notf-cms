@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,29 +11,34 @@
     <!-- Navigation -->
     <nav class="navbar">
         <div class="container">
-            <div class="nav-brand"><img src="images/gba-logo.png" alt="GBA" class="brand-logo">Corporations of Greater Bengaluru</div>
+            <div class="nav-brand"><img src="images/gba-logo.png" alt="GBA" class="brand-logo"><span data-i18n="nav.brand">Corporations of Greater Bengaluru</span></div>
             <div class="hamburger" onclick="toggleMenu()">
                 <span></span>
                 <span></span>
                 <span></span>
             </div>
             <div class="nav-tabs" id="navTabs">
-                <a href="index.html" class="nav-tab">Home</a>
+                <a href="index.html" class="nav-tab" data-i18n="nav.home">Home</a>
                 <div class="dropdown">
                     <button class="dropdown-toggle" onclick="toggleDropdown(event)">
-                        Corporations
+                        <span data-i18n="nav.corporations">Corporations</span>
                         <span class="dropdown-arrow">▼</span>
                     </button>
                     <div class="dropdown-menu">
-                        <a href="north.html" class="dropdown-item">Bengaluru North</a>
-                        <a href="south.html" class="dropdown-item">Bengaluru South</a>
-                        <a href="east.html" class="dropdown-item">Bengaluru East</a>
-                        <a href="west.html" class="dropdown-item">Bengaluru West</a>
-                        <a href="central.html" class="dropdown-item">Bengaluru Central</a>
+                        <a href="north.html" class="dropdown-item" data-i18n="corporations.north">Bengaluru North</a>
+                        <a href="south.html" class="dropdown-item" data-i18n="corporations.south">Bengaluru South</a>
+                        <a href="east.html" class="dropdown-item" data-i18n="corporations.east">Bengaluru East</a>
+                        <a href="west.html" class="dropdown-item" data-i18n="corporations.west">Bengaluru West</a>
+                        <a href="central.html" class="dropdown-item" data-i18n="corporations.central">Bengaluru Central</a>
                     </div>
                 </div>
-                <a href="track.html" class="nav-tab">Track Complaint</a>
-                <a href="admin/login.html?corp=north" class="admin-login-btn">Admin</a>
+                <a href="track.html" class="nav-tab" data-i18n="nav.trackComplaint">Track Complaint</a>
+                <a href="admin/login.html?corp=north" class="admin-login-btn" data-i18n="nav.admin">Admin</a>
+                <button class="lang-toggle" onclick="toggleLanguage()" title="Switch Language">
+                    <span class="lang-en active">EN</span>
+                    <span class="lang-separator">|</span>
+                    <span class="lang-kn">ಕನ್ನಡ</span>
+                </button>
             </div>
         </div>
     </nav>
@@ -73,22 +78,22 @@
     <!-- Dashboard Section -->
     <section class="dashboard-section">
         <div class="container">
-            <h2 class="section-title">Performance Dashboard</h2>
+            <h2 class="section-title" data-i18n="dashboard.title">Performance Dashboard</h2>
             <div class="stats-grid">
                 <div class="stats-card">
-                    <h3>Total Grievances</h3>
+                    <h3 data-i18n="dashboard.totalGrievances">Total Grievances</h3>
                     <div class="value" id="totalIssues">Loading...</div>
                 </div>
                 <div class="stats-card">
-                    <h3>Closed</h3>
+                    <h3 data-i18n="dashboard.closed">Closed</h3>
                     <div class="value" id="closedIssues">Loading...</div>
                 </div>
                 <div class="stats-card">
-                    <h3>Open</h3>
+                    <h3 data-i18n="dashboard.open">Open</h3>
                     <div class="value" id="openIssues">Loading...</div>
                 </div>
                 <div class="stats-card">
-                    <h3>Resolution Rate</h3>
+                    <h3 data-i18n="dashboard.resolutionRate">Resolution Rate</h3>
                     <div class="value" id="resolutionRate">Loading...</div>
                 </div>
             </div>
@@ -108,8 +113,8 @@
     <!-- Geographic Coverage Section -->
     <section class="section">
         <div class="container">
-            <h2 class="section-title">Geographic Coverage</h2>
-            <p style="text-align: center; color: var(--text-secondary); margin-bottom: 1.5rem;">
+            <h2 class="section-title" data-i18n="geographic.title">Geographic Coverage</h2>
+            <p style="text-align: center; color: var(--text-secondary); margin-bottom: 1.5rem;" data-i18n="geographic.subtitle">
                 Interactive map showing ward boundaries and issue density across the corporation
             </p>
             <div style="background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);">
@@ -121,12 +126,12 @@
     <!-- Charts and Analytics Section -->
     <section class="charts-section">
         <div class="container">
-            <h2 class="section-title">Performance Analytics & Trends</h2>
-            
+            <h2 class="section-title" data-i18n="charts.title">Performance Analytics & Trends</h2>
+
             <div class="charts-grid">
                 <!-- Resolution Rate Trend -->
                 <div class="chart-container">
-                    <h3 class="chart-title">Resolution Rate Trend (2020-2025)</h3>
+                    <h3 class="chart-title" data-i18n="charts.resolutionTrend">Resolution Rate Trend (2020-2025)</h3>
                     <div class="chart-canvas">
                         <canvas id="trendChart"></canvas>
                     </div>
@@ -134,7 +139,7 @@
 
                 <!-- Grievance Volume -->
                 <div class="chart-container">
-                    <h3 class="chart-title">Yearly Grievance Volume</h3>
+                    <h3 class="chart-title" data-i18n="charts.yearlyVolume">Yearly Grievance Volume</h3>
                     <div class="chart-canvas">
                         <canvas id="volumeChart"></canvas>
                     </div>
@@ -142,7 +147,7 @@
 
                 <!-- Category Breakdown -->
                 <div class="chart-container">
-                    <h3 class="chart-title">Top Issue Categories</h3>
+                    <h3 class="chart-title" data-i18n="charts.topCategories">Top Issue Categories</h3>
                     <div class="chart-canvas">
                         <canvas id="categoryChart"></canvas>
                     </div>
@@ -150,7 +155,7 @@
 
                 <!-- Closed vs Open Comparison -->
                 <div class="chart-container">
-                    <h3 class="chart-title">Closed vs Open Grievances</h3>
+                    <h3 class="chart-title" data-i18n="charts.closedVsOpen">Closed vs Open Grievances</h3>
                     <div class="chart-canvas">
                         <canvas id="comparisonChart"></canvas>
                     </div>
@@ -158,7 +163,7 @@
 
                 <!-- Seasonal Patterns -->
                 <div class="chart-container">
-                    <h3 class="chart-title">Monthly Distribution (Seasonal Patterns)</h3>
+                    <h3 class="chart-title" data-i18n="charts.seasonal">Monthly Distribution (Seasonal Patterns)</h3>
                     <div class="chart-canvas">
                         <canvas id="seasonalChart"></canvas>
                     </div>
@@ -190,40 +195,40 @@
     <div id="complaintModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 class="modal-title">File a Complaint</h2>
+                <h2 class="modal-title" data-i18n="complaint.fileComplaint">File a Complaint</h2>
                 <button class="modal-close" onclick="closeModal('complaintModal')">×</button>
             </div>
             <div class="modal-body">
                 <form id="complaintForm" onsubmit="handleComplaintSubmit(event); return false;">
                     <input type="hidden" name="corporation" id="complaintCorporation" value="Bengaluru North City Corporation">
                     <div class="form-group">
-                        <label class="form-label">Your Name *</label>
+                        <label class="form-label"><span data-i18n="complaint.yourName">Your Name</span> *</label>
                         <input type="text" name="name" class="form-input" required placeholder="Enter your full name">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Phone Number *</label>
+                        <label class="form-label"><span data-i18n="complaint.phone">Phone Number</span> *</label>
                         <input type="tel" name="phone" class="form-input" required pattern="[0-9]{10}" placeholder="10-digit mobile number">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Email</label>
-                        <input type="email" name="email" class="form-input" placeholder="For updates (optional)">
+                        <label class="form-label" data-i18n="complaint.email">Email</label>
+                        <input type="email" name="email" class="form-input" data-i18n-placeholder="complaint.emailPlaceholder" placeholder="For updates (optional)">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Issue Type *</label>
+                        <label class="form-label"><span data-i18n="complaint.issueType">Issue Type</span> *</label>
                         <select name="issueType" id="issueType" class="form-select" required>
                             <option value="">Loading categories...</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Location of Issue *</label>
-                        <input type="text" name="address" class="form-input" placeholder="Street address or area" required>
+                        <label class="form-label"><span data-i18n="complaint.location">Location of Issue</span> *</label>
+                        <input type="text" name="address" class="form-input" data-i18n-placeholder="complaint.locationPlaceholder" placeholder="Street address or area" required>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Landmark</label>
-                        <input type="text" name="landmark" class="form-input" placeholder="Nearby landmark (optional)">
+                        <label class="form-label" data-i18n="complaint.landmark">Landmark</label>
+                        <input type="text" name="landmark" class="form-input" data-i18n-placeholder="complaint.landmarkPlaceholder" placeholder="Nearby landmark (optional)">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Pin Location on Map</label>
+                        <label class="form-label" data-i18n="complaint.pinLocation">Pin Location on Map</label>
                         <div class="location-picker">
                             <div class="location-actions">
                                 <button type="button" class="btn-location" onclick="useMyLocation()">
@@ -235,7 +240,7 @@
                                         <line x1="2" y1="12" x2="6" y2="12"></line>
                                         <line x1="18" y1="12" x2="22" y2="12"></line>
                                     </svg>
-                                    Use My Location
+                                    <span data-i18n="complaint.useMyLocation">Use My Location</span>
                                 </button>
                                 <span class="location-status" id="locationStatus"></span>
                             </div>
@@ -248,14 +253,14 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Description *</label>
-                        <textarea name="description" class="form-textarea" required placeholder="Please describe the issue in detail"></textarea>
+                        <label class="form-label"><span data-i18n="complaint.description">Description</span> *</label>
+                        <textarea name="description" class="form-textarea" required data-i18n-placeholder="complaint.descriptionPlaceholder" placeholder="Please describe the issue in detail"></textarea>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Upload Photo (Optional)</label>
+                        <label class="form-label" data-i18n="complaint.uploadPhoto">Upload Photo (Optional)</label>
                         <input type="file" name="photo" class="form-file" accept="image/*">
                     </div>
-                    <button type="submit" class="btn-primary" id="submitComplaintBtn">Submit Complaint</button>
+                    <button type="submit" class="btn-primary" id="submitComplaintBtn" data-i18n="complaint.submit">Submit Complaint</button>
                 </form>
             </div>
         </div>
@@ -280,9 +285,9 @@
     <!-- Contact Information Section -->
     <section class="contact-section">
         <div class="container">
-            <h2 class="section-title">Contact Information</h2>
-            <p style="text-align: center; color: var(--text-secondary); margin-bottom: 1.5rem;">
-                Official contact details for corporation officials (Updated: 08-12-2025)
+            <h2 class="section-title" data-i18n="contact.title">Contact Information</h2>
+            <p style="text-align: center; color: var(--text-secondary); margin-bottom: 1.5rem;" data-i18n="contact.subtitle">
+                Official contact details for corporation officials
             </p>
             <div id="contactContainer">
                 <!-- Populated by JavaScript -->
@@ -293,6 +298,7 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="js/i18n.js"></script>
     <script src="js/data.js?v=10"></script>
     <script src="js/charts.js?v=10"></script>
     <script src="js/script.js?v=10"></script>
@@ -306,47 +312,47 @@
                 <!-- About Section -->
                 <div class="footer-section">
                     <img src="images/gba-logo.png" alt="GBA Logo" class="footer-logo">
-                    <h3>Greater Bengaluru Authority</h3>
-                    <p class="footer-about">
+                    <h3 data-i18n="footer.about">Greater Bengaluru Authority</h3>
+                    <p class="footer-about" data-i18n="footer.aboutDesc">
                         Civic grievance tracking and transparency platform for all five corporations of Greater Bengaluru.
                     </p>
                 </div>
 
                 <!-- Corporations -->
                 <div class="footer-section">
-                    <h3>Corporations</h3>
+                    <h3 data-i18n="footer.corporations">Corporations</h3>
                     <ul class="footer-links">
-                        <li><a href="north.html">Bengaluru North</a></li>
-                        <li><a href="south.html">Bengaluru South</a></li>
-                        <li><a href="east.html">Bengaluru East</a></li>
-                        <li><a href="west.html">Bengaluru West</a></li>
-                        <li><a href="central.html">Bengaluru Central</a></li>
+                        <li><a href="north.html" data-i18n="corporations.north">Bengaluru North</a></li>
+                        <li><a href="south.html" data-i18n="corporations.south">Bengaluru South</a></li>
+                        <li><a href="east.html" data-i18n="corporations.east">Bengaluru East</a></li>
+                        <li><a href="west.html" data-i18n="corporations.west">Bengaluru West</a></li>
+                        <li><a href="central.html" data-i18n="corporations.central">Bengaluru Central</a></li>
                     </ul>
                 </div>
 
                 <!-- Features -->
                 <div class="footer-section">
-                    <h3>Features</h3>
+                    <h3 data-i18n="footer.features">Features</h3>
                     <ul class="footer-links">
-                        <li><a href="track.html">Track Complaint</a></li>
-                        <li><a href="index.html#data-insights">Data Insights</a></li>
-                        <li><a href="index.html#about">About the Platform</a></li>
+                        <li><a href="track.html" data-i18n="footer.trackComplaint">Track Complaint</a></li>
+                        <li><a href="index.html#data-insights" data-i18n="footer.dataInsights">Data Insights</a></li>
+                        <li><a href="index.html#about" data-i18n="footer.aboutPlatform">About the Platform</a></li>
                     </ul>
                 </div>
 
                 <!-- Data & Resources -->
                 <div class="footer-section">
-                    <h3>Data & Resources</h3>
+                    <h3 data-i18n="footer.dataResources">Data & Resources</h3>
                     <ul class="footer-links">
-                        <li><a href="https://data.opencity.in/dataset/bbmp-grievances-data" target="_blank">BBMP Grievances Data</a></li>
-                        <li><a href="https://data.opencity.in/dataset/gba-wards-delimitation-2025" target="_blank">GBA Ward Delimitation</a></li>
-                        <li><a href="https://github.com/urbanmorph/notf-cms" target="_blank">GitHub Repository</a></li>
+                        <li><a href="https://data.opencity.in/dataset/bbmp-grievances-data" target="_blank" data-i18n="footer.bbmpData">BBMP Grievances Data</a></li>
+                        <li><a href="https://data.opencity.in/dataset/gba-wards-delimitation-2025" target="_blank" data-i18n="footer.wardData">GBA Ward Delimitation</a></li>
+                        <li><a href="https://github.com/urbanmorph/notf-cms" target="_blank" data-i18n="footer.github">GitHub Repository</a></li>
                     </ul>
                 </div>
             </div>
 
             <div class="footer-bottom">
-                <p>&copy; 2026 Corporations of Greater Bengaluru. Data sourced from <a href="https://data.opencity.in" target="_blank">OpenCity.in</a></p>
+                <p>&copy; 2026 <span data-i18n="footer.copyright">Corporations of Greater Bengaluru. Data sourced from</span> <a href="https://data.opencity.in" target="_blank">OpenCity.in</a></p>
             </div>
         </div>
     </footer>

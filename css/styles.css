@@ -182,6 +182,54 @@ body {
     box-shadow: var(--shadow-md);
 }
 
+/* Language Toggle Button */
+.lang-toggle {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 20px;
+    padding: 6px 12px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    color: white;
+    transition: all 0.2s ease;
+    font-family: inherit;
+    margin-left: 0.5rem;
+}
+
+.lang-toggle:hover {
+    background: rgba(255, 255, 255, 0.25);
+}
+
+.lang-toggle .lang-separator {
+    opacity: 0.5;
+}
+
+.lang-toggle .lang-en,
+.lang-toggle .lang-kn {
+    opacity: 0.6;
+    transition: opacity 0.2s ease;
+}
+
+.lang-toggle .lang-en.active,
+.lang-toggle .lang-kn.active {
+    opacity: 1;
+    font-weight: 600;
+}
+
+/* Kannada font adjustment */
+[data-lang="kn"] .nav-brand,
+[data-lang="kn"] .hero-title,
+[data-lang="kn"] .hero-subtitle,
+[data-lang="kn"] .section-title,
+[data-lang="kn"] h1,
+[data-lang="kn"] h2,
+[data-lang="kn"] h3 {
+    line-height: 1.4;
+}
+
 .hamburger {
     display: none;
     flex-direction: column;
