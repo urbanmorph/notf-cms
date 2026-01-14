@@ -98,7 +98,7 @@ module.exports = async function handler(req, res) {
                 citizen_name: complaint.citizen_name,
                 citizen_phone: complaint.citizen_phone,
                 citizen_email: complaint.citizen_email,
-                status: 'pending'
+                status: 'new'
             })
             .select()
             .single();
