@@ -1,0 +1,14 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "api/**/*.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "images": {
+    "domains": ["nkljmdzaxcpbsmdxlywi.supabase.co"],
+    "formats": ["image/webp", "image/avif"],
+    "minimumCacheTTL": 86400
+  }
+}

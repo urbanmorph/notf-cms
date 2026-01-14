@@ -913,16 +913,40 @@ class ComplaintChatbot {
         this.showTypingIndicator();
 
         try {
-            // This will use the existing submitComplaintToSupabase function from Step 2
-            // For now, simulate submission
-            await this.delay(2000);
+            // Call Vercel serverless function (API keys hidden on server)
+            const response = await fetch('/api/submit-complaint', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    corporation_id: this.corporationId,
+                    category_id: this.formData.category_id,
+                    description: this.formData.description,
+                    address: this.formData.address,
+                    landmark: this.formData.landmark || '',
+                    latitude: this.formData.latitude,
+                    longitude: this.formData.longitude,
+                    citizen_name: this.formData.citizen_name,
+                    citizen_phone: this.formData.citizen_phone,
+                    citizen_email: this.formData.citizen_email
+                })
+            });
+
+            const result = await response.json();
 
             this.hideTypingIndicator();
 
+            if (!response.ok) {
+                throw new Error(result.error || 'Failed to submit complaint');
+            }
+
+            // Store the complaint number for success message
+            this.submittedComplaint = result.complaint;
             this.state = ChatStates.SUBMITTED;
 
-            // Show success message
-            this.showSuccessMessage();
+            // Show success message with real ticket number
+            this.showSuccessMessage(result.complaint.complaint_number);
 
         } catch (error) {
             this.hideTypingIndicator();
@@ -931,7 +955,7 @@ class ComplaintChatbot {
         }
     }
 
-    showSuccessMessage() {
+    showSuccessMessage(complaintNumber) {
         const messagesContainer = document.getElementById('chatMessages');
         if (!messagesContainer) return;
 
@@ -959,10 +983,10 @@ class ComplaintChatbot {
         text.innerHTML = '<strong>✅ Complaint Submitted Successfully!</strong>';
         successDiv.appendChild(text);
 
-        // Complaint number (will be real in Step 9)
+        // Complaint number (real ticket number from database)
         const number = document.createElement('div');
         number.className = 'complaint-number';
-        number.textContent = 'NOR-26-000042'; // Placeholder
+        number.textContent = complaintNumber || 'Processing...';
         successDiv.appendChild(number);
 
         // Additional info

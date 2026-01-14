@@ -1,0 +1,9 @@
+{
+  "name": "notf-cms",
+  "version": "1.0.0",
+  "description": "Greater Bengaluru Complaint Management System",
+  "private": true,
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.0"
+  }
+}
