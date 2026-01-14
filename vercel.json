@@ -1,15 +1,9 @@
 {
-  "version": 2,
   "buildCommand": "npm install",
-  "builds": [
-    {
-      "src": "api/**/*.js",
-      "use": "@vercel/node"
+  "functions": {
+    "api/**/*.js": {
+      "memory": 1024,
+      "maxDuration": 10
     }
-  ],
-  "images": {
-    "domains": ["abblyaukkoxmgzwretvm.supabase.co"],
-    "formats": ["image/webp", "image/avif"],
-    "minimumCacheTTL": 86400
   }
 }
