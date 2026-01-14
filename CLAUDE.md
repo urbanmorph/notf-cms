@@ -54,6 +54,19 @@ All pages must include the i18n script and have `data-lang="en"` on the html tag
 - `index.html` - Landing page
 - `north.html`, `south.html`, `east.html`, `west.html`, `central.html` - Corporation pages
 - `track.html` - Complaint tracking page
+- `admin/login.html` - Admin login page (completed)
+
+### Admin pages (partially complete)
+Admin pages use `admin.*` translation keys (e.g., `admin.sidebar.dashboard`, `admin.login.title`).
+These pages still need data-i18n attributes added:
+- `admin/dashboard.html`
+- `admin/complaints.html`
+- `admin/officers.html`
+- `admin/assignments.html`
+- `admin/analytics.html`
+- `admin/sla-tracking.html`
+
+All admin translation keys are already defined in `js/i18n.js`.
 
 ## Git Workflow
 - Main development branch: `elastic-blackwell`
