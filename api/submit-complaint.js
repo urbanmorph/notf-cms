@@ -1,5 +1,6 @@
 // Serverless function to submit complaints
 // API keys are hidden in Vercel environment variables
+// Last updated: 2026-01-14 - Fixed CommonJS exports and environment variable configuration
 
 const { createClient } = require('@supabase/supabase-js');
 
