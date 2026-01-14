@@ -180,7 +180,10 @@
     
     <!-- Floating Action Buttons -->
     <div class="floating-buttons">
-        <button class="floating-btn complaint-btn" onclick="openModal('complaintModal')" title="File Complaint">
+        <a href="chat-complaint.html?corp=north" class="floating-btn chat-btn" title="Chat Interface (New!)" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); animation: pulse 2s infinite;">
+            💬
+        </a>
+        <button class="floating-btn complaint-btn" onclick="openModal('complaintModal')" title="File Complaint (Traditional Form)">
             📝
         </button>
         <button class="floating-btn whatsapp-btn" onclick="openWhatsApp()" title="WhatsApp">
@@ -257,8 +260,15 @@
                         <textarea name="description" class="form-textarea" required data-i18n-placeholder="complaint.descriptionPlaceholder" placeholder="Please describe the issue in detail"></textarea>
                     </div>
                     <div class="form-group">
-                        <label class="form-label" data-i18n="complaint.uploadPhoto">Upload Photo (Optional)</label>
-                        <input type="file" name="photo" class="form-file" accept="image/*">
+                        <label class="form-label" data-i18n="complaint.uploadPhoto">Upload Photo (Optional, max 2 MB)</label>
+                        <input type="file"
+                               id="complaintPhoto"
+                               name="photo"
+                               class="form-file"
+                               accept="image/jpeg,image/png,image/webp,image/heic"
+                               capture="environment">
+                        <div id="photoError" class="error-message" style="display:none; color: #dc3545; font-size: 14px; margin-top: 8px;"></div>
+                        <div id="photoPreview" class="photo-preview" style="display:none; margin-top: 15px;"></div>
                     </div>
                     <button type="submit" class="btn-primary" id="submitComplaintBtn" data-i18n="complaint.submit">Submit Complaint</button>
                 </form>
