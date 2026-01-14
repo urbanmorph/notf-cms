@@ -56,6 +56,18 @@ async function signIn(email, password) {
 }
 
 async function signOut() {
+    // Clean up realtime subscriptions before signing out
+    if (supabaseClient && supabaseClient.realtime) {
+        // Remove all channels to prevent WebSocket errors
+        const channels = supabaseClient.realtime.channels || [];
+        for (const channel of channels) {
+            await supabaseClient.removeChannel(channel);
+        }
+
+        // Disconnect the realtime connection
+        supabaseClient.realtime.disconnect();
+    }
+
     const { error } = await supabaseClient.auth.signOut();
     if (error) throw error;
 }
