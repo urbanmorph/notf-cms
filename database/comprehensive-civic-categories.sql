@@ -81,7 +81,10 @@ INSERT INTO issue_categories (id, name, code, parent_id, display_order) VALUES
   ('a1000000-0000-0000-0000-000000000030', 'Welfare Schemes', 'welfare', NULL, 30),
   ('a1000000-0000-0000-0000-000000000031', 'Elections', 'elections', NULL, 31),
   ('a1000000-0000-0000-0000-000000000032', 'General Grievances', 'general', NULL, 99)
-ON CONFLICT (code) DO UPDATE SET name = EXCLUDED.name, display_order = EXCLUDED.display_order;
+ON CONFLICT (id) DO UPDATE SET
+  name = EXCLUDED.name,
+  code = EXCLUDED.code,
+  display_order = EXCLUDED.display_order;
 
 -- =====================================================
 -- 1. ROADS & TRAFFIC (Most common complaints)
