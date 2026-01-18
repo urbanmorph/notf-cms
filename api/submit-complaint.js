@@ -76,6 +76,24 @@ module.exports = async function handler(req, res) {
             corporationId = corpData.id;
         }
 
+        // Convert category code (e.g., "garbage_not_collected") to UUID
+        let categoryId = complaint.category_id;
+        if (categoryId && typeof categoryId === 'string' && !categoryId.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i)) {
+            // It's a code like "garbage_not_collected" - look up the UUID
+            const { data: catData, error: catError } = await supabase
+                .from('issue_categories')
+                .select('id')
+                .eq('code', categoryId.toLowerCase())
+                .single();
+
+            if (catError || !catData) {
+                console.warn('Category code not found:', categoryId, '- setting to null');
+                categoryId = null; // Don't reject, just set to null
+            } else {
+                categoryId = catData.id;
+            }
+        }
+
         // Validate phone number format (if provided)
         if (complaint.citizen_phone) {
             const phoneRegex = /^[6-9]\d{9}$/;
@@ -99,7 +117,7 @@ module.exports = async function handler(req, res) {
         // Build complaint object
         const complaintData = {
             corporation_id: corporationId,
-            category_id: complaint.category_id || null,  // Allow null if not provided
+            category_id: categoryId || null,  // Use converted UUID (or null)
             title: complaint.title || 'Civic Issue',  // Default title if not provided
             description: complaint.description,
             address: complaint.address,
