@@ -3,6 +3,20 @@
 ## Project Overview
 This is the Corporations of Greater Bengaluru website - a civic grievance management system for Bengaluru's five city corporations (North, South, East, West, Central).
 
+## Brand Guidelines
+
+**Central Brand Guide:** `/Users/sathya/Documents/NOTF_BRAND_GUIDELINES.md`
+
+**NOTF Brand Colors:**
+- Yellow: `#FBC831` - CTAs, highlights
+- Pink: `#F7A782` - Secondary accents
+- Teal: `#23A2A5` - Primary brand color
+- Green: `#0D7576` - Dark teal, text emphasis
+
+**Primary Gradient:** `linear-gradient(135deg, #23A2A5 0%, #0D7576 100%)`
+
+Refer to the central brand guidelines for complete color usage, typography, spacing, and design patterns.
+
 ## i18n (Internationalization)
 
 ### IMPORTANT: Always update translations when modifying text
