@@ -1,15 +1,27 @@
 // Serverless function to submit complaints
 // API keys are hidden in Vercel environment variables
-// Last updated: 2026-01-14 - Fixed CommonJS exports and environment variable configuration
+// Last updated: 2026-01-18 - Added CORS restrictions, metadata support, and source tracking for NOTF chatbot integration
 
 const { createClient } = require('@supabase/supabase-js');
 
 module.exports = async function handler(req, res) {
-    // CORS headers for your domain
+    // CORS headers - restrict to specific origins for security
+    const allowedOrigins = [
+        'https://notf.vercel.app',
+        'https://notf-one.vercel.app',
+        'https://notf-cms.vercel.app',
+        'http://localhost:8080',
+        'http://127.0.0.1:8080'
+    ];
+
+    const origin = req.headers.origin;
+    if (allowedOrigins.includes(origin)) {
+        res.setHeader('Access-Control-Allow-Origin', origin);
+    }
+
     res.setHeader('Access-Control-Allow-Credentials', true);
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
-    res.setHeader('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version');
+    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-Requested-With');
 
     // Handle preflight request
     if (req.method === 'OPTIONS') {
@@ -109,6 +121,16 @@ module.exports = async function handler(req, res) {
         if (complaint.priority) {
             complaintData.priority = complaint.priority;
         }
+
+        // Add metadata with source tracking
+        const metadata = complaint.metadata || {};
+        if (!metadata.source) {
+            // Auto-detect source if not provided
+            metadata.source = (origin?.includes('notf.vercel.app') || origin?.includes('notf-one.vercel.app')) ? 'notf-chatbot' : 'notf-cms-chatbot';
+            metadata.submitted_at = new Date().toISOString();
+            metadata.origin = origin;
+        }
+        complaintData.metadata = metadata;
 
         // Insert complaint into database
         const { data, error } = await supabase
