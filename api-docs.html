@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="en" data-lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Documentation - Corporations of Greater Bengaluru</title>
+    <link rel="stylesheet" href="css/styles.css?v=6">
+    <style>
+        /* API Documentation Styles */
+        .api-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .api-hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+            border-radius: 12px;
+            margin-bottom: 40px;
+        }
+
+        .api-hero h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+
+        .api-hero p {
+            font-size: 1.3rem;
+            opacity: 0.95;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .api-version {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            margin-top: 20px;
+            font-size: 0.9rem;
+        }
+
+        .api-sidebar {
+            position: sticky;
+            top: 20px;
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .api-sidebar h3 {
+            margin-top: 0;
+            color: #667eea;
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+        }
+
+        .api-sidebar ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .api-sidebar li {
+            margin-bottom: 8px;
+        }
+
+        .api-sidebar a {
+            color: #333;
+            text-decoration: none;
+            display: block;
+            padding: 8px 12px;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .api-sidebar a:hover {
+            background: #f5f3ff;
+            color: #667eea;
+            transform: translateX(4px);
+        }
+
+        .api-content {
+            flex: 1;
+        }
+
+        .api-layout {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 40px;
+            margin-top: 40px;
+        }
+
+        .api-section {
+            margin-bottom: 60px;
+            scroll-margin-top: 80px;
+        }
+
+        .api-section h2 {
+            color: #667eea;
+            font-size: 2rem;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        .api-section h3 {
+            color: #333;
+            font-size: 1.5rem;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+
+        .endpoint-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .endpoint-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .http-method {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 0.85rem;
+            font-family: 'Courier New', monospace;
+        }
+
+        .http-method.post {
+            background: #10b981;
+            color: white;
+        }
+
+        .http-method.get {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .endpoint-path {
+            font-family: 'Courier New', monospace;
+            font-size: 1.1rem;
+            color: #374151;
+        }
+
+        .code-block {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 16px 0;
+            position: relative;
+        }
+
+        .code-block pre {
+            margin: 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .code-block .copy-btn {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+        }
+
+        .code-block .copy-btn:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .parameter-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .parameter-table th {
+            background: #f9fafb;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            color: #374151;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        .parameter-table td {
+            padding: 12px;
+            border-bottom: 1px solid #e5e7eb;
+            color: #4b5563;
+        }
+
+        .parameter-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .parameter-name {
+            font-family: 'Courier New', monospace;
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .parameter-type {
+            font-family: 'Courier New', monospace;
+            color: #10b981;
+            font-size: 0.85rem;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .badge.required {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .badge.optional {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .alert {
+            padding: 16px 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .alert.info {
+            background: #dbeafe;
+            border-left: 4px solid #3b82f6;
+            color: #1e40af;
+        }
+
+        .alert.warning {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            color: #92400e;
+        }
+
+        .alert.success {
+            background: #d1fae5;
+            border-left: 4px solid #10b981;
+            color: #065f46;
+        }
+
+        .try-it-section {
+            background: #f9fafb;
+            padding: 24px;
+            border-radius: 8px;
+            margin-top: 24px;
+        }
+
+        .try-it-section h4 {
+            margin-top: 0;
+            color: #667eea;
+        }
+
+        .try-it-form input, .try-it-form textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            margin-bottom: 12px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+
+        .try-it-form button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .try-it-form button:hover {
+            background: #5568d3;
+            transform: translateY(-1px);
+        }
+
+        .response-preview {
+            margin-top: 16px;
+        }
+
+        @media (max-width: 768px) {
+            .api-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .api-sidebar {
+                position: static;
+            }
+
+            .api-hero h1 {
+                font-size: 2rem;
+            }
+
+            .api-hero p {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand"><img src="images/gba-logo.png" alt="GBA" class="brand-logo"><span data-i18n="nav.brand">Corporations of Greater Bengaluru</span></div>
+            <div class="hamburger" onclick="toggleMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <div class="nav-tabs" id="navTabs">
+                <a href="index.html" class="nav-tab" data-i18n="nav.home">Home</a>
+                <div class="dropdown">
+                    <button class="dropdown-toggle" onclick="toggleDropdown(event)">
+                        <span data-i18n="nav.corporations">Corporations</span>
+                        <span class="dropdown-arrow">▼</span>
+                    </button>
+                    <div class="dropdown-menu">
+                        <a href="north.html" class="dropdown-item" data-i18n="corporations.north">Bengaluru North</a>
+                        <a href="south.html" class="dropdown-item" data-i18n="corporations.south">Bengaluru South</a>
+                        <a href="east.html" class="dropdown-item" data-i18n="corporations.east">Bengaluru East</a>
+                        <a href="west.html" class="dropdown-item" data-i18n="corporations.west">Bengaluru West</a>
+                        <a href="central.html" class="dropdown-item" data-i18n="corporations.central">Bengaluru Central</a>
+                    </div>
+                </div>
+                <a href="api-docs.html" class="nav-tab active">API Docs</a>
+                <button class="lang-toggle" onclick="toggleLanguage()" title="Switch Language">
+                    <span class="lang-en active">EN</span>
+                    <span class="lang-separator">|</span>
+                    <span class="lang-kn">ಕನ್ನಡ</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="api-hero">
+        <h1>📚 API Documentation</h1>
+        <p>Integrate civic complaint management into your applications with our simple, powerful REST API</p>
+        <div class="api-version">Version 1.0 | Updated January 2026</div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="api-container">
+        <div class="api-layout">
+            <!-- Sidebar Navigation -->
+            <aside class="api-sidebar">
+                <h3>📖 Contents</h3>
+                <ul>
+                    <li><a href="#overview">Overview</a></li>
+                    <li><a href="#authentication">Authentication</a></li>
+                    <li><a href="#endpoints">Endpoints</a></li>
+                    <li><a href="#submit-complaint">Submit Complaint</a></li>
+                    <li><a href="#request-format">Request Format</a></li>
+                    <li><a href="#response-format">Response Format</a></li>
+                    <li><a href="#error-handling">Error Handling</a></li>
+                    <li><a href="#code-examples">Code Examples</a></li>
+                    <li><a href="#try-it">Try It Out</a></li>
+                    <li><a href="#rate-limits">Rate Limits</a></li>
+                </ul>
+            </aside>
+
+            <!-- Main Content -->
+            <main class="api-content">
+                <!-- Overview Section -->
+                <section id="overview" class="api-section">
+                    <h2>Overview</h2>
+                    <p>The Corporations of Greater Bengaluru API enables developers to integrate civic complaint management into their applications. Submit complaints, track status, and access municipal corporation data programmatically.</p>
+
+                    <div class="alert info">
+                        <strong>🌐 Base URL:</strong> <code>https://notf-cms.vercel.app/api</code>
+                    </div>
+
+                    <h3>Key Features</h3>
+                    <ul>
+                        <li>✅ Submit complaints to 12 Indian cities</li>
+                        <li>✅ Auto-route complaints to correct municipal corporation</li>
+                        <li>✅ Support for photos and location data</li>
+                        <li>✅ Real-time ticket number generation</li>
+                        <li>✅ Automatic issue categorization</li>
+                        <li>✅ No authentication required for public endpoints</li>
+                    </ul>
+                </section>
+
+                <!-- Authentication Section -->
+                <section id="authentication" class="api-section">
+                    <h2>Authentication</h2>
+                    <p>Currently, the API is <strong>publicly accessible</strong> with no authentication required. Future versions may include API keys for advanced features.</p>
+
+                    <div class="alert warning">
+                        <strong>⚠️ Rate Limiting:</strong> While no API key is required, please be mindful of request volume. We reserve the right to implement rate limits in the future.
+                    </div>
+                </section>
+
+                <!-- Endpoints Section -->
+                <section id="endpoints" class="api-section">
+                    <h2>Endpoints</h2>
+
+                    <!-- Submit Complaint Endpoint -->
+                    <div id="submit-complaint" class="endpoint-card">
+                        <div class="endpoint-header">
+                            <span class="http-method post">POST</span>
+                            <span class="endpoint-path">/submit-complaint</span>
+                        </div>
+                        <p>Submit a new civic complaint to a municipal corporation.</p>
+                    </div>
+                </section>
+
+                <!-- Request Format Section -->
+                <section id="request-format" class="api-section">
+                    <h2>Request Format</h2>
+
+                    <h3>Required Headers</h3>
+                    <table class="parameter-table">
+                        <thead>
+                            <tr>
+                                <th>Header</th>
+                                <th>Value</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="parameter-name">Content-Type</span></td>
+                                <td><code>application/json</code></td>
+                                <td>Request body format</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3>Request Parameters</h3>
+                    <table class="parameter-table">
+                        <thead>
+                            <tr>
+                                <th>Parameter</th>
+                                <th>Type</th>
+                                <th>Required</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="parameter-name">description</span></td>
+                                <td><span class="parameter-type">string</span></td>
+                                <td><span class="badge required">Required</span></td>
+                                <td>Detailed description of the issue (min 10 characters)</td>
+                            </tr>
+                            <tr>
+                                <td><span class="parameter-name">address</span></td>
+                                <td><span class="parameter-type">string</span></td>
+                                <td><span class="badge required">Required</span></td>
+                                <td>Full address where the issue exists</td>
+                            </tr>
+                            <tr>
+                                <td><span class="parameter-name">citizen_phone</span></td>
+                                <td><span class="parameter-type">string</span></td>
+                                <td><span class="badge required">Required*</span></td>
+                                <td>10-digit Indian mobile number (starts with 6-9)</td>
+                            </tr>
+                            <tr>
+                                <td><span class="parameter-name">citizen_email</span></td>
+                                <td><span class="parameter-type">string</span></td>
+                                <td><span class="badge required">Required*</span></td>
+                                <td>Valid email address</td>
+                            </tr>
+                            <tr>
+                                <td><span class="parameter-name">latitude</span></td>
+                                <td><span class="parameter-type">number</span></td>
+                                <td><span class="badge optional">Optional</span></td>
+                                <td>GPS latitude coordinate</td>
+                            </tr>
+                            <tr>
+                                <td><span class="parameter-name">longitude</span></td>
+                                <td><span class="parameter-type">number</span></td>
+                                <td><span class="badge optional">Optional</span></td>
+                                <td>GPS longitude coordinate</td>
+                            </tr>
+                            <tr>
+                                <td><span class="parameter-name">corporation_id</span></td>
+                                <td><span class="parameter-type">string</span></td>
+                                <td><span class="badge optional">Optional</span></td>
+                                <td>Corporation code (e.g., "chennai", "north") or UUID</td>
+                            </tr>
+                            <tr>
+                                <td><span class="parameter-name">category_id</span></td>
+                                <td><span class="parameter-type">string</span></td>
+                                <td><span class="badge optional">Optional</span></td>
+                                <td>Issue category code (e.g., "garbage_not_collected") or UUID</td>
+                            </tr>
+                            <tr>
+                                <td><span class="parameter-name">citizen_name</span></td>
+                                <td><span class="parameter-type">string</span></td>
+                                <td><span class="badge optional">Optional</span></td>
+                                <td>Name of complainant (can be anonymous)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="alert info">
+                        <strong>* Contact Requirement:</strong> At least one of <code>citizen_phone</code> or <code>citizen_email</code> must be provided.
+                    </div>
+
+                    <h3>Supported Cities</h3>
+                    <p>Use these corporation codes for the <code>corporation_id</code> parameter:</p>
+
+                    <table class="parameter-table">
+                        <thead>
+                            <tr>
+                                <th>Code</th>
+                                <th>City</th>
+                                <th>State</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><code>bengaluru</code> or <code>north</code>/<code>south</code>/<code>east</code>/<code>west</code>/<code>central</code></td><td>Bengaluru</td><td>Karnataka</td></tr>
+                            <tr><td><code>ahmedabad</code></td><td>Ahmedabad</td><td>Gujarat</td></tr>
+                            <tr><td><code>bhubaneswar</code></td><td>Bhubaneswar</td><td>Odisha</td></tr>
+                            <tr><td><code>chennai</code></td><td>Chennai</td><td>Tamil Nadu</td></tr>
+                            <tr><td><code>gurugram</code></td><td>Gurugram</td><td>Haryana</td></tr>
+                            <tr><td><code>hyderabad</code></td><td>Hyderabad</td><td>Telangana</td></tr>
+                            <tr><td><code>jaipur</code></td><td>Jaipur</td><td>Rajasthan</td></tr>
+                            <tr><td><code>kolkata</code></td><td>Kolkata</td><td>West Bengal</td></tr>
+                            <tr><td><code>mumbai</code></td><td>Mumbai</td><td>Maharashtra</td></tr>
+                            <tr><td><code>pune</code></td><td>Pune</td><td>Maharashtra</td></tr>
+                            <tr><td><code>thane</code></td><td>Thane</td><td>Maharashtra</td></tr>
+                            <tr><td><code>visakhapatnam</code></td><td>Visakhapatnam</td><td>Andhra Pradesh</td></tr>
+                        </tbody>
+                    </table>
+
+                    <h3>Example Request</h3>
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <pre>{
+  "description": "Streetlight not working on MG Road near City Center",
+  "address": "MG Road, Bengaluru North, Karnataka 560001",
+  "latitude": 12.9716,
+  "longitude": 77.5946,
+  "citizen_phone": "9876543210",
+  "citizen_name": "Ramesh Kumar",
+  "corporation_id": "north",
+  "category_id": "streetlight_not_working"
+}</pre>
+                    </div>
+                </section>
+
+                <!-- Response Format Section -->
+                <section id="response-format" class="api-section">
+                    <h2>Response Format</h2>
+
+                    <h3>Success Response (200 OK)</h3>
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <pre>{
+  "success": true,
+  "complaint": {
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "complaint_number": "NOR-26-000123",
+    "corporation_id": "123e4567-e89b-12d3-a456-426614174000",
+    "category_id": "789e4567-e89b-12d3-a456-426614174000",
+    "description": "Streetlight not working on MG Road near City Center",
+    "address": "MG Road, Bengaluru North, Karnataka 560001",
+    "latitude": 12.9716,
+    "longitude": 77.5946,
+    "citizen_name": "Ramesh Kumar",
+    "citizen_phone": "9876543210",
+    "status": "new",
+    "created_at": "2026-01-18T12:30:45.123Z"
+  },
+  "message": "Complaint submitted successfully. Ticket: NOR-26-000123"
+}</pre>
+                    </div>
+
+                    <div class="alert success">
+                        <strong>✅ Ticket Numbers:</strong> Format is <code>{CORP_CODE}-{YEAR}-{NUMBER}</code>. Example: <code>NOR-26-000123</code> (Bengaluru North, 2026, complaint #123)
+                    </div>
+                </section>
+
+                <!-- Error Handling Section -->
+                <section id="error-handling" class="api-section">
+                    <h2>Error Handling</h2>
+
+                    <h3>Error Response Format</h3>
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <pre>{
+  "error": "Description must be at least 10 characters long."
+}</pre>
+                    </div>
+
+                    <h3>HTTP Status Codes</h3>
+                    <table class="parameter-table">
+                        <thead>
+                            <tr>
+                                <th>Status Code</th>
+                                <th>Meaning</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>200</code></td>
+                                <td>OK</td>
+                                <td>Complaint submitted successfully</td>
+                            </tr>
+                            <tr>
+                                <td><code>400</code></td>
+                                <td>Bad Request</td>
+                                <td>Invalid parameters or missing required fields</td>
+                            </tr>
+                            <tr>
+                                <td><code>405</code></td>
+                                <td>Method Not Allowed</td>
+                                <td>HTTP method not supported (use POST)</td>
+                            </tr>
+                            <tr>
+                                <td><code>500</code></td>
+                                <td>Internal Server Error</td>
+                                <td>Server-side error occurred</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3>Common Error Messages</h3>
+                    <ul>
+                        <li><code>"Description must be at least 10 characters long."</code></li>
+                        <li><code>"Please provide either a phone number or email address."</code></li>
+                        <li><code>"Invalid phone number. Must be 10 digits starting with 6-9."</code></li>
+                        <li><code>"Invalid email address format."</code></li>
+                        <li><code>"Invalid corporation code: {code}"</code></li>
+                    </ul>
+                </section>
+
+                <!-- Code Examples Section -->
+                <section id="code-examples" class="api-section">
+                    <h2>Code Examples</h2>
+
+                    <h3>JavaScript (Fetch API)</h3>
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <pre>const response = await fetch('https://notf-cms.vercel.app/api/submit-complaint', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    description: 'Streetlight not working on MG Road',
+    address: 'MG Road, Bengaluru North, Karnataka 560001',
+    latitude: 12.9716,
+    longitude: 77.5946,
+    citizen_phone: '9876543210',
+    citizen_name: 'Ramesh Kumar',
+    corporation_id: 'north',
+    category_id: 'streetlight_not_working'
+  })
+});
+
+const data = await response.json();
+console.log('Ticket Number:', data.complaint.complaint_number);</pre>
+                    </div>
+
+                    <h3>Python (Requests)</h3>
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <pre>import requests
+
+response = requests.post(
+    'https://notf-cms.vercel.app/api/submit-complaint',
+    json={
+        'description': 'Streetlight not working on MG Road',
+        'address': 'MG Road, Bengaluru North, Karnataka 560001',
+        'latitude': 12.9716,
+        'longitude': 77.5946,
+        'citizen_phone': '9876543210',
+        'citizen_name': 'Ramesh Kumar',
+        'corporation_id': 'north',
+        'category_id': 'streetlight_not_working'
+    }
+)
+
+data = response.json()
+print(f"Ticket Number: {data['complaint']['complaint_number']}")</pre>
+                    </div>
+
+                    <h3>cURL</h3>
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <pre>curl -X POST https://notf-cms.vercel.app/api/submit-complaint \
+  -H "Content-Type: application/json" \
+  -d '{
+    "description": "Streetlight not working on MG Road",
+    "address": "MG Road, Bengaluru North, Karnataka 560001",
+    "latitude": 12.9716,
+    "longitude": 77.5946,
+    "citizen_phone": "9876543210",
+    "citizen_name": "Ramesh Kumar",
+    "corporation_id": "north",
+    "category_id": "streetlight_not_working"
+  }'</pre>
+                    </div>
+                </section>
+
+                <!-- Try It Out Section -->
+                <section id="try-it" class="api-section">
+                    <h2>Try It Out</h2>
+                    <div class="try-it-section">
+                        <h4>🧪 Test the API Live</h4>
+                        <form class="try-it-form" onsubmit="testApi(event)">
+                            <label>Description *</label>
+                            <textarea id="test-description" rows="3" placeholder="Describe the civic issue..." required></textarea>
+
+                            <label>Address *</label>
+                            <input type="text" id="test-address" placeholder="Full address with city and state" required>
+
+                            <label>Phone Number * (10 digits, starts with 6-9)</label>
+                            <input type="text" id="test-phone" placeholder="9876543210" pattern="[6-9][0-9]{9}" required>
+
+                            <label>Email</label>
+                            <input type="email" id="test-email" placeholder="you@example.com">
+
+                            <label>Corporation Code</label>
+                            <input type="text" id="test-corp" placeholder="north, chennai, mumbai, etc.">
+
+                            <button type="submit">Send Test Request</button>
+                        </form>
+
+                        <div id="test-response" class="response-preview"></div>
+                    </div>
+                </section>
+
+                <!-- Rate Limits Section -->
+                <section id="rate-limits" class="api-section">
+                    <h2>Rate Limits</h2>
+                    <p>Currently, there are no strict rate limits. However, we recommend:</p>
+                    <ul>
+                        <li>Maximum 100 requests per minute from a single IP</li>
+                        <li>Implement exponential backoff for retries</li>
+                        <li>Cache responses when appropriate</li>
+                    </ul>
+
+                    <div class="alert warning">
+                        <strong>⚠️ Fair Use Policy:</strong> Please use the API responsibly. Excessive usage may result in temporary IP blocking.
+                    </div>
+                </section>
+
+                <!-- Support Section -->
+                <section class="api-section">
+                    <h2>Support & Feedback</h2>
+                    <p>Need help? Found a bug? Have a feature request?</p>
+                    <ul>
+                        <li>📧 Email: <a href="mailto:support@notf.in">support@notf.in</a></li>
+                        <li>💬 GitHub Issues: <a href="https://github.com/urbanmorph/notf-cms/issues" target="_blank">Report an issue</a></li>
+                        <li>📖 Documentation: This page is regularly updated</li>
+                    </ul>
+
+                    <div class="alert info">
+                        <strong>📝 Changelog:</strong> Last updated January 18, 2026 - Added category code auto-conversion
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        function copyCode(btn) {
+            const codeBlock = btn.nextElementSibling;
+            const text = codeBlock.textContent;
+
+            navigator.clipboard.writeText(text).then(() => {
+                btn.textContent = 'Copied!';
+                setTimeout(() => {
+                    btn.textContent = 'Copy';
+                }, 2000);
+            });
+        }
+
+        async function testApi(event) {
+            event.preventDefault();
+
+            const responseDiv = document.getElementById('test-response');
+            responseDiv.innerHTML = '<div style="padding: 16px; background: #f0f9ff; border-radius: 6px;">⏳ Sending request...</div>';
+
+            const requestBody = {
+                description: document.getElementById('test-description').value,
+                address: document.getElementById('test-address').value,
+                citizen_phone: document.getElementById('test-phone').value
+            };
+
+            const email = document.getElementById('test-email').value;
+            if (email) requestBody.citizen_email = email;
+
+            const corp = document.getElementById('test-corp').value;
+            if (corp) requestBody.corporation_id = corp;
+
+            try {
+                const response = await fetch('https://notf-cms.vercel.app/api/submit-complaint', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestBody)
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    responseDiv.innerHTML = `
+                        <div style="padding: 16px; background: #d1fae5; border-radius: 6px; border-left: 4px solid #10b981;">
+                            <strong style="color: #065f46;">✅ Success!</strong><br>
+                            <strong>Ticket Number:</strong> ${data.complaint.complaint_number}<br>
+                            <strong>Status:</strong> ${data.complaint.status}<br>
+                            <div style="margin-top: 12px;">
+                                <strong>Full Response:</strong>
+                                <pre style="background: white; padding: 12px; border-radius: 4px; overflow-x: auto; margin-top: 8px; color: #065f46;">${JSON.stringify(data, null, 2)}</pre>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    responseDiv.innerHTML = `
+                        <div style="padding: 16px; background: #fee2e2; border-radius: 6px; border-left: 4px solid #dc2626;">
+                            <strong style="color: #991b1b;">❌ Error ${response.status}</strong><br>
+                            ${data.error || 'Unknown error occurred'}
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                responseDiv.innerHTML = `
+                    <div style="padding: 16px; background: #fee2e2; border-radius: 6px; border-left: 4px solid #dc2626;">
+                        <strong style="color: #991b1b;">❌ Network Error</strong><br>
+                        ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        function toggleMenu() {
+            const navTabs = document.getElementById('navTabs');
+            navTabs.classList.toggle('active');
+        }
+
+        function toggleDropdown(event) {
+            event.stopPropagation();
+            const dropdown = event.currentTarget.parentElement;
+            dropdown.classList.toggle('active');
+        }
+
+        function toggleLanguage() {
+            // Placeholder for language toggle functionality
+            console.log('Language toggle clicked');
+        }
+
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', function() {
+            document.querySelectorAll('.dropdown').forEach(dropdown => {
+                dropdown.classList.remove('active');
+            });
+        });
+    </script>
+</body>
+</html>
