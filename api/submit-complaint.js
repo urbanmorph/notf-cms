@@ -41,8 +41,33 @@ module.exports = async function handler(req, res) {
             process.env.SUPABASE_SERVICE_KEY
         );
 
-        // Parse complaint data
-        const complaint = req.body;
+        // Parse complaint data (handle both JSON and FormData)
+        let complaint;
+        let photoFile = null;
+
+        // Check if this is FormData (with photo) or JSON (without photo)
+        const contentType = req.headers['content-type'] || '';
+
+        if (contentType.includes('multipart/form-data')) {
+            // FormData request - parse the data field
+            // Note: Vercel doesn't parse multipart by default, so we need to handle it
+            // For now, reject FormData requests and ask client to send JSON + base64
+            return res.status(400).json({
+                error: 'Photo upload via FormData not supported yet. Please send photo as base64 in JSON body.',
+                details: 'FormData parsing not implemented in serverless function'
+            });
+        } else {
+            // Regular JSON request
+            complaint = req.body;
+
+            // Check if req.body exists
+            if (!complaint) {
+                return res.status(400).json({
+                    error: 'No request body received',
+                    details: 'Request body is undefined. Check Content-Type header.'
+                });
+            }
+        }
 
         // Server-side validation (can't be bypassed by client!)
         if (!complaint.description || complaint.description.length < 10) {
@@ -165,10 +190,60 @@ module.exports = async function handler(req, res) {
             });
         }
 
+        // Handle photo upload if provided (base64)
+        let photoUrl = null;
+        if (complaint.photo && typeof complaint.photo === 'string' && complaint.photo.startsWith('data:image/')) {
+            try {
+                console.log('[API] Processing base64 photo...');
+
+                // Extract base64 data and content type
+                const matches = complaint.photo.match(/^data:([^;]+);base64,(.+)$/);
+                if (matches) {
+                    const contentType = matches[1];
+                    const base64Data = matches[2];
+                    const buffer = Buffer.from(base64Data, 'base64');
+
+                    // Generate filename
+                    const fileExtension = contentType.split('/')[1] || 'jpg';
+                    const fileName = `${data.id}/${Date.now()}.${fileExtension}`;
+
+                    // Upload to Supabase Storage
+                    const { data: uploadData, error: uploadError } = await supabase.storage
+                        .from('notf-cms')
+                        .upload(fileName, buffer, {
+                            contentType: contentType,
+                            cacheControl: '3600',
+                            upsert: false
+                        });
+
+                    if (uploadError) {
+                        console.error('[API] Photo upload error:', uploadError);
+                    } else {
+                        // Get public URL
+                        const { data: urlData } = supabase.storage
+                            .from('notf-cms')
+                            .getPublicUrl(fileName);
+
+                        photoUrl = urlData.publicUrl;
+                        console.log('[API] Photo uploaded successfully:', photoUrl);
+
+                        // TODO: Create attachment record in complaint_attachments table
+                        // For now, just return the URL
+                    }
+                }
+            } catch (photoError) {
+                console.error('[API] Photo processing error:', photoError);
+                // Don't fail the complaint submission if photo upload fails
+            }
+        }
+
         // Success! Return the created complaint with ticket number
         return res.status(200).json({
             success: true,
             complaint: data,
+            complaint_number: data.complaint_number,
+            id: data.id,
+            photo_url: photoUrl,
             message: `Complaint submitted successfully. Ticket: ${data.complaint_number}`
         });
 
