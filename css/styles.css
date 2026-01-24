@@ -1448,7 +1448,6 @@ thead tr:hover {
     width: auto;
     margin-right: 12px;
     vertical-align: middle;
-    border-radius: 50%;
 }
 
 /* Mobile adjustments */
@@ -1532,7 +1531,6 @@ thead tr:hover {
     height: 60px;
     width: auto;
     margin-bottom: 1rem;
-    border-radius: 50%;
 }
 
 .footer-bottom {
