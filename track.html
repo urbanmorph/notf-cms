@@ -557,13 +557,13 @@
         const SUPABASE_URL = 'https://abblyaukkoxmgzwretvm.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_I1nVJvhGbNwAgSiypEq1gg_KkMaKtar';
 
-        let supabase;
+        let supabaseClient;
         let currentComplaint = null;
 
         document.addEventListener('DOMContentLoaded', function() {
             // Initialize Supabase
             if (typeof window.supabase !== 'undefined') {
-                supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
             }
 
             // Check URL for complaint number
@@ -601,11 +601,11 @@
             hideResults();
 
             try {
-                if (!supabase) {
+                if (!supabaseClient) {
                     throw new Error('Unable to connect to the service. Please try again later.');
                 }
 
-                const { data, error } = await supabase
+                const { data, error } = await supabaseClient
                     .from('complaints')
                     .select(`
                         *,
