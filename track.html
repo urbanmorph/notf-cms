@@ -605,7 +605,8 @@
                     throw new Error('Unable to connect to the service. Please try again later.');
                 }
 
-                const { data, error } = await supabaseClient
+                // Try query with joins first
+                let { data, error } = await supabaseClient
                     .from('complaints')
                     .select(`
                         *,
@@ -615,7 +616,25 @@
                     .eq('complaint_number', complaintNumber)
                     .single();
 
-                if (error || !data) {
+                // If joins fail, try basic query without joins
+                if (error && error.code !== 'PGRST116') {
+                    console.warn('Query with joins failed, trying basic query:', error);
+                    const basicQuery = await supabaseClient
+                        .from('complaints')
+                        .select('*')
+                        .eq('complaint_number', complaintNumber)
+                        .single();
+
+                    data = basicQuery.data;
+                    error = basicQuery.error;
+                }
+
+                if (error) {
+                    console.error('Supabase error details:', error);
+                    throw new Error(`Database error: ${error.message || 'Complaint not found'}`);
+                }
+
+                if (!data) {
                     throw new Error('Complaint not found. Please check the number and try again.');
                 }
 
